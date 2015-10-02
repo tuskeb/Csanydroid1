@@ -1,124 +1,116 @@
 package hu.csany_zeg.one.csanydroid1.hosok;
 
-/**
- * Created by tanuló on 2015.10.02..
- */
-public class Hero{
-    private String name;
-    private int healthPoint;
-    private float magic;
-    private float offensivePoint;
-    private float defensivePoint;
+public class Hero {
 
-    //Önmagát klónozza egy új objektum példányba. Figyelni kell, amikor új változókat viszünk be az osztályba.
-    //Le kell klónozni.
-    public Hero clone()
-    {
-        Hero newHero = new Hero();
-        newHero.setName(getName());
-        //......................
-        return newHero;
-    }
+	private String name;
 
-    public Hero()
-    {
-        name = "János";
-        healthPoint = (int)(Math.random()*491f+10f);
-        magic = (float)(Math.random()*20.0);
-        offensivePoint = (float)(Math.random()*10.0)+1f;
-        defensivePoint = (float)(Math.random()*10.0)+1f;
-    }
+	private int healthPoint;
 
-    public float finalizeOffensivePoint()
-    {
-        //2
-        //Kivonja az értékekből a támadási ponthoz felhasznált értékeket
-        //Eredményként a támadási pontot adja
-        //finalizeMagicPoint();
-        return 0f;
-    }
+	private float charm;
 
-    private float finalizeDefensivePoint()
-    {
-        //4
-        //finalizeMagicPoint();
-        return 0f;
-    }
+	private float offensivePoint;
 
-    private float finalizeMagicPoint()
-    {
-        //3-5
-        return 0f;
-    }
+	private float defensivePoint;
 
 
-    private void damaged(float lostPoints)
-    {
-        //6. pont
-    }
+	public Hero() {
+		this.name = "János";
+		this.healthPoint = (int) (Math.random() * 491f + 10f);
+		this.charm = (float) (Math.random() * 20.0);
+		this.offensivePoint = (float) (Math.random() * 10.0) + 1f;
+		this.defensivePoint = (float) (Math.random() * 10.0) + 1f;
+	}
+
+	//Önmagát klónozza egy új objektum példányba. Figyelni kell, amikor új változókat viszünk be az osztályba.
+	//Le kell klónozni.
+	public Hero clone() {
+		Hero newHero = new Hero();
+		newHero.setName(getName());
+		//......................
+		return newHero;
+	}
+
+	public float finalizeOffensivePoint() {
+		return this.offensivePoint * ((.7f + (float) (Math.random() * (1.15 - .7))) + (this.useCharm() / 5));
+	}
+
+	private float finalizeDefensivePoint() {
+		return this.defensivePoint * ((.5f + (float) (Math.random() * (1.3f - .5f))) + (this.useCharm() / 2.5f));
+	}
+
+	private float useCharm() {
+		if(this.charm == 0) return 0f;
+
+		final float usedCharm = Math.min(this.charm, 5f);
+		this.charm -= usedCharm;
+		return usedCharm;
+
+	}
 
 
-    public void duel(Hero offensive)
-    {
-        //float a = offensive.finalizeOffensivePoint();
-        //float b = defensive.;
-        damaged(offensive.finalizeOffensivePoint());
-    }
+	private void damaged(float lostHelthPoint) {
 
-    /*Implementálni kell*/
-    public Hero(String name)
-    {
-        this.name=name;
-    }
+		if((this.healthPoint -= lostHelthPoint) < 0) {
+			// a játékos halott
 
 
 
+		}
+
+	}
 
 
+	public void duel(Hero offensive) {
+		//float a = offensive.finalizeOffensivePoint();
+		//float b = defensive.;
+		damaged(offensive.finalizeOffensivePoint());
+	}
 
+	/*Implementálni kell*/
+	public Hero(String name) {
+		this.name = name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setHealthPoint(int healthPoint) {
-        this.healthPoint = healthPoint;
-    }
+	public void setHealthPoint(int healthPoint) {
+		this.healthPoint = healthPoint;
+	}
 
-    public void setMagic(float magic) {
-        this.magic = magic;
-    }
+	public void setCharm(float charm) {	this.charm = charm;	}
 
-    public void setOffensivePoint(float offensivePoint) {
-        this.offensivePoint = offensivePoint;
-    }
+	public void setOffensivePoint(float offensivePoint) {
+		this.offensivePoint = offensivePoint;
+	}
 
-    public void setDefensivePoint(float defensivePoint) {
-        this.defensivePoint = defensivePoint;
-    }
+	public void setDefensivePoint(float defensivePoint) {
+		this.defensivePoint = defensivePoint;
+	}
 
-    @Override
-    public String toString() {
-        return name + " - " + healthPoint;
-    }
+	@Override
+	public String toString() {
+		return String.format("%s - %d", this.name, this.healthPoint);
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return this.name;
+	}
 
-    public int getHealthPoint() {
-        return healthPoint;
-    }
+	public int getHealthPoint() {
+		return this.healthPoint;
+	}
 
-    public float getMagic() {
-        return magic;
-    }
+	public float getCharm() {
+		return this.charm;
+	}
 
-    public float getOffensivePoint() {
-        return offensivePoint;
-    }
+	public float getOffensivePoint() {
+		return this.offensivePoint;
+	}
 
-    public float getDefensivePoint() {
-        return defensivePoint;
-    }
+	public float getDefensivePoint() {
+		return this.defensivePoint;
+	}
 }
