@@ -9,7 +9,7 @@ public class Teszt {
     {
         Hero h = new Hero();
         Hero m = new Hero("Valaki");
-        Hero c = new Hero("Teszt");
+        Hero c = new Hero("Teszt hős");
         System.out.println(h);
         System.out.println(m);
     }
