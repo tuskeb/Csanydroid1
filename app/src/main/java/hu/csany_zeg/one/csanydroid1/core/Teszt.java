@@ -1,4 +1,4 @@
-package hu.csany_zeg.one.csanydroid1.hosok;
+package hu.csany_zeg.one.csanydroid1.core;
 
 /**
  * Created by tanuló on 2015.10.02..

@@ -1,4 +1,4 @@
-package hu.csany_zeg.one.csanydroid1.hosok;
+package hu.csany_zeg.one.csanydroid1.core;
 
 public class Hero {
 
@@ -47,26 +47,25 @@ public class Hero {
 
 	}
 
+	public void duel(Hero oppHero) {
+		final float offensivePoint = this.finalizeOffensivePoint();
+		final float defensivePoint = this.finalizeDefensivePoint();
 
-	private void damaged(float lostHelthPoint) {
+		if(offensivePoint > defensivePoint) {
+			// a védekező játékos életet veszít
 
-		if((this.healthPoint -= lostHelthPoint) < 0) {
-			// a játékos halott
+			this.healthPoint -= offensivePoint - defensivePoint;
+			if(this.healthPoint <= 0) {
+				this.healthPoint = 0;
+				// a játékos halott :(
 
-
+			}
 
 		}
 
 	}
 
-
-	public void duel(Hero offensive) {
-		//float a = offensive.finalizeOffensivePoint();
-		//float b = defensive.;
-		damaged(offensive.finalizeOffensivePoint());
-	}
-
-	/*Implementálni kell*/
+	// TODO Implementálni kell
 	public Hero(String name) {
 		this.name = name;
 	}
