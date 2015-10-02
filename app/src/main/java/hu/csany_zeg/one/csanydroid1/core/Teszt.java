@@ -1,16 +1,14 @@
 package hu.csany_zeg.one.csanydroid1.core;
 
-/**
- * Created by tanuló on 2015.10.02..
- */
 public class Teszt {
 
     public static void main (String[] arg)
     {
-        Hero h = new Hero();
-        Hero m = new Hero("Valaki");
-        Hero c = new Hero("Teszt hős");
-        System.out.println(h);
-        System.out.println(m);
+        Hero h1 = new Hero();
+        Hero h2 = new Hero("Valaki");
+        Hero h3 = new Hero("Teszt hős");
+        System.out.println(h1);
+        System.out.println(h2);
+
     }
 }

@@ -1,115 +1,245 @@
 package hu.csany_zeg.one.csanydroid1.core;
 
-public class Hero {
+import android.database.DataSetObservable;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
+import android.view.animation.Animation;
 
-	private String name;
+import java.util.ArrayList;
 
-	private int healthPoint;
+import hu.csany_zeg.one.csanydroid1.MainActivity;
 
-	private float charm;
+public class Hero extends DataSetObservable implements Cloneable {
 
-	private float offensivePoint;
+	private String mName;
 
-	private float defensivePoint;
+	private short mHealthPoint;
 
+	private float mCharm;
+
+	private float mOffensivePoint;
+
+	private float mDefensivePoint;
+
+
+	// TODO? statisztika az összes támadásról és védekezésről
+	private short killedOpponents = 0;
 
 	public Hero() {
-		this.name = "János";
-		this.healthPoint = (int) (Math.random() * 491f + 10f);
-		this.charm = (float) (Math.random() * 20.0);
-		this.offensivePoint = (float) (Math.random() * 10.0) + 1f;
-		this.defensivePoint = (float) (Math.random() * 10.0) + 1f;
+
+		// választ egy véletlen nevet
+		final String NAMES[] = new String[]{"Lekvároscsusza", "Lekvárosbukta", "Túrosgombóc", "Barack", "Szilva", "Krokodil", "Pilóta keksz"};
+		mName = NAMES[(int) (NAMES.length * Math.random())];
+
+		// és feltölti véletlen értékekkel
+		mHealthPoint = (short) (Math.random() * 491f + 10);
+		mCharm = (float) (Math.random() * 20.0);
+		mOffensivePoint = (float) (Math.random() * 10f) + 1;
+		mDefensivePoint = (float) (Math.random() * 10f) + 1;
+
+	}
+
+	protected Hero clone() {
+		try {
+			return (Hero) super.clone();
+		} catch (CloneNotSupportedException e) {
+			return null;
+		}
 	}
 
 	//Önmagát klónozza egy új objektum példányba. Figyelni kell, amikor új változókat viszünk be az osztályba.
 	//Le kell klónozni.
+	/*
 	public Hero clone() {
+		Object.
 		Hero newHero = new Hero();
 		newHero.setName(getName());
 		//......................
 		return newHero;
 	}
+	*/
 
 	public float finalizeOffensivePoint() {
-		return this.offensivePoint * ((.7f + (float) (Math.random() * (1.15 - .7))) + (this.useCharm() / 5));
+		final float RAND_MIN = .7f, RAND_MAX = 1.15f;
+		return mOffensivePoint * ((RAND_MIN + (float) Math.random() * (RAND_MAX - RAND_MIN)) + (useCharm() / 5));
 	}
 
 	private float finalizeDefensivePoint() {
-		return this.defensivePoint * ((.5f + (float) (Math.random() * (1.3f - .5f))) + (this.useCharm() / 2.5f));
+		final float RAND_MIN = .5f, RAND_MAX = 1.3f;
+		return mDefensivePoint * ((RAND_MIN + (float) Math.random() * (RAND_MAX - RAND_MIN)) + (useCharm() / 2.5f));
 	}
 
 	private float useCharm() {
-		if(this.charm == 0) return 0f;
+		if (mCharm == 0) return 0f; // elfogyott a varázsereje
 
-		final float usedCharm = Math.min(this.charm, 5f);
-		this.charm -= usedCharm;
+		final float usedCharm = Math.min(mCharm, 5f);
+
+		mCharm -= usedCharm;
 		return usedCharm;
 
 	}
 
-	public void duel(Hero oppHero) {
-		final float offensivePoint = this.finalizeOffensivePoint();
-		final float defensivePoint = this.finalizeDefensivePoint();
 
-		if(offensivePoint > defensivePoint) {
-			// a védekező játékos életet veszít
+	public static ArrayList<Hero> sHeroes = new ArrayList<Hero>();
+	public static final Handler sEventHandler = new Handler(Looper.getMainLooper());
+	public static HeroListener mListener = null;
+	public static Hero sAttackerHero = null, sDefensiveHero = null;
 
-			this.healthPoint -= offensivePoint - defensivePoint;
-			if(this.healthPoint <= 0) {
-				this.healthPoint = 0;
-				// a játékos halott :(
+	public static Thread sBattleThread = new Thread() {
 
-			}
+		@Override
+		public void run() {
+			final Hero old = sAttackerHero;
+
+			sAttackerHero = sHeroes.get((sAttackerHero != null ? sHeroes.indexOf(sAttackerHero) + 1 : 0) % sHeroes.size());
+
+			if (mListener != null) mListener.onAttackerHeroChanged(old);
+		}
+
+	};
+
+	private final Runnable sAttackerHeroChange = new Runnable() {
+		@Override
+		public void run() {
+
+			final Hero old = sAttackerHero;
+
+			sAttackerHero = sHeroes.get((sAttackerHero != null ? sHeroes.indexOf(sAttackerHero) + 1 : 0) % sHeroes.size());
+
+			if (mListener != null) mListener.onAttackerHeroChanged(old);
+		}
+	};
+
+	private final Runnable sDefensiveHeroChange = new Runnable() {
+		@Override
+		public void run() {
+			final Hero old = sAttackerHero;
+
+			while (sAttackerHero == (sDefensiveHero = sHeroes.get((int) (Math.random() * sHeroes.size()))))
+				;
+
+			if (mListener != null) mListener.onDefensiveHeroChanged(old);
+
+		}
+	};
+
+	private final Runnable sCharmChange = new Runnable() {
+		@Override
+		public void run() {
+			final float old = mCharm;
+
+			while (sAttackerHero == (sDefensiveHero = sHeroes.get((int) (Math.random() * sHeroes.size()))))
+				;
+
+			if (mListener != null) mListener.onCharmChanged(1f);
+
+		}
+	};
+
+
+	public static void beginMassacre() {
+	}
+
+	public void receiveDemage(float lostLife) {
+		assert lostLife > 0;
+
+		sDefensiveHero.mHealthPoint -= lostLife;
+		if (sDefensiveHero.mHealthPoint <= 0) {
+			sDefensiveHero.mHealthPoint = 0;
+
+			++sAttackerHero.killedOpponents;
+			// a játékos halott :(
 
 		}
 
 	}
 
-	// TODO Implementálni kell
+	public static void duel(Hero oppHero) {
+		final float offensivePoint;
+		offensivePoint = sAttackerHero.finalizeOffensivePoint();
+		final float defensivePoint = sDefensiveHero.finalizeDefensivePoint();
+
+		if (offensivePoint > defensivePoint) {
+			// a védekező játékos életet veszít
+			sDefensiveHero.receiveDemage(offensivePoint - defensivePoint);
+		}
+	}
+
+	// TODO implementálni kell
 	public Hero(String name) {
-		this.name = name;
+		mName = name;
+	}
+
+	public String getName() {
+		return mName;
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		mName = name;
+		super.notifyChanged();
 	}
 
-	public void setHealthPoint(int healthPoint) {
-		this.healthPoint = healthPoint;
+	public short getHealthPoint() {
+		return mHealthPoint;
 	}
 
-	public void setCharm(float charm) {	this.charm = charm;	}
+	public void setHealthPoint(short healthPoint) {
+		mHealthPoint = healthPoint;
+		super.notifyChanged();
+	}
+
+	public float getCharm() {
+		return mCharm;
+	}
+
+	public void setCharm(float charm) {
+		mCharm = charm;
+		super.notifyChanged();
+	}
+
+	public float getOffensivePoint() {
+		return mOffensivePoint;
+	}
 
 	public void setOffensivePoint(float offensivePoint) {
-		this.offensivePoint = offensivePoint;
+		mOffensivePoint = offensivePoint;
+		super.notifyChanged();
+	}
+
+	public float getDefensivePoint() {
+		return mDefensivePoint;
 	}
 
 	public void setDefensivePoint(float defensivePoint) {
-		this.defensivePoint = defensivePoint;
+		mDefensivePoint = defensivePoint;
+		super.notifyChanged();
+	}
+
+	public short getKilledOpponents() {
+		return killedOpponents;
+	}
+
+	public void setKilledOpponents(short killedOpponents) {
+		this.killedOpponents = killedOpponents;
+		super.notifyChanged();
 	}
 
 	@Override
 	public String toString() {
-		return String.format("%s - %d", this.name, this.healthPoint);
+		return String.format("%s [ nm=%s, hp=%d, ch=%f, op=%f, dp=%f ]", getClass().getName(), mName, mHealthPoint, mCharm, mOffensivePoint, mDefensivePoint);
 	}
 
-	public String getName() {
-		return this.name;
+	public interface HeroListener {
+
+		void onAttackerHeroChanged(Hero oldHero);
+
+		void onDefensiveHeroChanged(Hero oldHero);
+
+		void onCharmChanged(float oldCharm);
+
+		void onHealthPointChanged(float oldHealthPoint);
+
 	}
 
-	public int getHealthPoint() {
-		return this.healthPoint;
-	}
-
-	public float getCharm() {
-		return this.charm;
-	}
-
-	public float getOffensivePoint() {
-		return this.offensivePoint;
-	}
-
-	public float getDefensivePoint() {
-		return this.defensivePoint;
-	}
 }

@@ -6,7 +6,7 @@ public class Battle {
 	ArrayList<Hero> listOfHeroes = new ArrayList();
 
 	//Megadja, hogy hányadik lépésnél áll a csata. A hős indexe, aki támad.
-	private int step = 0;
+	private short round = 0;
 
 
 	public void addHero(Hero hero) {
@@ -16,6 +16,8 @@ public class Battle {
 	//Legenerálja, hogy ki, kivel fog harcolni, a hősökön keresztül pedik
 	//kiszámolj, hogyan alakulnak a pontjaik.
 	public BattleParams nextStep() {
+		++round;
+
 		//A 4 hőst meg kell adni.
 		BattleParams bp = new BattleParams();
 
