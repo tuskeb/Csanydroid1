@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.animation.Animation;
 
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
 
 import hu.csany_zeg.one.csanydroid1.MainActivity;
 
@@ -38,6 +39,12 @@ public class Hero extends DataSetObservable implements Cloneable {
 		mOffensivePoint = (float) (Math.random() * 10f) + 1;
 		mDefensivePoint = (float) (Math.random() * 10f) + 1;
 
+		sHeroes.add(this);
+	}
+
+	public void dispose() {
+		sHeroes.remove(this);
+
 	}
 
 	protected Hero clone() {
@@ -47,18 +54,6 @@ public class Hero extends DataSetObservable implements Cloneable {
 			return null;
 		}
 	}
-
-	//Önmagát klónozza egy új objektum példányba. Figyelni kell, amikor új változókat viszünk be az osztályba.
-	//Le kell klónozni.
-	/*
-	public Hero clone() {
-		Object.
-		Hero newHero = new Hero();
-		newHero.setName(getName());
-		//......................
-		return newHero;
-	}
-	*/
 
 	public float finalizeOffensivePoint() {
 		final float RAND_MIN = .7f, RAND_MAX = 1.15f;
@@ -102,7 +97,6 @@ public class Hero extends DataSetObservable implements Cloneable {
 	private final Runnable sAttackerHeroChange = new Runnable() {
 		@Override
 		public void run() {
-
 			final Hero old = sAttackerHero;
 
 			sAttackerHero = sHeroes.get((sAttackerHero != null ? sHeroes.indexOf(sAttackerHero) + 1 : 0) % sHeroes.size());
@@ -129,17 +123,13 @@ public class Hero extends DataSetObservable implements Cloneable {
 		public void run() {
 			final float old = mCharm;
 
-			while (sAttackerHero == (sDefensiveHero = sHeroes.get((int) (Math.random() * sHeroes.size()))))
-				;
+			while (sAttackerHero == (sDefensiveHero = sHeroes.get((int) (Math.random() * sHeroes.size())))) {}
 
 			if (mListener != null) mListener.onCharmChanged(1f);
 
+
 		}
 	};
-
-
-	public static void beginMassacre() {
-	}
 
 	public void receiveDemage(float lostLife) {
 		assert lostLife > 0;

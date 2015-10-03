@@ -1,13 +1,26 @@
 package hu.csany_zeg.one.csanydroid1.core;
 
 import java.util.ArrayList;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 public class Battle {
 	ArrayList<Hero> listOfHeroes = new ArrayList();
+	ArrayBlockingQueue<Integer> eventQueue = new ArrayBlockingQueue<Integer>(10);
 
-	//Megadja, hogy hányadik lépésnél áll a csata. A hős indexe, aki támad.
-	private short round = 0;
+	public static Hero attacker = null;
 
+	public static final int STATE_WAIT_NEXT_HERO = 1;
+
+	public static void setAttacker() {
+
+	}
+
+	public static void beginMassacre() {
+		attacker = Hero.sHeroes.get(0);
+
+	}
 
 	public void addHero(Hero hero) {
 		listOfHeroes.add(hero);
@@ -16,7 +29,6 @@ public class Battle {
 	//Legenerálja, hogy ki, kivel fog harcolni, a hősökön keresztül pedik
 	//kiszámolj, hogyan alakulnak a pontjaik.
 	public BattleParams nextStep() {
-		++round;
 
 		//A 4 hőst meg kell adni.
 		BattleParams bp = new BattleParams();
