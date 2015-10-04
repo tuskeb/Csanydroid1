@@ -1,0 +1,10 @@
+<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
+          android:id="@+id/hero_list"
+          android:name="hu.csany_zeg.one.csanydroid1.HeroListFragment"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:layout_marginLeft="16dp"
+          android:layout_marginRight="16dp"
+          tools:context="hu.csany_zeg.one.csanydroid1.HeroListActivity"
+          tools:layout="@android:layout/list_content"/>

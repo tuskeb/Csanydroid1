@@ -1,0 +1,8 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="hu.csany_zeg.one.csanydroid1.BattleActivity">
+    <item android:id="@+id/give_up"
+          android:title="@string/give_up"
+          app:showAsAction="withText|ifRoom"/>
+</menu>

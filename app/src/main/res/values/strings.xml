@@ -1,5 +1,15 @@
 <resources>
-    <string name="app_name">Csanydroid1</string>
+    <string name="app_name" translatable="false">CsányDroid1</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_battle">Battles</string>
+
+    <string name="title_section_add">New</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="give_up">Give Up</string>
+    <string name="title_hero_list">Heros</string>
+    <string name="title_hero_detail">Hero Detail</string>
 </resources>

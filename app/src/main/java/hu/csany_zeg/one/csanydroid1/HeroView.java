@@ -51,8 +51,9 @@ public class HeroView extends View {
 
 	public HeroView(final Context context, Hero hero) {
 		super(context);
+
 		this.mHero = hero;
-		this.mIsAttacker = (hero == Battle.attacker);
+		this.mIsAttacker = (hero == null);
 
 	    /*
 	    Timer timer = new Timer(false);
@@ -67,14 +68,12 @@ public class HeroView extends View {
 		final DataSetObserver dso = new DataSetObserver() {
 			@Override
 			public void onChanged() {
-
 				new Handler(Looper.getMainLooper()).post(new Runnable() {
 					@Override
 					public void run() {
 						invalidate();
 					}
 				});
-
 			}
 		};
 
@@ -186,7 +185,7 @@ public class HeroView extends View {
 		mPaint.setTextSize(20.0f);
 		canvas.drawText(mHero.getHealthPoint() + "", 50, y + 20, mPaint);
 		canvas.drawText((Math.round(mHero.getCharm() * 10f) / 10f) + "", 50, y + 50, mPaint);
-		canvas.drawText((Math.round(mHero.getOffensivePoint() * 10f) / 10f) + "", 50, y + 80, mPaint);
+		canvas.drawText((Math.round(mHero.getBaseOffensivePoint() * 10f) / 10f) + "", 50, y + 80, mPaint);
 
 		if (speedY > 0) {
 			y += speedY;
@@ -215,7 +214,7 @@ public class HeroView extends View {
 			case MotionEvent.ACTION_DOWN:
 				mIsTouched = true;
 				if (speedY == 0) {
-					addParticles(event.getX(), event.getY(), 16 + (int)(Math.random() * 8));
+					//addParticles(event.getX(), event.getY(), 16 + (int)(Math.random() * 8));
 
 					initialY = event.getY();
 					diffY = initialY - y;

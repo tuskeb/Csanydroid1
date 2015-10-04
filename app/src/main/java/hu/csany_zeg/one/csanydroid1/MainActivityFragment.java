@@ -11,6 +11,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import hu.csany_zeg.one.csanydroid1.core.Battle;
 import hu.csany_zeg.one.csanydroid1.core.Hero;
 
 public class MainActivityFragment extends Fragment {
@@ -27,11 +28,11 @@ public class MainActivityFragment extends Fragment {
 
         v = inflater.inflate(R.layout.fragment_main, container, false);
 
-        cv = new HeroView(inflater.getContext(), Hero.sHeroes.get(0));
-	    ((LinearLayout)v.findViewById(R.id.linearLayout)).addView(cv);
+       // cv = new HeroView(inflater.getContext(), Battle.sBattles.get(0).mHeros.get(0));
+	   // ((LinearLayout)v.findViewById(R.id.linearLayout)).addView(cv);
 
-	    cv = new HeroView(inflater.getContext(), Hero.sHeroes.get(1));
-        ((LinearLayout)v.findViewById(R.id.linearLayout)).addView(cv);
+	    //cv = new HeroView(inflater.getContext(), null);
+        //((LinearLayout)v.findViewById(R.id.linearLayout)).addView(cv);
         //((RelativeLayout)v.findViewById(R.id.relativeLayout)).addView(new HeroView(inflater.getContext(), Hero.sHeroes.get(1)));
 
 
