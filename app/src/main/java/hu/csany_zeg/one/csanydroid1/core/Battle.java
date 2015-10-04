@@ -158,7 +158,7 @@ public class Battle implements Parcelable {
 	 * Létrehoz egy új csatát
 	 */
 	public Battle(String name, Opponent opponent) {
-		mName = name != null ? name : "Névtelen csata";
+		mName = name != null ? name : "Névtelen csataaa";
 		mOpponent = opponent;
 
 		sBattles.add(this);
