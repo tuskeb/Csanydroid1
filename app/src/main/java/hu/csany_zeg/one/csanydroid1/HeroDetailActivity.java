@@ -38,8 +38,7 @@ public class HeroDetailActivity extends AppCompatActivity {
 			// Create the detail fragment and add it to the activity
 			// using a fragment transaction.
 			Bundle arguments = new Bundle();
-			arguments.putInt(HeroDetailFragment.ARG_ITEM_ID,
-					                   getIntent().getIntExtra(HeroDetailFragment.ARG_ITEM_ID, 0));
+			arguments.putString(HeroDetailFragment.ARG_ITEM_ID,getIntent().getStringExtra(HeroDetailFragment.ARG_ITEM_ID));
 
 			HeroDetailFragment fragment = new HeroDetailFragment();
 			fragment.setArguments(arguments);

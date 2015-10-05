@@ -28,7 +28,7 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
 	 * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
 	 */
 	private NavigationDrawerFragment mNavigationDrawerFragment;
-	
+
 	/**
 	 * Used to store the last screen title. For use in {@link #restoreActionBar()}.
 	 */
@@ -40,37 +40,30 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 		setContentView(R.layout.activity_battle);
-		
+
 		mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
 		mTitle = getTitle();
 
-
 		// Set up the drawer.
 		mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
+
+
 	}
 	
 	@Override
 	public void onNavigationDrawerItemSelected(int position) {
+		if(position == -1) return;
 		// update the main content by replacing fragments
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		fragmentManager.beginTransaction()
 				.replace(R.id.container, PlaceholderFragment.newInstance(position))
 				.commit();
 	}
-	
-	public void onSectionAttached(int number) {
-		if(number < Battle.countBattles()) {
-			mTitle = Battle.sBattles.get(number).getName();
-		} else {
-			mTitle = getString(R.string.title_section_add);
-		}
 
-	}
-	
 	public void restoreActionBar() {
 		ActionBar actionBar = getSupportActionBar();
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 		actionBar.setDisplayShowTitleEnabled(true);
+		//actionBar.setSubtitle("Pirates");
 		actionBar.setTitle(mTitle);
 	}
 	
@@ -119,11 +112,21 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
 			View rootView = inflater.inflate(R.layout.fragment_battle, container, false);
 			return rootView;
 		}
-		
+
+		public void selectItem(int position) {
+			final Battle battle = Battle.sBattles.get(position);
+			final BattleActivity activity = (BattleActivity) getActivity();
+
+			activity.mTitle = battle.getName();
+		}
+
 		@Override
-		public void onAttach(Activity activity) {
-			super.onAttach(activity);
-			((BattleActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
+		public void onAttach(Context context) {
+			super.onAttach(context);
+
+			selectItem(getArguments().getInt(ARG_SECTION_NUMBER));
+
+
 		}
 	}
 	

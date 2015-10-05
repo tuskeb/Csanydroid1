@@ -28,40 +28,41 @@ public class Hero extends DataSetObservable implements Cloneable, Parcelable {
 	};
 
 	public static Hero sAttackerHero = null, sDefensiveHero = null;
-	private static short MIN_HEALTH = 10, MAX_HEALTH = 500;
-	private static float MIN_CHARM = 0.0f, MAX_CHARM = 20.0f;
-	private static float MIN_OFFENSIVE_POINT = 1.0f, MAX_OFFENSIVE_POINT = 10.0f;
-	private static float MIN_DEFENSIVE_POINT = 1.0f, MAX_DEFENSIVE_POINT = 10.0f;
+	public static short MIN_HEALTH = 10, MAX_HEALTH = 500;
+	public static float MIN_CHARM = 0.0f, MAX_CHARM = 20.0f;
+	public static float MIN_OFFENSIVE_POINT = 1.0f, MAX_OFFENSIVE_POINT = 10.0f;
+	public static float MIN_DEFENSIVE_POINT = 1.0f, MAX_DEFENSIVE_POINT = 10.0f;
 
 	/**
 	 * A hős neve.
 	 */
-	private String mName;
+	protected String mName;
 
 	/**
 	 * A hős élete.
 	 */
-	private float mHealthPoint;
+	protected float mHealthPoint;
 
 	/**
 	 * Felhasználható varázsereje.
 	 */
-	private float mCharm;
+	protected float mCharm;
 
 	/**
 	 * Alap varázsereje.
 	 */
-	private float mBaseCharm;
+	protected float mBaseCharm;
 
 	/**
 	 * Támadási értéke.
 	 */
-	private float mOffensivePoint;
+	protected float mOffensivePoint;
 
 	/**
 	 * Védekezési értéke.
 	 */
-	private float mDefensivePoint;
+	protected float mDefensivePoint;
+	private float mDrunkCharm;
 
 	/**
 	 * Létrehoz egy távoli hőst.
@@ -72,12 +73,6 @@ public class Hero extends DataSetObservable implements Cloneable, Parcelable {
 		mBaseCharm = in.readFloat();
 		mOffensivePoint = in.readFloat();
 		mDefensivePoint = in.readFloat();
-	}
-
-	public void addToBattle(Battle battle) {
-		if(battle.mHeros.indexOf(this) > 0) return;
-		battle.mHeros.add(this);
-
 	}
 
 	/**
@@ -96,6 +91,12 @@ public class Hero extends DataSetObservable implements Cloneable, Parcelable {
 
 	}
 
+	public void addToBattle(Battle battle) {
+		if (battle.mHeros.indexOf(this) > 0) return;
+		battle.mHeros.add(this);
+
+	}
+
 	protected Hero clone() {
 		try {
 			return (Hero) super.clone();
@@ -108,8 +109,6 @@ public class Hero extends DataSetObservable implements Cloneable, Parcelable {
 		return mDrunkCharm;
 	}
 
-	float mDrunkCharm;
-
 	public boolean isAlive() { return this.mHealthPoint > 0; }
 
 	/**
@@ -120,8 +119,8 @@ public class Hero extends DataSetObservable implements Cloneable, Parcelable {
 			this.mDrunkCharm = Math.min(mCharm, battle.MAX_USABLE_CHARM); // "maximális varázsereje"??
 			mCharm -= this.mDrunkCharm;
 
-			if(this instanceof LocalHero) {
-				((LocalHero)this).mTotalDrunkCharm += this.mDrunkCharm;
+			if (this instanceof LocalHero) {
+				((LocalHero) this).mTotalDrunkCharm += this.mDrunkCharm;
 			}
 
 		} else { // ne használjon ilyen szereket
@@ -130,6 +129,15 @@ public class Hero extends DataSetObservable implements Cloneable, Parcelable {
 
 		super.notifyChanged();
 
+	}
+
+	public int getBattleCount() {
+		int r = 0;
+		for (Battle battle : Battle.sBattles) {
+			if (battle.mHeros.contains(this)) ++r;
+		}
+
+		return r;
 	}
 
 	private boolean shouldDrinkCharm() {
@@ -150,11 +158,11 @@ public class Hero extends DataSetObservable implements Cloneable, Parcelable {
 	}
 
 	public boolean receiveDamage(float lostLife) {
-		if(lostLife <= 0) return false;
+		if (lostLife <= 0) return false;
 
 		this.mHealthPoint -= lostLife;
 
-		if(!this.isAlive()) {
+		if (!this.isAlive()) {
 			if (this instanceof LocalHero) {
 				super.notifyChanged();
 			}
@@ -163,15 +171,13 @@ public class Hero extends DataSetObservable implements Cloneable, Parcelable {
 
 	}
 
-	public float getCharm() { return mCharm; }
+	public float getCharm() { return mBaseCharm; }
 
 	public float getBaseOffensivePoint() {
 		return mOffensivePoint;
 	}
 
-	public float getBaseDefensivePoint() {
-		return mDefensivePoint;
-	}
+	public float getBaseDefensivePoint() { return mDefensivePoint; }
 
 	@Override
 	public String toString() {
@@ -193,6 +199,7 @@ public class Hero extends DataSetObservable implements Cloneable, Parcelable {
 		dest.writeFloat(getBaseOffensivePoint());
 	}
 
+
 	public interface HeroListener {
 
 		void onAttackerHeroChanged(Hero oldHero);
@@ -202,6 +209,10 @@ public class Hero extends DataSetObservable implements Cloneable, Parcelable {
 		void onCharmChanged(float oldCharm);
 
 		void onHealthPointChanged(float oldHealthPoint);
+
+	}
+
+	public class HeroParametersUnmodifiable extends Throwable {
 
 	}
 

@@ -9,8 +9,12 @@ import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+// TODO: http://stackoverflow.com/questions/18903735/how-to-change-the-text-color-of-a-listview-item
 // TODO http://developer.android.com/training/displaying-bitmaps/cache-bitmap.html
-
+/*
+#ebd46e
+#d3b21f
+ */
 public class Battle implements Parcelable {
 	public static ArrayList<Battle> sBattles = new ArrayList<Battle>();
 
@@ -85,6 +89,11 @@ public class Battle implements Parcelable {
 	public float DEF_RAND_MIN = .5f, DEF_RAND_MAX = 1.3f, DEF_CHARM_FACTOR = 1f / 2.5f;
 	public float MAX_USABLE_CHARM = 5f;
 
+	public void giveUp() {
+
+		dispose();
+	}
+
 	public void setAttacker() {
 		//if(mPreviousAction != ACTION_ROUND_STARTED) throw new Exception();
 
@@ -110,6 +119,12 @@ public class Battle implements Parcelable {
 	public static String ACTION_ROUND_STARTED = "RoundStarted";
 	public static String ACTION_OFFENSIVE_HERO_SELECTED = "OffensiveHeroSelected";
 	public static String ACTION_DEFENSIVE_HERO_SELECTED = "DefensiveHeroSelected";
+
+	public short getRound() {
+		return round;
+	}
+
+	private short round = 0;
 
 	public void setDefender(Hero defHero) throws InvalidParameterException {
 		assert mAttacker != defHero; // TODO throw exception?
@@ -158,7 +173,7 @@ public class Battle implements Parcelable {
 	 * Létrehoz egy új csatát
 	 */
 	public Battle(String name, Opponent opponent) {
-		mName = name != null ? name : "Névtelen csataaa";
+		mName = name != null ? name : "Névtelen csat";
 		mOpponent = opponent;
 
 		sBattles.add(this);

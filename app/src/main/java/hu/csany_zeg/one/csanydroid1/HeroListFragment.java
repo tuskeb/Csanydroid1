@@ -1,6 +1,7 @@
 package hu.csany_zeg.one.csanydroid1;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
@@ -55,10 +56,10 @@ public class HeroListFragment extends ListFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		// TODO: sublabel show current battle counts
 		setListAdapter(new ArrayAdapter<LocalHero>(
 				                                          getActivity(),
-				                                          android.R.layout.simple_list_item_1,
+				                                          android.R.layout.simple_list_item_2,
 				                                          android.R.id.text1,
 				                                          LocalHero.sHeros));
 	}
@@ -75,8 +76,9 @@ public class HeroListFragment extends ListFragment {
 	}
 	
 	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
+	public void onAttach(Context context) {
+		super.onAttach(context);
+		Activity activity = getActivity();
 
 		// Activities containing this fragment must implement its callbacks.
 		if (!(activity instanceof Callbacks)) {
@@ -100,9 +102,14 @@ public class HeroListFragment extends ListFragment {
 
 		// Notify the active callbacks interface (the activity, if the
 		// fragment is attached to one) that an item has been selected.
-		mCallbacks.onItemSelected(LocalHero.sHeros.get(position).getName());
+		selectItem(position);
 	}
-	
+
+	public void selectItem(int position) {
+
+		mCallbacks.onItemSelected(position >= 0 ? LocalHero.sHeros.get(position).getName() : null);
+	}
+
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);

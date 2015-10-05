@@ -1,13 +1,22 @@
 package hu.csany_zeg.one.csanydroid1;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import hu.csany_zeg.one.csanydroid1.core.Battle;
 import hu.csany_zeg.one.csanydroid1.core.Hero;
 import hu.csany_zeg.one.csanydroid1.core.LocalHero;
 
@@ -27,7 +36,7 @@ public class HeroDetailFragment extends Fragment {
 	/**
 	 * The dummy content this fragment is presenting.
 	 */
-	private LocalHero mItem;
+	private LocalHero mHero;
 	
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
@@ -44,20 +53,140 @@ public class HeroDetailFragment extends Fragment {
 			// Load the dummy content specified by the fragment
 			// arguments. In a real-world scenario, use a Loader
 			// to load content from a content provider.
-			mItem = LocalHero.sHeros.get(getArguments().getInt(ARG_ITEM_ID));
+			mHero = LocalHero.findHeroByName(getArguments().getString(ARG_ITEM_ID));
 		}
+
 	}
 	
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+	public View onCreateView(final LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.fragment_hero_detail, container, false);
-		Log.v("mama", "anya");
-		// Show the dummy content as text in a TextView.
-		if (mItem != null) {
-			((TextView) rootView.findViewById(R.id.hero_detail)).setText("\"" + mItem.getName() + "\"");
+		View rootView;
+
+		if (mHero == null) {
+			rootView = null;
+		} else {
+
+			rootView = inflater.inflate(R.layout.fragment_hero_detail, container, false);
+
+			EditText editText;
+
+			editText = (EditText) rootView.findViewById(R.id.hero_name);
+			editText.setText(mHero.getName());
+			editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+				@Override
+				public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+					boolean isValid = mHero.isValidName(v.getText().toString());
+
+					if (isValid) {
+						mHero.setName(v.getText().toString());
+						return false;
+					} else {
+						AlertDialog alert = new AlertDialog.Builder(getActivity())
+								                    .setTitle("Invalid Name")
+								                    .setMessage("This is an invalid name!")
+								                    .setCancelable(true)
+								                    .create();
+						alert.show();
+
+						return true;
+					}
+				}
+			});
+
+			SeekBar seekBar;
+
+			seekBar = (SeekBar) rootView.findViewById(R.id.charmBar);
+			seekBar.setMax((int) (Hero.MAX_CHARM - Hero.MIN_CHARM));
+			seekBar.setProgress(Math.round(mHero.getCharm() - Hero.MIN_CHARM));
+			seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+				@Override
+				public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+					mHero.setBaseCharm((float) progress + Hero.MIN_CHARM);
+				}
+
+				@Override
+				public void onStartTrackingTouch(SeekBar seekBar) { }
+
+				@Override
+				public void onStopTrackingTouch(SeekBar seekBar) { }
+			});
+
+
+			seekBar = (SeekBar) rootView.findViewById(R.id.offensiveBar);
+			seekBar.setMax((int) (Hero.MAX_OFFENSIVE_POINT - Hero.MIN_OFFENSIVE_POINT));
+			seekBar.setProgress(Math.round(mHero.getBaseOffensivePoint() - Hero.MIN_OFFENSIVE_POINT));
+			seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+				@Override
+				public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+					mHero.setOffensivePoint((float) progress + Hero.MIN_OFFENSIVE_POINT);
+				}
+
+				@Override
+				public void onStartTrackingTouch(SeekBar seekBar) { }
+
+				@Override
+				public void onStopTrackingTouch(SeekBar seekBar) { }
+			});
+
+			seekBar = (SeekBar) rootView.findViewById(R.id.defensiveBar);
+			seekBar.setMax((int) (Hero.MAX_DEFENSIVE_POINT - Hero.MIN_DEFENSIVE_POINT));
+			seekBar.setProgress(Math.round(mHero.getBaseDefensivePoint() - Hero.MIN_DEFENSIVE_POINT));
+			seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+				@Override
+				public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+					mHero.setDefensivePoint((float) progress + Hero.MIN_DEFENSIVE_POINT);
+				}
+
+				@Override
+				public void onStartTrackingTouch(SeekBar seekBar) { }
+
+				@Override
+				public void onStopTrackingTouch(SeekBar seekBar) { }
+			});
+
+			Button button;
+			button = (Button) rootView.findViewById(R.id.remove_hero);
+			button.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					AlertDialog alert = new AlertDialog.Builder(getActivity())
+							                    .setTitle("Confirm")
+							                    .setMessage("Do you sure want to remove this hero from your repository?")
+							                    .setPositiveButton(getString(android.R.string.yes), new DialogInterface.OnClickListener() {
+								                    @Override
+								                    public void onClick(DialogInterface dialog, int which) {
+
+									                    final int postion = LocalHero.sHeros.indexOf(mHero);
+
+									                    mHero.dispose();
+									                    HeroListFragment hlf = (HeroListFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.hero_list);
+									                    ((ArrayAdapter) hlf.getListAdapter()).notifyDataSetChanged();
+
+									                    if (LocalHero.sHeros.size() == postion) {
+										                    hlf.selectItem(postion - 1);
+									                    } else {
+										                    hlf.selectItem(postion);
+									                    }
+
+									                    dialog.dismiss();
+								                    }
+
+							                    })
+							                    .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
+								                    @Override
+								                    public void onClick(DialogInterface dialog, int which) {
+									                    dialog.dismiss();
+								                    }
+							                    })
+							                    .create();
+					alert.show();
+
+				}
+			});
+
 		}
-		
+
 		return rootView;
 	}
 }

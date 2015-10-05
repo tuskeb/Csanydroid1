@@ -44,9 +44,7 @@ public class HeroListActivity extends FragmentActivity
 			
 			// In two-pane mode, list items should be given the
 			// 'activated' state when touched.
-			((HeroListFragment) getSupportFragmentManager()
-					                    .findFragmentById(R.id.hero_list))
-					.setActivateOnItemClick(true);
+			((HeroListFragment) getSupportFragmentManager().findFragmentById(R.id.hero_list)).setActivateOnItemClick(true);
 		}
 		
 		// TODO: If exposing deep links into your app, handle intents here.

@@ -64,6 +64,53 @@ public class LocalHero extends Hero {
 
 	boolean isFavourite;
 
+	public void setBaseCharm(float baseCharm) {
+		//if(getBattleCount() > 0) {
+		//	throw new HeroParametersUnmodifiable();
+		//}
+		mBaseCharm = baseCharm;
+	}
+
+	public boolean dispose() {
+		sHeros.remove(this);
+		return true;
+	}
+
+	public boolean isValidName(String text) {
+		text = text.trim();
+
+		if(text.compareTo("") == 0) return false;
+
+		for(LocalHero localHero : LocalHero.sHeros) {
+			if(localHero != this && localHero.getName().compareToIgnoreCase(text) == 0) {
+				return false;
+			}
+		}
+
+
+
+		return true;
+	}
+
+	public void setOffensivePoint(float offensivePoint) {
+		mOffensivePoint = offensivePoint;
+	}
+
+	public void setDefensivePoint(float defensivePoint) {
+		mDefensivePoint = defensivePoint;
+	}
+
+	public static LocalHero findHeroByName(String name) {
+
+		for(LocalHero localHero : LocalHero.sHeros) {
+			if(localHero.getName().compareToIgnoreCase(name) == 0) {
+				return localHero;
+			}
+		}
+
+		return null;
+
+	}
 
 	private LocalHero(Parcel in) {
 		super(in);
@@ -78,12 +125,7 @@ public class LocalHero extends Hero {
 
 	@Override
 	public void setName(String name) {
-
-		for(Hero h : sHeros) {
-			if(h.getName().compareTo(name) == 0) {
-				throw new InvalidParameterException("Same named heroes.");
-			}
-		}
+		if(!isValidName(name)) throw new InvalidParameterException("Same named heroes.");
 
 		super.setName(name);
 	}
