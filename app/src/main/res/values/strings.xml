@@ -14,5 +14,7 @@
 
     <string name="give_up">Give Up</string>
     <string name="title_hero_list">Heros</string>
-    <string name="title_hero_detail">Hero Detail</string>
+    <string name="title_hero_detail">Hero Repository</string>
+
+    <string name="default_hero_name">Hero</string>
 </resources>

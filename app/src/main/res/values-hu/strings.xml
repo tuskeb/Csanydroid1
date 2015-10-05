@@ -8,4 +8,6 @@
     <string name="navigation_drawer_close">Navigációs panel bezárása</string>
     <string name="navigation_drawer_open">Navigáció panel megnyitása</string>
     <string name="title_hero_list">Hősök</string>
+    <string name="default_hero_name">Hős</string>
+    <string name="title_hero_detail">Hős Raktár</string>
 </resources>

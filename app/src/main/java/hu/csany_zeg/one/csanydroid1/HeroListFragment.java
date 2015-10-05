@@ -5,9 +5,13 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.TwoLineListItem;
 
 import hu.csany_zeg.one.csanydroid1.core.LocalHero;
 
@@ -57,11 +61,26 @@ public class HeroListFragment extends ListFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		// TODO: sublabel show current battle counts
+
 		setListAdapter(new ArrayAdapter<LocalHero>(
 				                                          getActivity(),
-				                                          android.R.layout.simple_list_item_2,
-				                                          android.R.id.text1,
-				                                          LocalHero.sHeros));
+				                                          android.R.layout.simple_list_item_1,
+				                                         LocalHero.sHeros) {
+
+			@Override
+			public View getView(int position, View convertView, ViewGroup parent) {
+				if(convertView == null) {
+					convertView = View.inflate(getContext(),android.R.layout.simple_list_item_2, null);
+				}
+
+				((TextView)convertView.findViewById(android.R.id.text1)).setText(getItem(position).getName());
+				//((TextView)convertView.findViewById(android.R.id.text2)).setText(getItem(position).getBattleCount());
+
+				return convertView;
+			}
+
+		});
+
 	}
 	
 	@Override
@@ -95,7 +114,7 @@ public class HeroListFragment extends ListFragment {
 		// Reset the active callbacks interface to the dummy implementation.
 		mCallbacks = sDummyCallbacks;
 	}
-	
+
 	@Override
 	public void onListItemClick(ListView listView, View view, int position, long id) {
 		super.onListItemClick(listView, view, position, id);

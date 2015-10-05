@@ -2,8 +2,8 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:layout_marginLeft="16dp"
-              android:layout_marginRight="16dp"
+              android:layout_marginLeft="0dp"
+              android:layout_marginRight="0dp"
               android:baselineAligned="false"
               android:divider="?android:attr/dividerHorizontal"
               android:orientation="horizontal"
@@ -15,14 +15,30 @@
     master/detail flow.
     
     -->
+<LinearLayout
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:divider="?android:attr/dividerVertical"
+    android:orientation="vertical"
+    android:showDividers="middle"
+    android:baselineAligned="false">
+
+    <Button
+        android:id="@+id/new_hero_button"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:minHeight="?attr/listPreferredItemHeight"
+        android:text="New Hero!"/>
 
     <fragment
         android:id="@+id/hero_list"
         android:name="hu.csany_zeg.one.csanydroid1.HeroListFragment"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
         tools:layout="@android:layout/list_content"/>
+
+</LinearLayout>
 
     <FrameLayout
         android:id="@+id/hero_detail_container"

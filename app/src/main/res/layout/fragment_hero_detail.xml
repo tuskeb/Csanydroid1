@@ -1,51 +1,49 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/hero_detail_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:context="hu.csany_zeg.one.csanydroid1.HeroDetailActivity"
-            tools:ignore="MergeRootFrame">
-<!-- http://stackoverflow.com/questions/9699951/changing-size-of-seekbar-thumb -->
-    <EditText xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:id="@+id/hero_name"
-              android:layout_width="100dp"
-              android:layout_columnWeight=".4"
-              android:layout_height="100dp"
-              android:padding="16dp"
-              android:text="My Big Hero"
-              android:textSize="32dp"
-              android:singleLine="true"/>
+<RelativeLayout android:id="@+id/hero_detail_container"
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="hu.csany_zeg.one.csanydroid1.HeroDetailActivity"
+                tools:ignore="MergeRootFrame">
+    <!-- http://stackoverflow.com/questions/9699951/changing-size-of-seekbar-thumb -->
+    <EditText
+        android:id="@+id/hero_name"
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        android:padding="16dp"
+        android:singleLine="true"
+        android:text="My Big Hero"
+        android:textSize="32dp"/>
 
     <Button
+        android:id="@+id/remove_hero"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:text="Törlés"
-        android:id="@+id/remove_hero"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignBottom="@+id/hero_name"
-        android:layout_marginTop="24dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
         android:layout_marginBottom="24dp"
-        android:layout_marginRight="10dp"/>
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="24dp"
+        android:text="Törlés"/>
 
     <SeekBar
+        android:id="@+id/charmBar"
         android:layout_width="400dp"
         android:layout_height="35dp"
-        android:id="@+id/charmBar"
         android:layout_below="@+id/hero_name"/>
 
     <SeekBar
+        android:id="@+id/offensiveBar"
         android:layout_width="400dp"
         android:layout_height="35dp"
-        android:id="@+id/offensiveBar"
         android:layout_below="@+id/charmBar"/>
 
     <SeekBar
+        android:id="@+id/defensiveBar"
         android:layout_width="400dp"
         android:layout_height="35dp"
-        android:id="@+id/defensiveBar"
         android:layout_below="@+id/offensiveBar"/>
 
 

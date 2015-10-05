@@ -1,10 +1,29 @@
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          android:id="@+id/hero_list"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_marginLeft="16dp"
+              android:layout_marginRight="16dp"
+              android:baselineAligned="false"
+              android:divider="?android:attr/dividerHorizontal"
+              android:orientation="vertical"
+              android:showDividers="middle"
+              tools:context="hu.csany_zeg.one.csanydroid1.HeroListActivity">
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:text="New Hero!"/>
+
+<fragment android:id="@+id/hero_list"
           android:name="hu.csany_zeg.one.csanydroid1.HeroListFragment"
           android:layout_width="match_parent"
           android:layout_height="match_parent"
           android:layout_marginLeft="16dp"
           android:layout_marginRight="16dp"
+          android:layout_marginStart="100dp"
           tools:context="hu.csany_zeg.one.csanydroid1.HeroListActivity"
           tools:layout="@android:layout/list_content"/>
+
+
+</LinearLayout>

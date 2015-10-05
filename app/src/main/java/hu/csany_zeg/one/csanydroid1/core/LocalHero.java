@@ -1,11 +1,17 @@
 package hu.csany_zeg.one.csanydroid1.core;
 
+import android.app.Application;
+import android.content.res.Resources;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
 import java.security.InvalidParameterException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+
+import hu.csany_zeg.one.csanydroid1.App;
+import hu.csany_zeg.one.csanydroid1.R;
 
 public class LocalHero extends Hero {
 
@@ -76,6 +82,16 @@ public class LocalHero extends Hero {
 		return true;
 	}
 
+	private static String getFreeName() {
+		final String baseName = App.getContext().getString(R.string.default_hero_name);
+		String name;
+
+		for(long n = 0;findHeroByName((name = baseName + " " + NumberFormat.getInstance().format(++n))) != null;);
+
+		return name;
+
+	}
+
 	public boolean isValidName(String text) {
 		text = text.trim();
 
@@ -114,12 +130,12 @@ public class LocalHero extends Hero {
 
 	private LocalHero(Parcel in) {
 		super(in);
-		Log.v("mama", "locapar");
+
 	}
 
 	public LocalHero() {
 		super();
-
+		setName(getFreeName());
 		sHeros.add(this);
 	}
 
