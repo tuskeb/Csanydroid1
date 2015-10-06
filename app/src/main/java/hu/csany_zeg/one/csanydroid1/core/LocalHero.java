@@ -68,7 +68,15 @@ public class LocalHero extends Hero {
 	 */
 	short mTotalBattles;
 
-	boolean isFavourite;
+	boolean mIsFavourite;
+
+	public boolean IsFavourite() {
+		return mIsFavourite;
+	}
+
+	public void setFavourite(boolean isFavourite) {
+		mIsFavourite = isFavourite;
+	}
 
 	public void setBaseCharm(float baseCharm) {
 		//if(getBattleCount() > 0) {

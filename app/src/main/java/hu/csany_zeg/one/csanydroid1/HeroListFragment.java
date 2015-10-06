@@ -9,9 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TwoLineListItem;
+
+import java.util.ArrayDeque;
+import java.util.Observable;
 
 import hu.csany_zeg.one.csanydroid1.core.LocalHero;
 
@@ -60,21 +64,22 @@ public class HeroListFragment extends ListFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		// TODO: sublabel show current battle counts
 
 		setListAdapter(new ArrayAdapter<LocalHero>(
 				                                          getActivity(),
-				                                          android.R.layout.simple_list_item_1,
-				                                         LocalHero.sHeros) {
+				                                          R.layout.listitem_hero,
+				                                          LocalHero.sHeros) {
 
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
-				if(convertView == null) {
-					convertView = View.inflate(getContext(),android.R.layout.simple_list_item_2, null);
+				if (convertView == null) {
+					convertView = View.inflate(getContext(), R.layout.listitem_hero, null);
 				}
 
-				((TextView)convertView.findViewById(android.R.id.text1)).setText(getItem(position).getName());
-				//((TextView)convertView.findViewById(android.R.id.text2)).setText(getItem(position).getBattleCount());
+				final LocalHero localHero = getItem(position);
+
+				((TextView) convertView.findViewById(R.id.text1)).setText(localHero.getName() + "");
+				((ImageView) convertView.findViewById(R.id.imageview1)).setImageResource(localHero.IsFavourite() ? android.R.drawable.btn_star_big_on : android.R.drawable.btn_star_big_off);
 
 				return convertView;
 			}
@@ -91,7 +96,10 @@ public class HeroListFragment extends ListFragment {
 		if (savedInstanceState != null
 				    && savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
 			setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
+		} else {
+			setActivatedPosition(ListView.INVALID_POSITION);
 		}
+
 	}
 	
 	@Override
@@ -121,21 +129,27 @@ public class HeroListFragment extends ListFragment {
 
 		// Notify the active callbacks interface (the activity, if the
 		// fragment is attached to one) that an item has been selected.
-		selectItem(position);
+		selectItem(position, true);
 	}
 
-	public void selectItem(int position) {
+	public void selectItem(int position, boolean user) {
 
 		mCallbacks.onItemSelected(position >= 0 ? LocalHero.sHeros.get(position).getName() : null);
+		setActivatedPosition(position);
+
+		if (!user) getListView().setSelection(position);
+
 	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
+
 		if (mActivatedPosition != ListView.INVALID_POSITION) {
 			// Serialize and persist the activated item position.
 			outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
 		}
+
 	}
 	
 	/**
@@ -151,6 +165,7 @@ public class HeroListFragment extends ListFragment {
 	}
 	
 	private void setActivatedPosition(int position) {
+
 		if (position == ListView.INVALID_POSITION) {
 			getListView().setItemChecked(mActivatedPosition, false);
 		} else {

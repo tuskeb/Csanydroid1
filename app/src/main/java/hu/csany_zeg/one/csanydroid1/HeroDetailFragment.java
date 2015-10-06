@@ -3,6 +3,7 @@ package hu.csany_zeg.one.csanydroid1;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,13 +50,15 @@ public class HeroDetailFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		if (getArguments().containsKey(ARG_ITEM_ID)) {
+
 			// Load the dummy content specified by the fragment
 			// arguments. In a real-world scenario, use a Loader
 			// to load content from a content provider.
-			mHero = LocalHero.findHeroByName(getArguments().getString(ARG_ITEM_ID));
-		}
+			String itemId = getArguments().getString(ARG_ITEM_ID);
+			mHero = itemId != null ? LocalHero.findHeroByName(itemId) : null;
+		} else Log.v("mama", "karcsi");
 
 	}
 	
@@ -64,9 +68,9 @@ public class HeroDetailFragment extends Fragment {
 		View rootView;
 
 		if (mHero == null) {
-			rootView = null;
+			rootView = inflater.inflate(R.layout.fragment_hero_overalldetail, container, false);
+			((TextView)rootView.findViewById(R.id.number_of_heros)).setText(LocalHero.sHeros.size() + "");
 		} else {
-
 			rootView = inflater.inflate(R.layout.fragment_hero_detail, container, false);
 
 			EditText editText;
@@ -145,8 +149,8 @@ public class HeroDetailFragment extends Fragment {
 				public void onStopTrackingTouch(SeekBar seekBar) { }
 			});
 
-			Button button;
-			button = (Button) rootView.findViewById(R.id.remove_hero);
+			ImageButton button;
+			button = (ImageButton) rootView.findViewById(R.id.remove_hero);
 			button.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -157,16 +161,17 @@ public class HeroDetailFragment extends Fragment {
 								                    @Override
 								                    public void onClick(DialogInterface dialog, int which) {
 
-									                    final int postion = LocalHero.sHeros.indexOf(mHero);
+									                    final int position = LocalHero.sHeros.indexOf(mHero);
 
 									                    mHero.dispose();
-									                    HeroListFragment hlf = (HeroListFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.hero_list);
-									                    ((ArrayAdapter) hlf.getListAdapter()).notifyDataSetChanged();
 
-									                    if (LocalHero.sHeros.size() == postion) {
-										                    hlf.selectItem(postion - 1);
+									                    HeroListFragment heroListFragment = (HeroListFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.hero_list);
+									                    ((ArrayAdapter) heroListFragment.getListAdapter()).notifyDataSetChanged();
+
+									                    if (LocalHero.sHeros.size() == position) {
+										                    heroListFragment.selectItem(position - 1, false);
 									                    } else {
-										                    hlf.selectItem(postion);
+										                    heroListFragment.selectItem(position, false);
 									                    }
 
 									                    dialog.dismiss();
@@ -185,8 +190,19 @@ public class HeroDetailFragment extends Fragment {
 				}
 			});
 
-		}
 
-		return rootView;
+			button = (ImageButton)rootView.findViewById(R.id.add_to_favourites_hero);
+			button.setImageResource(mHero.IsFavourite() ? android.R.drawable.btn_star_big_on : android.R.drawable.btn_star_big_off);
+			button.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					mHero.setFavourite(!mHero.IsFavourite());
+					((ImageButton)v).setImageResource(mHero.IsFavourite() ? android.R.drawable.btn_star_big_on : android.R.drawable.btn_star_big_off);
+				}
+			});
+
+}
+
+			return rootView;
 	}
 }

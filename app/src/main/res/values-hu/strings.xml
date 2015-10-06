@@ -2,7 +2,6 @@
 <resources>
     <string name="action_settings">Beállítások</string>
     <string name="give_up">Feladom</string>
-    <string name="hello_world">Hello Világ!</string>
     <string name="title_activity_battle">Csaták</string>
     <string name="title_section_add">Új</string>
     <string name="navigation_drawer_close">Navigációs panel bezárása</string>
@@ -10,4 +9,7 @@
     <string name="title_hero_list">Hősök</string>
     <string name="default_hero_name">Hős</string>
     <string name="title_hero_detail">Hős Raktár</string>
+    <string name="statistics_number_of_heros">Hőseim</string>
+    <string name="create_hero">Új Hős</string>
+    <string name="remove_hero">Törlés</string>
 </resources>

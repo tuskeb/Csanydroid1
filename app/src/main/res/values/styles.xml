@@ -20,4 +20,30 @@
         <item name="android:paddingRight">10dp</item>
     </style>
 
+    <style name="hero_overalldetail_row">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:weightSum">2</item>
+        <item name="android:divider">?android:attr/dividerHorizontal</item>
+        <item name="android:showDividers">middle</item>
+    </style>
+
+    <style name="hero_overalldetail_name">
+        <item name="android:padding">3dip</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">right</item>
+    </style>
+
+    <style name="hero_overalldetail_value">
+        <item name="android:padding">3dip</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">left</item>
+    </style>
+
 </resources>

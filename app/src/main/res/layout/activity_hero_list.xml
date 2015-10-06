@@ -2,28 +2,27 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:layout_marginLeft="16dp"
-              android:layout_marginRight="16dp"
               android:baselineAligned="false"
               android:divider="?android:attr/dividerHorizontal"
               android:orientation="vertical"
               android:showDividers="middle"
               tools:context="hu.csany_zeg.one.csanydroid1.HeroListActivity">
 
-    <Button
+    <ImageButton
+        android:id="@+id/add_hero_button"
         android:layout_width="fill_parent"
-        android:layout_height="100dp"
-        android:text="New Hero!"/>
+        android:layout_height="?attr/listPreferredItemHeight"
+        android:text="@string/create_hero"
+        android:src="@android:drawable/ic_menu_add"/>
 
-<fragment android:id="@+id/hero_list"
-          android:name="hu.csany_zeg.one.csanydroid1.HeroListFragment"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:layout_marginLeft="16dp"
-          android:layout_marginRight="16dp"
-          android:layout_marginStart="100dp"
-          tools:context="hu.csany_zeg.one.csanydroid1.HeroListActivity"
-          tools:layout="@android:layout/list_content"/>
-
+    <fragment
+        android:id="@+id/hero_list"
+        android:name="hu.csany_zeg.one.csanydroid1.HeroListFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp"
+        tools:layout="@android:layout/list_content"/>
 
 </LinearLayout>

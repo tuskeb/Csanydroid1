@@ -1,10 +1,28 @@
-<ListView xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:choiceMode="singleChoice"
-          android:divider="#cfcfcf"
-          android:dividerHeight="2dp"
-          android:background="#ededed"
-          tools:context="hu.csany_zeg.one.csanydroid1.NavigationDrawerFragment"
-          android:contextClickable="false"/>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:divider="?android:attr/dividerHorizontal"
+    android:orientation="vertical"
+    android:showDividers="middle"
+    tools:context="hu.csany_zeg.one.csanydroid1.NavigationDrawerFragment">
+
+    <ListView
+        android:id="@+id/battle_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/colorPrimary"
+        android:choiceMode="singleChoice"
+        android:contextClickable="false"
+        android:divider="?attr/colorAccent"
+        android:dividerHeight="2dp"/>
+<!--
+    <Button
+        android:id="@+id/new_battle_button"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/listPreferredItemHeight"
+        android:text="Create Battle..."/>
+-->
+
+</LinearLayout>

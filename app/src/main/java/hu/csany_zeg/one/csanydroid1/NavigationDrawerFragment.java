@@ -2,6 +2,7 @@ package hu.csany_zeg.one.csanydroid1;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v4.app.FragmentHostCallback;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -24,11 +25,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
 import hu.csany_zeg.one.csanydroid1.core.Battle;
+import hu.csany_zeg.one.csanydroid1.core.LocalHero;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -97,22 +101,53 @@ public class NavigationDrawerFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
-		mDrawerListView = (ListView) inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+		View view = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+
+		mDrawerListView = (ListView) view.findViewById(R.id.battle_list);
 		mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				selectItem(position);
 			}
 		});
-
-		// TODO: show round
+/*
 		mDrawerListView.setAdapter(new ArrayAdapter<Battle>(
 				                                                   getActionBar().getThemedContext(),
 				                                                   android.R.layout.simple_list_item_activated_2,
 				                                                   android.R.id.text1,
 				                                                   Battle.sBattles));
+*/
+
+		mDrawerListView.setAdapter(new ArrayAdapter<Battle>(
+				                                                   getActionBar().getThemedContext(),
+				                                                   android.R.layout.simple_list_item_2,
+				                                                   Battle.sBattles) {
+
+			@Override
+			public View getView(int position, View convertView, ViewGroup parent) {
+				if (convertView == null) {
+					convertView = View.inflate(getContext(), android.R.layout.simple_list_item_2, null);
+				}
+
+				((TextView) convertView.findViewById(android.R.id.text1)).setText(getItem(position).getName());
+				//((TextView)convertView.findViewById(android.R.id.text2)).setText(getItem(position).getRound());
+
+				return convertView;
+			}
+
+		});
+
 		mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
-		return mDrawerListView;
+/*
+		((Button) view.findViewById(R.id.new_battle_button)).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				//Intent myIntent = new Intent(MainActivity.this, BattleActivity.class);
+				//MainActivity.this.startActivity(myIntent);
+			}
+		});
+*/
+		return view;
 	}
 	
 	public boolean isDrawerOpen() {
@@ -264,7 +299,7 @@ public class NavigationDrawerFragment extends Fragment {
 							                    public void onClick(DialogInterface dialog, int which) {
 								                    Battle.sBattles.get(mCurrentSelectedPosition).giveUp();
 
-								                    if(Battle.countBattles() == mCurrentSelectedPosition) {
+								                    if (Battle.countBattles() == mCurrentSelectedPosition) {
 									                    selectItem(mCurrentSelectedPosition - 1);
 								                    } else {
 									                    selectItem(mCurrentSelectedPosition);
@@ -272,10 +307,10 @@ public class NavigationDrawerFragment extends Fragment {
 								                    }
 
 								                    getActivity().supportInvalidateOptionsMenu(); // calls onPrepareOptionsMenu()
-								                    ((BattleActivity)getActivity()).onNavigationDrawerItemSelected(mCurrentSelectedPosition);
+								                    ((BattleActivity) getActivity()).onNavigationDrawerItemSelected(mCurrentSelectedPosition);
 
 
-								                   // getActivity().recreate(); // TODO: is it good?
+								                    // getActivity().recreate(); // TODO: is it good?
 
 								                    dialog.dismiss();
 							                    }

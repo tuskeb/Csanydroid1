@@ -52,7 +52,6 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
 	
 	@Override
 	public void onNavigationDrawerItemSelected(int position) {
-		if(position == -1) return;
 		// update the main content by replacing fragments
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		fragmentManager.beginTransaction()
@@ -109,7 +108,9 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 		                         Bundle savedInstanceState) {
+
 			View rootView = inflater.inflate(R.layout.fragment_battle, container, false);
+
 			return rootView;
 		}
 
@@ -118,6 +119,7 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
 			final BattleActivity activity = (BattleActivity) getActivity();
 
 			activity.mTitle = battle.getName();
+
 		}
 
 		@Override

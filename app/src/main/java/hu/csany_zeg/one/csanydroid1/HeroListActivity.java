@@ -1,14 +1,13 @@
 package hu.csany_zeg.one.csanydroid1;
 
-import android.app.ActionBar;
-import android.app.ListFragment;
-import android.app.Notification;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.ImageButton;
 
 import hu.csany_zeg.one.csanydroid1.core.LocalHero;
 
@@ -37,37 +36,39 @@ public class HeroListActivity extends FragmentActivity
 	 * device.
 	 */
 	private boolean mTwoPane;
-	private HeroListFragment mHeroListFragment;
+	private HeroListFragment mHeroListFragment = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
 		setContentView(R.layout.activity_hero_list);
 
 		mHeroListFragment = (HeroListFragment) getSupportFragmentManager().findFragmentById(R.id.hero_list);
 
-		if (findViewById(R.id.hero_detail_container) != null) {
+		if ((mTwoPane = (findViewById(R.id.hero_detail_container) != null))) {
+
 			// The detail container view will be present only in the
 			// large-screen layouts (res/values-large and
 			// res/values-sw600dp). If this view is present, then the
 			// activity should be in two-pane mode.
-			mTwoPane = true;
-			
+
 			// In two-pane mode, list items should be given the
 			// 'activated' state when touched.
 			mHeroListFragment.setActivateOnItemClick(true);
 		}
 
-		((Button)findViewById(R.id.new_hero_button)).setOnClickListener(new View.OnClickListener() {
+		findViewById(R.id.add_hero_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				//runOnUiThread(new Runnable() {
 				//	@Override
 				//	public void run() {
 				final LocalHero newHero = new LocalHero();
-				((ArrayAdapter)mHeroListFragment.getListAdapter()).notifyDataSetChanged();
-				mHeroListFragment.getListView().setSelection(LocalHero.sHeros.indexOf(newHero));
-				mHeroListFragment.selectItem(LocalHero.sHeros.indexOf(newHero));
+				((ArrayAdapter) mHeroListFragment.getListAdapter()).notifyDataSetChanged();
+				mHeroListFragment.selectItem(LocalHero.sHeros.indexOf(newHero), false);
 
 				//	}
 				//}
@@ -77,8 +78,10 @@ public class HeroListActivity extends FragmentActivity
 		});
 
 		// TODO: If exposing deep links into your app, handle intents here.
+
 	}
-	
+
+
 	/**
 	 * Callback method from {@link HeroListFragment.Callbacks}
 	 * indicating that the item with the given ID was selected.
@@ -93,10 +96,10 @@ public class HeroListActivity extends FragmentActivity
 			arguments.putString(HeroDetailFragment.ARG_ITEM_ID, id);
 			HeroDetailFragment fragment = new HeroDetailFragment();
 			fragment.setArguments(arguments);
-			getSupportFragmentManager().beginTransaction()
+			getSupportFragmentManager()
+					.beginTransaction()
 					.replace(R.id.hero_detail_container, fragment)
 					.commit();
-			
 		} else {
 			// In single-pane mode, simply start the detail activity
 			// for the selected item ID.

@@ -2,43 +2,36 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:layout_marginLeft="0dp"
-              android:layout_marginRight="0dp"
               android:baselineAligned="false"
               android:divider="?android:attr/dividerHorizontal"
               android:orientation="horizontal"
               android:showDividers="middle"
               tools:context="hu.csany_zeg.one.csanydroid1.HeroListActivity">
 
-    <!--
-    This layout is a two-pane layout for the Heros
-    master/detail flow.
-    
-    -->
-<LinearLayout
-    android:layout_width="0dp"
-    android:layout_height="match_parent"
-    android:layout_weight="1"
-    android:divider="?android:attr/dividerVertical"
-    android:orientation="vertical"
-    android:showDividers="middle"
-    android:baselineAligned="false">
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:baselineAligned="false"
+        android:divider="?android:attr/dividerVertical"
+        android:orientation="vertical"
+        android:showDividers="middle">
 
-    <Button
-        android:id="@+id/new_hero_button"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:minHeight="?attr/listPreferredItemHeight"
-        android:text="New Hero!"/>
+        <ImageButton
+            android:id="@+id/add_hero_button"
+            android:layout_width="fill_parent"
+            android:layout_height="?attr/listPreferredItemHeight"
+            android:text="@string/create_hero"
+            android:src="@android:drawable/ic_menu_add"/>
 
-    <fragment
-        android:id="@+id/hero_list"
-        android:name="hu.csany_zeg.one.csanydroid1.HeroListFragment"
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        tools:layout="@android:layout/list_content"/>
+        <fragment
+            android:id="@+id/hero_list"
+            android:name="hu.csany_zeg.one.csanydroid1.HeroListFragment"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            tools:layout="@android:layout/list_content"/>
 
-</LinearLayout>
+    </LinearLayout>
 
     <FrameLayout
         android:id="@+id/hero_detail_container"

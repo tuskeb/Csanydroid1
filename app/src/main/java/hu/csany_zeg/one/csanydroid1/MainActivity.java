@@ -99,7 +99,6 @@ e.printStackTrace();
 			new LocalHero().setName("B");
 			new LocalHero().setName("C");
 			new LocalHero().setName("D");
-
 		} else {
 			Log.v("mama", "!!!!!!!!!!!!!!!!!");
 		}
