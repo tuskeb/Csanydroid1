@@ -27,11 +27,13 @@ public class Hero extends DataSetObservable implements Cloneable, Parcelable {
 		}
 	};
 
-	public static Hero sAttackerHero = null, sDefensiveHero = null;
 	public static short MIN_HEALTH = 10, MAX_HEALTH = 500;
 	public static float MIN_CHARM = 0.0f, MAX_CHARM = 20.0f;
 	public static float MIN_OFFENSIVE_POINT = 1.0f, MAX_OFFENSIVE_POINT = 10.0f;
 	public static float MIN_DEFENSIVE_POINT = 1.0f, MAX_DEFENSIVE_POINT = 10.0f;
+	private final Player mOwner;
+	private Battle mBattle = null;
+	private HeroParams mParams = null;
 
 	/**
 	 * A hős neve.
@@ -68,6 +70,7 @@ public class Hero extends DataSetObservable implements Cloneable, Parcelable {
 	 * Létrehoz egy távoli hőst.
 	 */
 	protected Hero(Parcel in) {
+		mOwner = Player.CURRENT;
 		mName = in.readString();
 		mHealthPoint = in.readFloat();
 		mBaseCharm = in.readFloat();
@@ -82,7 +85,7 @@ public class Hero extends DataSetObservable implements Cloneable, Parcelable {
 	public Hero() {
 
 		mName = Math.random() > .5 ? "Szilvás gombóc" : "Burgonya";
-
+		mOwner = Player.CURRENT;
 		// és feltölti véletlen értékekkel
 		// TODO review
 		mHealthPoint = (short) (Math.random() * (MAX_HEALTH - MIN_HEALTH + 1) + MIN_HEALTH);
@@ -90,13 +93,47 @@ public class Hero extends DataSetObservable implements Cloneable, Parcelable {
 		mOffensivePoint = (float) Math.random() * (MAX_OFFENSIVE_POINT - MIN_OFFENSIVE_POINT + Float.MIN_VALUE) + MIN_OFFENSIVE_POINT;
 		mDefensivePoint = (float) Math.random() * (MAX_OFFENSIVE_POINT - MIN_OFFENSIVE_POINT + Float.MIN_VALUE) + MIN_OFFENSIVE_POINT;
 		super.notifyChanged();
+	}
+
+	public boolean setBattle(Battle battle) {
+
+		if(isBattle()) {
+			// csatázik már
+			return false;
+		}
+
+		// csata ellenőrzése
+
+		if(battle.addHero(this)) {
+			mBattle = battle;
+		}
+
+		return true;
 
 	}
 
-	public void addToBattle(Battle battle) {
-		if (battle.mHeros.indexOf(this) > 0) return;
-		battle.mHeros.add(this);
+	public void removeBattle() throws Exception {
+		if(isBattle()) return;
 
+		if(mBattle.getState() == 1) {
+			// befejeződött
+			mBattle = null;
+		} else {
+			throw new Exception();
+		}
+
+	}
+
+	public boolean isBattle() {
+		return mBattle != null;
+	}
+
+	public Battle getBattle() {
+		return mBattle;
+	}
+
+	public Player getOwner() {
+		return mOwner;
 	}
 
 	protected Hero clone() {
@@ -116,34 +153,21 @@ public class Hero extends DataSetObservable implements Cloneable, Parcelable {
 	/**
 	 * @param r A megivás valószínűsége.
 	 */
-	private void drinkCharm(double r, Battle battle) {
+	public float drinkCharm(double r) {
 		if (Math.random() < r) {
-			this.mDrunkCharm = Math.min(mCharm, battle.MAX_USABLE_CHARM); // "maximális varázsereje"??
-			mCharm -= this.mDrunkCharm;
+			mDrunkCharm = Math.min(mCharm, mBattle.MAX_USABLE_CHARM); // "maximális varázsereje"??
+			mCharm -= mDrunkCharm;
 
 			if (this instanceof LocalHero) {
-				((LocalHero) this).mTotalDrunkCharm += this.mDrunkCharm;
+				((LocalHero) this).mTotalDrunkCharm += mDrunkCharm;
 			}
 
 		} else { // ne használjon ilyen szereket
-			this.mDrunkCharm = 0;
+			mDrunkCharm = 0;
 		}
 
 		super.notifyChanged();
-
-	}
-
-	public int getBattleCount() {
-		int r = 0;
-		for (Battle battle : Battle.sBattles) {
-			if (battle.mHeros.contains(this)) ++r;
-		}
-
-		return r;
-	}
-
-	private boolean shouldDrinkCharm() {
-		return true;
+		return mDrunkCharm;
 	}
 
 	public String getName() {
@@ -183,8 +207,7 @@ public class Hero extends DataSetObservable implements Cloneable, Parcelable {
 
 	@Override
 	public String toString() {
-		return mName;
-		//return String.format("%s [ nm=%s, hp=%f, ch=%f, op=%f, dp=%f ]", getClass().getName(), mName, mHealthPoint, mCharm, mOffensivePoint, mDefensivePoint);
+		return String.format("%s [ nm=%s, hp=%f, ch=%f, op=%f, dp=%f ]", getClass().getName(), mName, mHealthPoint, mCharm, mOffensivePoint, mDefensivePoint);
 	}
 
 	@Override
@@ -201,20 +224,11 @@ public class Hero extends DataSetObservable implements Cloneable, Parcelable {
 		dest.writeFloat(getBaseOffensivePoint());
 	}
 
-
-	public interface HeroListener {
-
-		void onAttackerHeroChanged(Hero oldHero);
-
-		void onDefensiveHeroChanged(Hero oldHero);
-
-		void onCharmChanged(float oldCharm);
-
-		void onHealthPointChanged(float oldHealthPoint);
-
-	}
-
-	public class HeroParametersUnmodifiable extends Throwable {
+	public class HeroParams {
+		public float mHealthPoint;
+		public float mOffensivePoint;
+		public float mDefensivePoint;
+		public float mCharm;
 
 	}
 

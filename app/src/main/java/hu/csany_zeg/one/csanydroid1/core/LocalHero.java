@@ -15,8 +15,6 @@ import hu.csany_zeg.one.csanydroid1.R;
 
 public class LocalHero extends Hero {
 
-	public static ArrayList<LocalHero> sHeros = new ArrayList<LocalHero>();
-
 	public static final Parcelable.Creator<LocalHero> CREATOR
 			= new Parcelable.Creator<LocalHero>() {
 
@@ -28,6 +26,7 @@ public class LocalHero extends Hero {
 			return new LocalHero[size];
 		}
 	};
+	public static ArrayList<LocalHero> sHeros = new ArrayList<LocalHero>();
 	/**
 	 * A hős összes védekezésének mértéke.
 	 */
@@ -70,6 +69,39 @@ public class LocalHero extends Hero {
 
 	boolean mIsFavourite;
 
+	private LocalHero(Parcel in) {
+		super(in);
+
+	}
+
+	public LocalHero() {
+		super();
+		setName(getFreeName());
+		sHeros.add(this);
+	}
+
+	private static String getFreeName() {
+		final String baseName = App.getContext().getString(R.string.default_hero_name);
+		String name;
+
+		for (long n = 0; findHeroByName((name = baseName + " " + NumberFormat.getInstance().format(++n))) != null; );
+
+		return name;
+
+	}
+
+	public static LocalHero findHeroByName(String name) {
+
+		for (LocalHero localHero : LocalHero.sHeros) {
+			if (localHero.getName().compareToIgnoreCase(name) == 0) {
+				return localHero;
+			}
+		}
+
+		return null;
+
+	}
+
 	public boolean IsFavourite() {
 		return mIsFavourite;
 	}
@@ -90,27 +122,16 @@ public class LocalHero extends Hero {
 		return true;
 	}
 
-	private static String getFreeName() {
-		final String baseName = App.getContext().getString(R.string.default_hero_name);
-		String name;
-
-		for(long n = 0;findHeroByName((name = baseName + " " + NumberFormat.getInstance().format(++n))) != null;);
-
-		return name;
-
-	}
-
 	public boolean isValidName(String text) {
 		text = text.trim();
 
-		if(text.compareTo("") == 0) return false;
+		if (text.compareTo("") == 0) return false;
 
-		for(LocalHero localHero : LocalHero.sHeros) {
-			if(localHero != this && localHero.getName().compareToIgnoreCase(text) == 0) {
+		for (LocalHero localHero : LocalHero.sHeros) {
+			if (localHero != this && localHero.getName().compareToIgnoreCase(text) == 0) {
 				return false;
 			}
 		}
-
 
 
 		return true;
@@ -124,32 +145,9 @@ public class LocalHero extends Hero {
 		mDefensivePoint = defensivePoint;
 	}
 
-	public static LocalHero findHeroByName(String name) {
-
-		for(LocalHero localHero : LocalHero.sHeros) {
-			if(localHero.getName().compareToIgnoreCase(name) == 0) {
-				return localHero;
-			}
-		}
-
-		return null;
-
-	}
-
-	private LocalHero(Parcel in) {
-		super(in);
-
-	}
-
-	public LocalHero() {
-		super();
-		setName(getFreeName());
-		sHeros.add(this);
-	}
-
 	@Override
 	public void setName(String name) {
-		if(!isValidName(name)) throw new InvalidParameterException("Same named heroes.");
+		if (!isValidName(name)) throw new InvalidParameterException("Same named heroes.");
 
 		super.setName(name);
 	}

@@ -6,8 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,17 +16,10 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import hu.csany_zeg.one.csanydroid1.core.Battle;
 import hu.csany_zeg.one.csanydroid1.core.Hero;
 import hu.csany_zeg.one.csanydroid1.core.LocalHero;
-import hu.csany_zeg.one.csanydroid1.core.Opponent;
+import hu.csany_zeg.one.csanydroid1.core.Player;
 
 public class MainActivity extends AppCompatActivity {
 	private final static int REQUEST_ENABLE_BT = 1;
@@ -110,19 +101,12 @@ e.printStackTrace();
 		{
 			Battle battle = new Battle("Waterló-i csata", null);
 			for (Hero h : LocalHero.sHeros) {
-				h.addToBattle(battle);
+				h.setBattle(battle);
 			}
 
-			battle.beginMassacre();
+			battle.playerReady(Player.CURRENT);
 		}
 
-		{
-			Battle battle = new Battle("Trója", null);
-			for (Hero h : LocalHero.sHeros) {
-				h.addToBattle(battle);
-			}
-			battle.beginMassacre();
-		}
 		// http://developer.android.com/reference/android/bluetooth/BluetoothServerSocket.html
 // http://developer.android.com/guide/topics/connectivity/bluetooth.html#ManagingAConnection
 
@@ -134,19 +118,8 @@ e.printStackTrace();
 		bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 		boolean sBluetoothAvailable;
 
-		Opponent.watchOnBluetooth(bluetoothAdapter);
-		Opponent.setListener(new Opponent.OpponentListener() {
+		Player.startListeningViaBluetooth(bluetoothAdapter);
 
-			@Override
-			public void onOpponentAdded(Opponent o) {
-				return;
-			}
-
-			@Override
-			public void onOpponentRemoved(Opponent o) {
-				return;
-			}
-		});
 		if ((sBluetoothAvailable = (bluetoothAdapter != null))) {
 
 			if (!bluetoothAdapter.isEnabled()) {
