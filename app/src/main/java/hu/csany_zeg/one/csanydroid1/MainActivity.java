@@ -91,7 +91,7 @@ e.printStackTrace();
 			new LocalHero().setName("C");
 			new LocalHero().setName("D");
 		} else {
-			Log.v("mama", "!!!!!!!!!!!!!!!!");
+			Log.v("mama", "!!!!!!!!!!!!!!!");
 		}
 
 		//Display display = getWindowManager().getDefaultDisplay();
