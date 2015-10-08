@@ -99,12 +99,17 @@ e.printStackTrace();
 		//display.getSize(size);
 		//setRequestedOrientation(size.x > size.y ? ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE : ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
 		{
-			Battle battle = new Battle("Waterló-i csata", null);
+			Battle battle = new Battle("Waterló-i csata", Player.CURRENT);
+			// battle.addPlayer(Player.CURRENT, true);
 			for (Hero h : LocalHero.sHeros) {
-				h.setBattle(battle);
+				try {
+					h.setBattle(battle);
+				} catch (Battle.InvalidPlayerException e) {
+					e.printStackTrace();
+				}
 			}
 
-			battle.playerReady(Player.CURRENT);
+			battle.setPlayerReady(Player.CURRENT);
 		}
 
 		// http://developer.android.com/reference/android/bluetooth/BluetoothServerSocket.html

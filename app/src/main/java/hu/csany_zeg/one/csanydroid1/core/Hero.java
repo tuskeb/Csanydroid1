@@ -95,7 +95,7 @@ public class Hero extends DataSetObservable implements Cloneable, Parcelable {
 		super.notifyChanged();
 	}
 
-	public boolean setBattle(Battle battle) {
+	public boolean setBattle(Battle battle) throws Battle.InvalidPlayerException {
 
 		if(isBattle()) {
 			// csatázik már

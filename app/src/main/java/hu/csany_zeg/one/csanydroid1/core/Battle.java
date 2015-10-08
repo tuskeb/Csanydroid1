@@ -7,6 +7,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import java.lang.reflect.Array;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -20,8 +21,6 @@ import java.util.concurrent.ArrayBlockingQueue;
  */
 public class Battle {
 
-	private static final String TAG = "game engine";
-
 	public static final byte
 			STATE_DRAW_START_PLAYER = 0,
 			STATE_CHOOSE_ATTACKER_HERO = 1,
@@ -29,9 +28,16 @@ public class Battle {
 			STATE_ATTACKER_DRINK_CHARM = 3,
 			STATE_DEFENDER_DRINK_CHARM = 4,
 			STATE_ATTACK = 5,
-			STATE_TURN_FINISHED = 6; // gondolkodási/elemzési idő
-
-
+			STATE_TURN_FINISHED = 6,
+			STATE_NEXT_PLAYER = 7; // gondolkodási/elemzési idő
+	private static final String TAG = "game engine";
+	public static ArrayList<Battle> sBattles = new ArrayList<Battle>();
+	/**
+	 * A csata neve
+	 */
+	public final String mName;
+	public final Player mServer;
+	private final UUID mUUID;
 	public float
 			OFF_RAND_MIN = .7f,
 			OFF_RAND_MAX = 1.15f,
@@ -42,31 +48,29 @@ public class Battle {
 			DEF_CHARM_FACTOR = 1f / 2.5f;
 	public float
 			MAX_USABLE_CHARM = 5f;
-
-	public static ArrayList<Battle> sBattles = new ArrayList<Battle>();
-
-	/**
-	 * A csata neve
-	 */
-	public final String mName;
 	/**
 	 * Az aktuális támadó és védekező játékos.
 	 */
 	public Hero mAttacker, mDefender;
-	public byte mLastOAttacker, mLastFAttacker;
-
-	public final Player mOwner, mOpponent;
-
+	public byte mLastAttackerA = -1, mLastAttackerB = -1;
 	ArrayBlockingQueue<Integer> mEventQueue = new ArrayBlockingQueue<Integer>(10);
-	private ArrayList<Hero> mOHeroes = new ArrayList<Hero>(); // [O]wner
-	private ArrayList<Hero> mFHeroes = new ArrayList<Hero>(); // [F]oreign
-	private final UUID mUUID;
+	// TODO átnevezni: attacker & defender heroes
+	private ArrayList<Player> mPlayersA, mPlayersB;
+	private ArrayList<Player> mReadyPlayers = null;
+	private ArrayList<Hero> mHeroesA = new ArrayList<Hero>(), mHeroesB = new ArrayList<Hero>();
 	private short mTurn;
+	/**
+	 * true:    A
+	 * false:   B
+	 */
 	private boolean mStartingPlayer;
 	private Handler mHandler = new Handler(Looper.getMainLooper());
 
+	/**
+	 * Felkészült játékosok száma, majd a csata állapota
+	 */
 	private byte mState;
-	private StateChangeListeners mListener = new StateChangeListeners() { };
+	private StateChangeListeners mListener = new StateChangeListeners() {};
 
 	/**
 	 * Létrehoz egy új csatát
@@ -74,8 +78,9 @@ public class Battle {
 	public Battle(String name, Player opponent) {
 		mName = name != null ? name : "Névtelen csata";
 		mTurn = 0;
-		mOwner = Player.CURRENT;
-		mOpponent = opponent;
+		mServer = Player.CURRENT; // mi leszünk a kiszolgáló
+		mReadyPlayers = new ArrayList<Player>();
+
 		mUUID = UUID.randomUUID();
 		sBattles.add(this);
 	}
@@ -94,47 +99,71 @@ public class Battle {
 	}
 
 	public void setNextState() {
-		if(mState < STATE_TURN_FINISHED) ++mState; // következő állapot
+		if (mState < STATE_NEXT_PLAYER) ++mState; // következő állapot
 		else mState = STATE_CHOOSE_ATTACKER_HERO; // kezdje előről
 
 		Log.v(TAG, "state changed: " + mState);
 
 		switch (mState) {
-			case STATE_CHOOSE_ATTACKER_HERO:    mListener.OnChooseAttackerHero();
+			case STATE_CHOOSE_ATTACKER_HERO:
+				mListener.OnChooseAttackerHero();
 				break;
-			case STATE_CHOOSE_DEFENDER_HERO:    mListener.OnChooseDefenderHero();
+			case STATE_CHOOSE_DEFENDER_HERO:
+				mListener.OnChooseDefenderHero();
 				break;
-			case STATE_ATTACKER_DRINK_CHARM:    mListener.OnAttackerDrinkCharm();
+			case STATE_ATTACKER_DRINK_CHARM:
+				mListener.OnAttackerDrinkCharm();
 				break;
-			case STATE_DEFENDER_DRINK_CHARM:    mListener.OnDefenderDrinkCharm();
+			case STATE_DEFENDER_DRINK_CHARM:
+				mListener.OnDefenderDrinkCharm();
 				break;
-			case STATE_ATTACK:                  mListener.OnAttack();
+			case STATE_ATTACK:
+				mListener.OnAttack();
 				break;
-			case STATE_TURN_FINISHED:           mListener.OnTurnFinished();
+			case STATE_TURN_FINISHED:
+				mListener.OnTurnFinished();
+				break;
+			case STATE_NEXT_PLAYER:
+				mListener.OnNextPlayer();
 				break;
 
 		}
 	}
 
-	public Player getCurrentPlayer() {
-		return (mTurn & 0x1) > 0 ? mOwner : mOpponent;
+	public boolean getCurrentPlayerAsBoolean() {
+		return (mTurn % 2 == 0) == mStartingPlayer;
 	}
 
-	public Hero setAttacker() {
-		final Hero old = mAttacker;
-		ArrayList<Hero> heroes =  getCurrentPlayer() == Player.CURRENT ? mOHeroes : mFHeroes;
-		mAttacker = heroes.get(mAttacker != null ? (heroes.indexOf(mAttacker) + 1) % heroes.size() : (int) (Math.random() * heroes.size()));
-		return old;
+	public ArrayList<Hero> getPlayerHeroes(boolean playerA) {
+		return playerA ? mHeroesA : mHeroesB;
 	}
 
-	public Hero setDefender() {
+	public Hero nextAttacker() {
+		final Hero oldHero = mAttacker;
 
-		Hero defHero;
-		ArrayList<Hero> heroes =  getCurrentPlayer() != Player.CURRENT ? mOHeroes : mFHeroes;
-		while (mAttacker == (defHero = heroes.get((int) (Math.random() * heroes.size()))) || mDefender == defHero)
+		final ArrayList<Hero> heroes = getPlayerHeroes(getCurrentPlayerAsBoolean());
+
+		if (getCurrentPlayerAsBoolean()) { // A
+			mLastAttackerA = (byte) ((mLastAttackerA + 1) % heroes.size());
+			mAttacker = heroes.get(mLastAttackerA);
+		} else { // B
+			mLastAttackerB = (byte) ((mLastAttackerB + 1) % heroes.size());
+			mAttacker = heroes.get(mLastAttackerB);
+		}
+
+		return oldHero;
+	}
+
+	public Hero nextDefender() {
+		final Hero oldHero = mDefender;
+
+		Hero newDefender;
+		final ArrayList<Hero> heroes = getPlayerHeroes(!getCurrentPlayerAsBoolean());
+		while (mAttacker == (newDefender = heroes.get((int) (Math.random() * heroes.size()))) || mDefender == newDefender)
 			;
-		mDefender = defHero;
-		return defHero;
+		mDefender = newDefender;
+
+		return oldHero;
 	}
 
 	public void dispose() {
@@ -156,7 +185,7 @@ public class Battle {
 
 				// gratulálunk a győztesnek
 				if (mAttacker instanceof LocalHero) {
-					++((LocalHero) mAttacker).mTotalKills;
+					// ++((LocalHero) mAttacker).mTotalKills;
 
 					mAttacker.notifyChanged();
 				}
@@ -167,40 +196,90 @@ public class Battle {
 
 	}
 
-	public void playerReady(Player player) {
-		if(mOwner == Player.CURRENT) {
-			beginMassacre();
-		} else {
-			mOwner.send(Player.ACTION_READY_FOR_BATTLE, null);
+	public Player findPlayerByUUID(UUID uuid) {
+		for(Player player : mReadyPlayers) {
+			if(player.getUUID() == uuid) {
+				return player;
+			}
+		}
+
+		return null;
+
+	}
+
+	public void processMessage(Parcel data) {
+		switch (data.readByte()) {
+			case Player.ACTION_READY_FOR_BATTLE: {
+				long mostSigBits = data.readLong();
+				long leastSigBits = data.readLong();
+				Player player = findPlayerByUUID(new UUID(mostSigBits, leastSigBits));
+
+				if (mReadyPlayers.contains(player)) break;
+				mReadyPlayers.add(player);
+			}
+			break;
+
+		}
+
+		broadcastMessage(data);
+
+	}
+
+	private void broadcastMessage(Parcel data) {
+		for (Player player : mReadyPlayers) {
+			if (player == Player.CURRENT) continue;
+			player.send(data);
 		}
 	}
 
-	private void beginMassacre() {
+	public void setPlayerReady(Player player) {
 
-		if(mOpponent == Player.CURRENT) {
-			mFHeroes = mOHeroes;
+		if (mServer != Player.CURRENT) {
+			mServer.send(null); // Player.ACTION_READY_FOR_BATTLE
+		} else {
+			// csata kezdése
+			Log.v(TAG, mHeroesA.size() + " vs. " + mHeroesB.size());
+
+			mAttacker = null;
+			mDefender = null;
+
+			// reset variables
+			mState = STATE_DRAW_START_PLAYER;
+			mListener.OnDrawStartPlayer();
+
 		}
-
-		Log.v(TAG, mFHeroes.size() + " vs. " + mOHeroes.size());
-
-		mAttacker = null;
-		mDefender = null;
-
-		// reset variables
-		mState = STATE_DRAW_START_PLAYER;
-		mListener.OnDrawStartPlayer();
 
 	}
 
 	public int getState() {
 		return mState;
 	}
+
+	public ArrayList<Player> getPlayers(boolean attackers) {
+		return attackers ? mPlayersA : mPlayersB;
+	}
+
 	public boolean isStarted() {return mTurn > 0;}
 
-	public boolean addHero(Hero hero) {
+	private boolean getPlayerRole(Player player) throws InvalidPlayerException {
+		if (mPlayersA.contains(player)) return true;
+		else if (mPlayersB.contains(player)) return false;
+		else throw new InvalidPlayerException();
+	}
+
+	public void addPlayer(Player player, boolean isAttacker) {
+		getPlayers(isAttacker).add(player);
+		++mState;
+	}
+
+	private boolean removePlayer(Player player) {
+		return mPlayersA.remove(player) || mPlayersB.remove(player);
+	}
+
+	public boolean addHero(Hero hero) throws InvalidPlayerException {
 		if (isStarted()) return false;
 
-		(hero.getOwner() == mOwner ? mOHeroes : mFHeroes).add(hero);
+		getPlayerHeroes(getPlayerRole(hero.getOwner())).add(hero);
 
 		return true;
 	}
@@ -210,7 +289,10 @@ public class Battle {
 			return false;
 		}
 
-		(hero.getOwner() == mOwner ? mOHeroes : mFHeroes).remove(hero);
+		try {
+			getPlayerHeroes(getPlayerRole(hero.getOwner())).remove(hero);
+
+		} catch (InvalidPlayerException e) { }
 
 		return true;
 	}
@@ -227,17 +309,17 @@ public class Battle {
 		}
 
 		public void OnChooseAttackerHero() {
-			Hero oldAttacker = setAttacker();
+			Hero oldAttacker = nextAttacker();
 			setNextState();
 		}
 
 		public void OnChooseDefenderHero() {
-			Hero oldDefender = setDefender();
+			Hero oldDefender = nextDefender();
 			setNextState();
 		}
 
 		public void OnAttackerDrinkCharm() {
-			if(mAttacker.drinkCharm(.5) > 0) {
+			if (mAttacker.drinkCharm(.5) > 0) {
 				mHandler.postDelayed(new Runnable() {
 					@Override
 					public void run() {
@@ -250,7 +332,7 @@ public class Battle {
 		}
 
 		public void OnDefenderDrinkCharm() {
-			if(mDefender.drinkCharm(.5) > 0) {
+			if (mDefender.drinkCharm(.5) > 0) {
 				mHandler.postDelayed(new Runnable() {
 					@Override
 					public void run() {
@@ -284,6 +366,16 @@ public class Battle {
 
 		}
 
+
+		public void OnNextPlayer() {
+
+			setNextState();
+
+		}
+
+
 	}
+
+	public class InvalidPlayerException extends Throwable {}
 
 }
