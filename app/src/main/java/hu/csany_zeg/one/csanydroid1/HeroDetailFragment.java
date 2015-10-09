@@ -41,13 +41,15 @@ public class HeroDetailFragment extends Fragment {
 	private LocalHero mHero;
 
 	private TextView offensiveTextViewNum;
+	private TextView defensiveTextViewNum;
+	private TextView charmTextViewNum;
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
 	 * fragment (e.g. upon screen orientation changes).
 	 */
 	public HeroDetailFragment() {
 	}
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -115,7 +117,7 @@ public class HeroDetailFragment extends Fragment {
 				@Override
 				public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 					mHero.setBaseCharm((float) progress + Hero.MIN_CHARM);
-					textView.setText(mHero.getCharm() + "");
+					charmTextViewNum.setText(String.valueOf(progress + Hero.MIN_CHARM));
 				}
 
 				@Override
@@ -150,6 +152,7 @@ public class HeroDetailFragment extends Fragment {
 				@Override
 				public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 					mHero.setDefensivePoint((float) progress + Hero.MIN_DEFENSIVE_POINT);
+					defensiveTextViewNum.setText(String.valueOf(progress + Hero.MIN_DEFENSIVE_POINT));
 				}
 
 				@Override

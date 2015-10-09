@@ -12,4 +12,7 @@
     <string name="statistics_number_of_heros">Hőseim</string>
     <string name="create_hero">Új Hős</string>
     <string name="remove_hero">Törlés</string>
+    <string name="offensive_point">Támadóérték</string>
+    <string name="defensive_point">Védekezőérték</string>
+    <string name="charm_point">Varázserő pont</string>
 </resources>

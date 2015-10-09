@@ -19,4 +19,7 @@
 
 
     <string name="statistics_number_of_heros">My Heros</string>
+    <string name="offensive_point">Offensive Point</string>
+    <string name="defensive_point">Defensive Point</string>
+    <string name="charm_point">Charm Point</string>
 </resources>
