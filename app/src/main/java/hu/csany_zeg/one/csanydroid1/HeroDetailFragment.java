@@ -39,7 +39,8 @@ public class HeroDetailFragment extends Fragment {
 	 * The dummy content this fragment is presenting.
 	 */
 	private LocalHero mHero;
-	
+
+	private TextView offensiveTextViewNum;
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
 	 * fragment (e.g. upon screen orientation changes).
@@ -76,7 +77,7 @@ public class HeroDetailFragment extends Fragment {
 			final TextView textView;
 
 			textView = (TextView)rootView.findViewById(R.id.charmTextView);
-
+			offensiveTextViewNum = (TextView)rootView.findViewById(R.id.offensiveTextViewNum);
 
 			EditText editText;
 
@@ -132,6 +133,7 @@ public class HeroDetailFragment extends Fragment {
 				@Override
 				public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 					mHero.setOffensivePoint((float) progress + Hero.MIN_OFFENSIVE_POINT);
+					offensiveTextViewNum.setText(String.valueOf(progress + Hero.MIN_OFFENSIVE_POINT));
 				}
 
 				@Override
