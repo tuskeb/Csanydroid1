@@ -73,6 +73,11 @@ public class HeroDetailFragment extends Fragment {
 		} else {
 			rootView = inflater.inflate(R.layout.fragment_hero_detail, container, false);
 
+			final TextView textView;
+
+			textView = (TextView)rootView.findViewById(R.id.charmTextView);
+
+
 			EditText editText;
 
 			editText = (EditText) rootView.findViewById(R.id.hero_name);
@@ -102,11 +107,14 @@ public class HeroDetailFragment extends Fragment {
 
 			seekBar = (SeekBar) rootView.findViewById(R.id.charmBar);
 			seekBar.setMax((int) (Hero.MAX_CHARM - Hero.MIN_CHARM));
+			textView.setText(String.valueOf(mHero.getCharm()));
 			seekBar.setProgress(Math.round(mHero.getCharm() - Hero.MIN_CHARM));
+
 			seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 				@Override
 				public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 					mHero.setBaseCharm((float) progress + Hero.MIN_CHARM);
+					textView.setText(mHero.getCharm() + "");
 				}
 
 				@Override

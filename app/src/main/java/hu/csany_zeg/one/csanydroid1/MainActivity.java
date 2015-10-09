@@ -98,9 +98,10 @@ e.printStackTrace();
 		//Point size = new Point();
 		//display.getSize(size);
 		//setRequestedOrientation(size.x > size.y ? ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE : ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+/*
 		{
 			Battle battle = new Battle("Waterló-i csata", Player.CURRENT);
-			// battle.addPlayer(Player.CURRENT, true);
+			battle.addPlayer(Player.CURRENT, true);
 			for (Hero h : LocalHero.sHeros) {
 				try {
 					h.setBattle(battle);
@@ -111,7 +112,7 @@ e.printStackTrace();
 
 			battle.setPlayerReady(Player.CURRENT);
 		}
-
+*/
 		// http://developer.android.com/reference/android/bluetooth/BluetoothServerSocket.html
 // http://developer.android.com/guide/topics/connectivity/bluetooth.html#ManagingAConnection
 

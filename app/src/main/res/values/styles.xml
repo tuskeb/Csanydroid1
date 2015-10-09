@@ -46,4 +46,8 @@
         <item name="android:gravity">left</item>
     </style>
 
+    <style name="button_style">
+        <item name="android:textSize">40dp</item>
+    </style>
+
 </resources>
