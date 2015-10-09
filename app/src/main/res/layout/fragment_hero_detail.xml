@@ -25,19 +25,108 @@
         android:layout_height="70dp"
         android:text="@string/remove_hero"
         android:src="@android:drawable/ic_menu_delete"
-        android:layout_above="@+id/charmBar"
+        android:layout_alignParentTop="true"
         android:layout_toLeftOf="@+id/add_to_favourites_hero"
-        android:layout_toStartOf="@+id/add_to_favourites_hero"/>
+        android:layout_toStartOf="@+id/add_to_favourites_hero" />
 
     <ImageButton
         android:id="@+id/add_to_favourites_hero"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_alignBottom="@+id/hero_name"
-        android:layout_alignRight="@+id/charmBar"
-        android:layout_alignEnd="@+id/charmBar"
+        android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"/>
+        android:layout_alignParentEnd="true" />
+
+    <SeekBar
+        android:id="@+id/offensiveBar"
+        android:layout_width="400dp"
+        android:layout_height="35dp"
+        android:layout_below="@+id/offensiveImageView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/offensiveImageView"
+        android:layout_below="@+id/hero_name"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/offensiveTextView"
+        android:layout_above="@+id/offensiveBar"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:singleLine="true"
+        android:layout_alignRight="@+id/defensiveTextView"
+        android:layout_alignEnd="@+id/defensiveTextView" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/offensiveTextViewNum"
+        android:layout_alignTop="@+id/offensiveTextView"
+        android:layout_toRightOf="@+id/offensiveTextView"
+        android:layout_toEndOf="@+id/offensiveTextView" />
+
+    <SeekBar
+        android:id="@+id/defensiveBar"
+        android:layout_width="400dp"
+        android:layout_height="35dp"
+        android:layout_below="@+id/defensiveImageView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/defensiveImageView"
+        android:layout_below="@+id/offensiveBar"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/defensiveTextView"
+        android:layout_above="@+id/defensiveBar"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/defensiveTextViewNum"
+        android:layout_alignTop="@+id/defensiveTextView"
+        android:layout_toRightOf="@+id/defensiveTextView"
+        android:layout_toEndOf="@+id/defensiveTextView" />
+
+    <SeekBar
+        android:id="@+id/charmBar"
+        android:layout_width="400dp"
+        android:layout_height="35dp"
+        android:layout_below="@+id/charmImageView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/charmImageView"
+        android:layout_below="@+id/defensiveBar"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <TextView
         android:layout_width="200dp"
@@ -45,40 +134,21 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Small Text"
         android:id="@+id/charmTextView"
-        android:layout_alignBottom="@+id/charmBar" />
-
-    <ImageView
-        android:layout_width="100dp"
-        android:layout_height="20dp"
-        android:id="@+id/charmImageView"
-        android:layout_alignTop="@+id/charmBar"
-        android:layout_alignRight="@+id/hero_name"
-        android:layout_alignEnd="@+id/hero_name" />
-
-    <SeekBar
-        android:id="@+id/charmBar"
-        android:layout_margin="5dp"
-        android:layout_width="400dp"
-        android:layout_height="35dp"
-        android:layout_below="@+id/offensiveBar"
-        android:layout_alignParentLeft="true" />
-
-    <SeekBar
-        android:id="@+id/offensiveBar"
-        android:layout_margin="5dp"
-        android:layout_width="400dp"
-        android:layout_height="35dp"
-        android:layout_below="@+id/defensiveBar"
-        android:layout_alignParentLeft="true" />
-
-    <SeekBar
-        android:id="@+id/defensiveBar"
-        android:layout_width="400dp"
-        android:layout_height="35dp"
-        android:layout_marginTop="85dp"
-        android:layout_below="@+id/hero_name"
+        android:layout_above="@+id/charmBar"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/defensiveTextView"
+        android:layout_alignEnd="@+id/defensiveTextView" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/charmTextViewNum"
+        android:layout_alignTop="@+id/charmTextView"
+        android:layout_toRightOf="@+id/charmTextView"
+        android:layout_toEndOf="@+id/charmTextView" />
 
 
 </RelativeLayout>
