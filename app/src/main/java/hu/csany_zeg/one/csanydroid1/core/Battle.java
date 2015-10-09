@@ -1,14 +1,11 @@
 package hu.csany_zeg.one.csanydroid1.core;
 
-import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-import java.lang.reflect.Array;
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -30,13 +27,30 @@ public class Battle {
 			STATE_ATTACK = 5,
 			STATE_TURN_FINISHED = 6,
 			STATE_NEXT_PLAYER = 7; // gondolkodási/elemzési idő
-	private static final String TAG = "game engine";
+	private static final String TAG = "battle";
 	public static ArrayList<Battle> sBattles = new ArrayList<Battle>();
 	/**
 	 * A csata neve
 	 */
-	public final String mName;
-	public final Player mServer;
+	public String mName;
+
+	public Player getServer() {
+		return mServer;
+	}
+
+	public static ArrayList<Battle> getOwnBattles() {
+		ArrayList<Battle> ownBattles = new ArrayList<Battle>();
+		for(Battle battle : sBattles) {
+			if(battle.getServer() == Player.CURRENT) {
+				ownBattles.add(battle);
+			}
+
+		}
+
+		return ownBattles;
+	}
+
+	private Player mServer;
 	private final UUID mUUID;
 	public float
 			OFF_RAND_MIN = .7f,
@@ -55,8 +69,8 @@ public class Battle {
 	public byte mLastAttackerA = -1, mLastAttackerB = -1;
 	ArrayBlockingQueue<Integer> mEventQueue = new ArrayBlockingQueue<Integer>(10);
 	// TODO átnevezni: attacker & defender heroes
-	private ArrayList<Player> mPlayersA, mPlayersB;
-	private ArrayList<Player> mReadyPlayers = null;
+	private ArrayList<Player> mPlayersA = new ArrayList<Player>(), mPlayersB = new ArrayList<Player>();
+	private ArrayList<Player> mReadyPlayers = null, mSpectators = null;
 	private ArrayList<Hero> mHeroesA = new ArrayList<Hero>(), mHeroesB = new ArrayList<Hero>();
 	private short mTurn;
 	/**
@@ -75,14 +89,38 @@ public class Battle {
 	/**
 	 * Létrehoz egy új csatát
 	 */
-	public Battle(String name, Player opponent) {
+	public Battle(String name) {
 		mName = name != null ? name : "Névtelen csata";
 		mTurn = 0;
 		mServer = Player.CURRENT; // mi leszünk a kiszolgáló
 		mReadyPlayers = new ArrayList<Player>();
-
+		mSpectators = new ArrayList<Player>();
 		mUUID = UUID.randomUUID();
 		sBattles.add(this);
+	}
+
+	public Battle(Player server, UUID uuid) {
+		mServer = server;
+		mUUID = uuid;
+
+		Parcel parcel = Parcel.obtain();
+		parcel.writeByte(Player.ACTION_GET_BATTLE);
+		writeHeaderToParcel(parcel);
+		mServer.send(parcel);
+
+	}
+
+	protected Battle(Parcel in) {
+		long mostSigBits = in.readLong();
+		long leastSigBits = in.readLong();
+
+		mUUID = new UUID(mostSigBits, leastSigBits);
+
+	}
+
+	public void writeHeaderToParcel(Parcel dest) {
+		dest.writeLong(mUUID.getMostSignificantBits());
+		dest.writeLong(mUUID.getLeastSignificantBits());
 	}
 
 	public static int countBattles() {
@@ -94,8 +132,15 @@ public class Battle {
 	}
 
 	public void giveUp() {
-
+		mServer.send(null);
 		dispose();
+	}
+
+	public static Battle findBattleByUUID(UUID uuid) {
+		for(Battle battle : sBattles) {
+			if(battle.mUUID.compareTo(uuid) == 0) return battle;
+		}
+		return null;
 	}
 
 	public void setNextState() {
@@ -134,14 +179,14 @@ public class Battle {
 		return (mTurn % 2 == 0) == mStartingPlayer;
 	}
 
-	public ArrayList<Hero> getPlayerHeroes(boolean playerA) {
+	public ArrayList<Hero> getHeroes(boolean playerA) {
 		return playerA ? mHeroesA : mHeroesB;
 	}
 
 	public Hero nextAttacker() {
 		final Hero oldHero = mAttacker;
 
-		final ArrayList<Hero> heroes = getPlayerHeroes(getCurrentPlayerAsBoolean());
+		final ArrayList<Hero> heroes = getHeroes(getCurrentPlayerAsBoolean());
 
 		if (getCurrentPlayerAsBoolean()) { // A
 			mLastAttackerA = (byte) ((mLastAttackerA + 1) % heroes.size());
@@ -158,7 +203,7 @@ public class Battle {
 		final Hero oldHero = mDefender;
 
 		Hero newDefender;
-		final ArrayList<Hero> heroes = getPlayerHeroes(!getCurrentPlayerAsBoolean());
+		final ArrayList<Hero> heroes = getHeroes(!getCurrentPlayerAsBoolean());
 		while (mAttacker == (newDefender = heroes.get((int) (Math.random() * heroes.size()))) || mDefender == newDefender)
 			;
 		mDefender = newDefender;
@@ -207,21 +252,20 @@ public class Battle {
 
 	}
 
-	public void processMessage(Parcel data) {
+	public void processMessage(Parcel data, Player player) {
 		switch (data.readByte()) {
 			case Player.ACTION_READY_FOR_BATTLE: {
-				long mostSigBits = data.readLong();
-				long leastSigBits = data.readLong();
-				Player player = findPlayerByUUID(new UUID(mostSigBits, leastSigBits));
-
 				if (mReadyPlayers.contains(player)) break;
 				mReadyPlayers.add(player);
+			}
+			case Player.ACTION_GIVE_UP: {
+				try {
+					removePlayerHeroes(player);
+				} catch (InvalidPlayerException e) { }
 			}
 			break;
 
 		}
-
-		broadcastMessage(data);
 
 	}
 
@@ -237,6 +281,12 @@ public class Battle {
 		if (mServer != Player.CURRENT) {
 			mServer.send(null); // Player.ACTION_READY_FOR_BATTLE
 		} else {
+			// nincs ellenfél
+			if(mPlayersB.size() == 0) {
+				mPlayersB = mPlayersA;
+				mHeroesB = mHeroesA;
+			}
+
 			// csata kezdése
 			Log.v(TAG, mHeroesA.size() + " vs. " + mHeroesB.size());
 
@@ -276,10 +326,25 @@ public class Battle {
 		return mPlayersA.remove(player) || mPlayersB.remove(player);
 	}
 
+	private void removePlayerHeroes(Player player) throws InvalidPlayerException {
+		ArrayList<Hero> heroes = getHeroes(getPlayerRole(player));
+		for(int i = heroes.size();i > 0;) {
+			Hero hero = heroes.get(--i);
+			if(hero.getOwner() == player) {
+				heroes.remove(i);
+			}
+		}
+	}
+
+	private void addSpectator(Player player) {
+		if(!mSpectators.contains(player))
+			mSpectators.add(player);
+	}
+
 	public boolean addHero(Hero hero) throws InvalidPlayerException {
 		if (isStarted()) return false;
 
-		getPlayerHeroes(getPlayerRole(hero.getOwner())).add(hero);
+		getHeroes(getPlayerRole(hero.getOwner())).add(hero);
 
 		return true;
 	}
@@ -290,7 +355,7 @@ public class Battle {
 		}
 
 		try {
-			getPlayerHeroes(getPlayerRole(hero.getOwner())).remove(hero);
+			getHeroes(getPlayerRole(hero.getOwner())).remove(hero);
 
 		} catch (InvalidPlayerException e) { }
 
