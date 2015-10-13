@@ -1,15 +1,17 @@
 package hu.csany_zeg.one.csanydroid1;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
+import android.text.InputType;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
+import android.widget.EditText;
 
-import hu.csany_zeg.one.csanydroid1.core.LocalHero;
+import hu.csany_zeg.one.csanydroid1.core.Hero;
 
 
 /**
@@ -63,16 +65,34 @@ public class HeroListActivity extends FragmentActivity
 		findViewById(R.id.add_hero_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				//runOnUiThread(new Runnable() {
-				//	@Override
-				//	public void run() {
-				final LocalHero newHero = new LocalHero();
-				((ArrayAdapter) mHeroListFragment.getListAdapter()).notifyDataSetChanged();
-				mHeroListFragment.selectItem(LocalHero.sHeros.indexOf(newHero), false);
+				AlertDialog.Builder builder = new AlertDialog.Builder(HeroListActivity.this);
+				builder.setTitle("Name of the new hero");
 
-				//	}
-				//}
-				//);
+				final EditText input = new EditText(HeroListActivity.this);
+
+				input.setInputType(InputType.TYPE_CLASS_TEXT);
+				builder.setView(input).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						try {
+							final String name = input.getText().toString();
+							final Hero newHero = new Hero(name);
+
+							((ArrayAdapter) mHeroListFragment.getListAdapter()).notifyDataSetChanged();
+							mHeroListFragment.selectItem(Hero.sHeroRepository.indexOf(newHero), false);
+
+							dialog.dismiss();
+						} catch (RuntimeException e) {
+
+						}
+
+					}
+				}).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.cancel();
+					}
+				}).show();
 
 			}
 		});

@@ -6,184 +6,275 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.UUID;
 
 public class Player {
 
-    public static final Player CURRENT = new Player();
+	public static final Player CURRENT = new Player();
+	private static final byte SCOPE_PLAYER = (byte)0x80;
+	public static final byte
+			ACTION_NO_OPERATION = 0,
+			ACTION_READY_FOR_BATTLE = 1,
+			ACTION_GIVE_UP = 2,
+			ACTION_GET_BATTLES = 3 | SCOPE_PLAYER,
+			ACTION_GET_BATTLE = 4,
+			ACTION_JOIN_TO_BATTLE = 5,
+			ACTION_JOIN_TO_BATTLE_ACCEPTED = 6,
+			ACTION_GET_HERO = 7,
+			ACTION_INVITE = 5;
+	private final static String TAG = "player";
+	private final static ArrayList<Player> sPlayers = new ArrayList<Player>();
+	private final OutputStream mOutputStream;
+	private final InputStream mInputStream;
+	private final UUID mUUID;
+	//private ArrayList<OnDataReceivedListener> mListeners = new ArrayList<OnDataReceivedListener>();
+	private String mName;
+	private Parcel mParcel = Parcel.obtain();
 
-    public final static byte
-            ACTION_NO_OPERATION = 0,
-            ACTION_READY_FOR_BATTLE = 1,
-            ACTION_GIVE_UP = 2,
-            ACTION_GET_BATTLES = 3,
-            ACTION_GET_BATTLE = 4,
-            ACTION_INVITE = 5;
+	public Player(BluetoothSocket bluetoothSocket) throws IOException {
+		this(bluetoothSocket.getRemoteDevice().getName(), bluetoothSocket.getOutputStream(), bluetoothSocket.getInputStream());
+	}
 
-    private final static ArrayList<Player> sPlayers = new ArrayList<Player>();
+	private Player() {
+		mName = "Ez vok én";
+		mUUID = UUID.randomUUID();
+		mOutputStream = null;
+		mInputStream = null;
 
-    public static void startListeningViaBluetooth(final BluetoothAdapter bluetoothAdapter) {
-        Thread thread = new Thread() {
-            @Override
-            public void run() {
-                BluetoothServerSocket bluetoothServerSocket;
-                try {
-                    bluetoothServerSocket = bluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord("Its me", UUID.randomUUID());
-                } catch (IOException e) {
-                    return;
-                }
+	}
 
-                Log.v("bluetooth", "listening started");
+	private Player(String name, OutputStream outputStream, InputStream inputStream) {
+		Log.v(TAG, "player connected");
 
-                try {
-                    while (true) {
-                        BluetoothSocket bluetoothSocket = bluetoothServerSocket.accept();
-                        new Player(bluetoothSocket);
+		mName = name;
+		mUUID = UUID.randomUUID();
+		mOutputStream = outputStream;
+		mInputStream = inputStream;
 
-                    }
-                } catch (IOException e) {
-                }
+		startListening();
 
-                try {
-                    bluetoothServerSocket.close();
-                } catch (IOException e) {
-                }
+		sPlayers.add(this);
 
-            }
-        };
-        thread.start();
+	}
 
-    }
+	public static void startListeningViaBluetooth(final BluetoothAdapter bluetoothAdapter) {
+		Thread thread = new Thread() {
+			@Override
+			public void run() {
+				BluetoothServerSocket bluetoothServerSocket;
+				try {
+					bluetoothServerSocket = bluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord("Its me", UUID.randomUUID());
+				} catch (IOException e) {
+					return;
+				}
+
+				Log.v(TAG, "listening started");
+
+				try {
+					while (true) {
+						BluetoothSocket bluetoothSocket = bluetoothServerSocket.accept();
+						new Player(bluetoothSocket);
+
+					}
+				} catch (IOException e) {
+				}
+
+				try {
+					bluetoothServerSocket.close();
+				} catch (IOException e) {
+				}
+
+			}
+		};
+		thread.start();
+
+	}
+
+	/*public void setDataReceivedListener(OnDataReceivedListener onDataReceivedListener) {
+		for (int i = mListeners.size(); i > 0; ) {
+			final OnDataReceivedListener listener = mListeners.get(--i);
+			if (listener.mAction == onDataReceivedListener.mAction) {
+				mListeners.set(i, onDataReceivedListener);
+				return;
+			}
+		}
+
+		mListeners.add(onDataReceivedListener);
+
+	}
+
+	public void removeDataReceivedListener(byte actionCode) {
+		for (int i = mListeners.size(); i > 0; ) {
+			final OnDataReceivedListener listener = mListeners.get(--i);
+			if (listener.mAction == actionCode) {
+				mListeners.remove(i);
+				return;
+			}
+		}
+	}
+
+	public void removeDataReceivedListener(OnDataReceivedListener onDataReceivedListener) {
+		mListeners.remove(onDataReceivedListener);
+	}*/
 
 
-    private final OutputStream mOutputStream;
-    private final InputStream mInputStream;
-    private String mName;
-    private final UUID mUUID;
+	public boolean setName(String name) throws IllegalAccessException {
+		name = name.trim();
 
-    public Player(BluetoothSocket bluetoothSocket) throws IOException {
-        this(bluetoothSocket.getRemoteDevice().getName(), bluetoothSocket.getOutputStream(), bluetoothSocket.getInputStream());
-    }
+		mName = name;
+		return true;
+	}
 
-    private Player() {
-        mName = "Ez vok én";
-        mUUID = UUID.randomUUID();
-        mOutputStream = null;
-        mInputStream = null;
-    }
+	private void startListening() {
+		Thread thread = new Thread() {
 
-    private Player(String name, OutputStream outputStream, InputStream inputStream) {
-        Log.v("player", "player connected");
+			private final byte[] buffer = new byte[512];
 
-        mName = name;
-        mUUID = UUID.randomUUID();
-        mOutputStream = outputStream;
-        mInputStream = inputStream;
+			@Override
+			public void run() {
+				try {
+					while (true) {
+						final int length = mInputStream.read(buffer);
+						final Parcel parcel = Parcel.obtain();
+						parcel.unmarshall(buffer, 0, buffer.length);
+						Player.this.processMessage(parcel);
 
-        startListening();
+					}
+				} catch (IOException e) {
+					Player.this.dispose();
+				}
 
-        sPlayers.add(this);
+			}
 
-    }
+		};
+
+		thread.start();
+
+	}
+
+	public void writeHeaderToParcel(Parcel parcel) {
+		parcel.writeLong(mUUID.getMostSignificantBits());
+		parcel.writeLong(mUUID.getLeastSignificantBits());
+	}
 
 
-    public boolean setName(String name) throws IllegalAccessException {
-        name = name.trim();
+	private void processMessage(Parcel parcel) {
+		try {
+			parcel.setDataPosition(0);
 
-        mName = name;
-        return true;
-    }
+			final byte action = parcel.readByte();
 
-    private void startListening() {
-        Thread thread = new Thread() {
+			if ((action & SCOPE_PLAYER) != 0) {
+				final Parcel resp = Parcel.obtain();
+				this.writeHeaderToParcel(resp);
 
-            private final byte[] buffer = new byte[512];
+				switch (action) {
+					case Player.ACTION_GET_BATTLES: {
+						final ArrayList<Battle> ownBattles = Battle.getOwnBattles();
+						resp.writeByte((byte) ownBattles.size());
 
-            @Override
-            public void run() {
-                try {
-                    while (true) {
-                        final int length = mInputStream.read(buffer);
-                        final Parcel parcel = Parcel.obtain();
-                        parcel.unmarshall(buffer, 0, buffer.length);
+						for (Battle battle : ownBattles) {
+							if (battle.getOwner() == Player.CURRENT) {
+								resp.writeString(battle.getName());
+							}
+						}
+					}
 
-                        // üzenet érkezett tőle
-                        long mostSigBits = parcel.readLong();
-                        long leastSigBits = parcel.readLong();
+					default:
+						break;
 
-                        Battle battle = Battle.findBattleByUUID(new UUID(mostSigBits, leastSigBits));
-                        if (battle != null) {
-                            battle.processMessage(parcel, Player.this);
-                        } else {
-                            this.processMessage(parcel);
-                        }
+				}
 
-                    }
-                } catch (IOException e) {
-                    Player.this.dispose();
-                }
+				// válasz küldése
+				send(resp);
 
-                Log.v("server", "end listening");
+			} else {
+				final String name = parcel.readString();
+				final Battle battle = Battle.findBattle(name);
+				if (battle == null) throw new NullPointerException();
 
-            }
+				battle.processMessage(action, parcel, this);
+			}
 
-            private void processMessage(Parcel parcel) {
-                Parcel response = Parcel.obtain();
 
-                switch (parcel.readByte()) {
-                    case ACTION_GET_BATTLES:
-                        ArrayList<Battle> ownBattles = Battle.getOwnBattles();
-                        response.writeByte((byte)ownBattles.size());
+		} catch(Exception e) {
+			Log.v(TAG, "misformatted message");
+		}
 
-                        for(Battle battle : ownBattles) {
-                            if(battle.getServer() == Player.CURRENT) {
-                                battle.writeHeaderToParcel(response);
-                            }
-                        }
-                        break;
-                }
 
-                Player.this.send(response);
+	}
 
-            }
+	public UUID getUUID() {
+		return mUUID;
+	}
 
-        };
+	public void dispose() {
 
-        thread.start();
+		for (int i = Battle.sBattles.size(); i > 0; ) {
+			Battle battle = Battle.sBattles.get(--i);
+			//if (battle.send() == this) {
+			//	battle.dispose();
+			//}
+		}
 
-    }
+		sPlayers.remove(this);
 
-    public static int getOpponentsCount() {
-        return sPlayers.size();
-    }
+	}
 
-    public UUID getUUID() {
-        return mUUID;
-    }
+	public void send(Message msg) {
 
-    public void dispose() {
+		synchronized (mParcel) {
+			mParcel.setDataPosition(0);
+			mParcel.writeString(msg.mName);
 
-        for (int i = Battle.sBattles.size(); i > 0; ) {
-            Battle battle = Battle.sBattles.get(--i);
-            //if (battle.send() == this) {
-            //	battle.dispose();
-            //}
-        }
+			msg.obtain(mParcel);
 
-        sPlayers.remove(this);
+			send(mParcel);
 
-    }
+		}
 
-    public void send(Parcel data) {
+	}
 
-        try {
-            mOutputStream.write(data.marshall());
-        } catch (IOException e) { }
+	public void send(Parcel parcel) {
 
-    }
+		if (mOutputStream != null) {
+			try {
+				mOutputStream.write(parcel.marshall());
+			} catch (IOException e) { }
+		} else {
+			// loopback
+			// TODO? static player HANDLER
+			processMessage(mParcel);
+		}
 
+	}
+
+	public static abstract class Message {
+
+		final String mName;
+
+		public Message(Battle port) {
+			mName = port.getName();
+		}
+
+		public Message(Hero port) { mName = port.getName(); }
+
+		public abstract void obtain(Parcel parcel);
+
+	}
+/*
+	public static abstract class OnDataReceivedListener {
+
+		private final byte mAction;
+
+		public OnDataReceivedListener(byte action) {
+			mAction = action;
+		}
+
+		public abstract boolean OnDataReceived(Parcel data);
+
+	}
+*/
 }

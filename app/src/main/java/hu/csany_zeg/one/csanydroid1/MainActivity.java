@@ -5,7 +5,6 @@ import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,7 +17,6 @@ import android.widget.Button;
 
 import hu.csany_zeg.one.csanydroid1.core.Battle;
 import hu.csany_zeg.one.csanydroid1.core.Hero;
-import hu.csany_zeg.one.csanydroid1.core.LocalHero;
 import hu.csany_zeg.one.csanydroid1.core.Player;
 
 public class MainActivity extends AppCompatActivity {
@@ -85,11 +83,11 @@ e.printStackTrace();
 		}
 */
 
-		if (LocalHero.sHeros.size() == 0) {
-			new LocalHero().setName("A");
-			new LocalHero().setName("B");
-			new LocalHero().setName("C");
-			new LocalHero().setName("D");
+		if (Hero.sHeroRepository.size() == 0) {
+			new Hero("Aa");
+			new Hero("Bb");
+			new Hero("Cc");
+			new Hero("Dd");
 		} else {
 			Log.v("mama", "!!!!!!!!!!!!!");
 		}
@@ -103,18 +101,24 @@ e.printStackTrace();
 			Battle battle = new Battle("Waterló-i csata");
 			battle.addPlayer(Player.CURRENT, true);
 			try {
-				for (Hero h : LocalHero.sHeros) {
-						h.setBattle(battle);
+				for (Hero hero : Hero.sHeroRepository) {
+					hero.setBattle(battle);
 				}
-			} catch (Battle.InvalidPlayerException e) { }
+			} catch (Battle.InvalidPlayerException e) {
+				e.printStackTrace();
+			}
 
+
+
+/*
 			battle.setPlayerReady(Player.CURRENT);
+*/
 		}
 
 		// http://developer.android.com/reference/android/bluetooth/BluetoothServerSocket.html
 // http://developer.android.com/guide/topics/connectivity/bluetooth.html#ManagingAConnection
 
-
+/*
 		registerReceiver(mReceiver, new IntentFilter(BluetoothDevice.ACTION_FOUND)); // Don't forget to unregister during onDestroy
 		registerReceiver(mReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)); // Don't forget to unregister during onDestroy
 
@@ -139,7 +143,7 @@ e.printStackTrace();
 		} else {
 			Log.v("bluetooth", "not supported");
 		}
-
+*/
 		setContentView(R.layout.activity_main);
 
 		((Button) findViewById(R.id.hero_repository_button)).setOnClickListener(new View.OnClickListener() {

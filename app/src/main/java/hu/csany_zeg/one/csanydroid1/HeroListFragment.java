@@ -2,22 +2,20 @@ package hu.csany_zeg.one.csanydroid1;
 
 import android.app.Activity;
 import android.content.Context;
+import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.TwoLineListItem;
 
-import java.util.ArrayDeque;
 import java.util.Observable;
 
-import hu.csany_zeg.one.csanydroid1.core.LocalHero;
+import hu.csany_zeg.one.csanydroid1.core.Hero;
 
 /**
  * A list fragment representing a list of Heros. This fragment
@@ -44,6 +42,17 @@ public class HeroListFragment extends ListFragment {
 		public void onItemSelected(String id) {
 		}
 	};
+	ArrayAdapter<Hero> arrayAdapter;
+
+	DataSetObserver arrayAdapterObserver = new DataSetObserver() {
+		@Override
+		public void onChanged() {
+			super.onChanged();
+			arrayAdapter.notifyDataSetChanged();
+		}
+	};
+
+
 	/**
 	 * The fragment's current callback object, which is notified of list item
 	 * clicks.
@@ -53,41 +62,50 @@ public class HeroListFragment extends ListFragment {
 	 * The current activated item position. Only used on tablets.
 	 */
 	private int mActivatedPosition = ListView.INVALID_POSITION;
-	
+
+
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
 	 * fragment (e.g. upon screen orientation changes).
 	 */
 	public HeroListFragment() {
 	}
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setListAdapter(new ArrayAdapter<LocalHero>(
-				                                          getActivity(),
-				                                          R.layout.listitem_hero,
-				                                          LocalHero.sHeros) {
+		arrayAdapter = new ArrayAdapter<Hero>(getActivity(), R.layout.listitem_hero, Hero.sHeroRepository) {
 
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
+
 				if (convertView == null) {
 					convertView = View.inflate(getContext(), R.layout.listitem_hero, null);
 				}
 
-				final LocalHero localHero = getItem(position);
+				final Hero hero = getItem(position);
 
-				((TextView) convertView.findViewById(R.id.text1)).setText(localHero.getName() + "");
-				((ImageView) convertView.findViewById(R.id.imageview1)).setImageResource(localHero.IsFavourite() ? android.R.drawable.btn_star_big_on : android.R.drawable.btn_star_big_off);
+				((TextView) convertView.findViewById(R.id.text1)).setText(hero.getName() + "");
+				((ImageView) convertView.findViewById(R.id.imageview1)).setImageResource(hero.IsFavourite() ? android.R.drawable.btn_star_big_on : android.R.drawable.btn_star_big_off);
 
 				return convertView;
 			}
 
-		});
+		};
+
+		Hero.getGlobalObservable().registerObserver(arrayAdapterObserver);
+		setListAdapter(arrayAdapter);
 
 	}
-	
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		Hero.getGlobalObservable().unregisterObserver(arrayAdapterObserver);
+
+	}
+
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
@@ -134,7 +152,7 @@ public class HeroListFragment extends ListFragment {
 
 	public void selectItem(int position, boolean user) {
 
-		mCallbacks.onItemSelected(position >= 0 ? LocalHero.sHeros.get(position).getName() : null);
+		mCallbacks.onItemSelected(position >= 0 ? Hero.getHero(position).getName() : null);
 		setActivatedPosition(position);
 
 		if (!user) getListView().setSelection(position);
