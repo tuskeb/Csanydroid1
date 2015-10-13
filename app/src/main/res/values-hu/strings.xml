@@ -15,4 +15,5 @@
     <string name="offensive_point">Támadóérték</string>
     <string name="defensive_point">Védekezőérték</string>
     <string name="charm_point">Varázserő pont</string>
+    <string name="unnamed_battle">Névtelen Csata</string>
 </resources>

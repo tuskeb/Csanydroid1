@@ -22,4 +22,5 @@
     <string name="offensive_point">Offensive Point</string>
     <string name="defensive_point">Defensive Point</string>
     <string name="charm_point">Charm Point</string>
+    <string name="unnamed_battle">Unnamed Battle</string>
 </resources>
