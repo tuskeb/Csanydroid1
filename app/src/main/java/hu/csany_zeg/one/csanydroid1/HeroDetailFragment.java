@@ -42,6 +42,8 @@ public class HeroDetailFragment extends Fragment {
 	private TextView charmTextViewNum;
 
 	private ImageView charmImageView;
+	private ImageView offensiveImageView;
+	private ImageView defensiveImageView;
 
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
@@ -89,6 +91,54 @@ public class HeroDetailFragment extends Fragment {
 
 	}
 
+	private void loadOffensiveImageView(int imageID)
+	{
+		switch (imageID) {
+			case 0:
+				offensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.heart_1));
+				break;
+			case 1:
+				offensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.shield1));
+				break;
+			case 2:
+				offensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.heart_3));
+				break;
+			case 3:
+				offensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.weapon_1));
+				break;
+			case 4:
+				offensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.weapon_3));
+				break;
+			default:
+				break;
+		}
+
+	}
+
+	private void loadDefensiveImageView(int imageID)
+	{
+		switch (imageID) {
+			case 0:
+				defensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.heart_1));
+				break;
+			case 1:
+				defensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.shield1));
+				break;
+			case 2:
+				defensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.heart_3));
+				break;
+			case 3:
+				defensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.weapon_1));
+				break;
+			case 4:
+				defensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.weapon_3));
+				break;
+			default:
+				break;
+		}
+
+	}
+
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, ViewGroup container,
@@ -110,6 +160,8 @@ public class HeroDetailFragment extends Fragment {
 
 
 			charmImageView = (ImageView) rootView.findViewById(R.id.charmImageView);
+			offensiveImageView = (ImageView) rootView.findViewById(R.id.offensiveImageView);
+			defensiveImageView = (ImageView) rootView.findViewById(R.id.defensiveImageView);
 
 
 
@@ -141,27 +193,33 @@ public class HeroDetailFragment extends Fragment {
 */
 
 			SeekBar seekBar;
-
+//Ez a charmbar programozása
 			seekBar = (SeekBar) rootView.findViewById(R.id.charmBar);
 			seekBar.setMax((int) (Hero.MAX_CHARM - Hero.MIN_CHARM));
 			charmTextViewNum.setText(String.valueOf(Math.round(mHero.getCharm())));
 			loadCharmImageView(mHero.getCharmImageID());
+			loadOffensiveImageView(mHero.getCharmImageID());
+			loadDefensiveImageView(mHero.getCharmImageID());
 			seekBar.setProgress(Math.round(mHero.getCharm() - Hero.MIN_CHARM));
 			seekBar.setEnabled(mHero.canModify());
 			seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 				@Override
 				public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-					int lastBaseCharmImageID=mHero.getCharmImageID();
+					int lastBaseCharmImageID = mHero.getCharmImageID();
+
+
 					try {
 						mHero.setBaseCharm((float) progress + Hero.MIN_CHARM);
 					} catch (Exception e) {
 					}
 
 					charmTextViewNum.setText(String.valueOf(progress + Hero.MIN_CHARM));
-					Log.e(String.valueOf(mHero.getCharmImageID()), "onProgressChanged ");
-					if (lastBaseCharmImageID!=mHero.getCharmImageID()) {
+
+					if (lastBaseCharmImageID != mHero.getCharmImageID()) {
 						loadCharmImageView(mHero.getCharmImageID());
 					}
+
+
 				}
 
 				@Override
@@ -173,7 +231,7 @@ public class HeroDetailFragment extends Fragment {
 				}
 			});
 
-
+//Ez a offensivebar porgramozása
 			seekBar = (SeekBar) rootView.findViewById(R.id.offensiveBar);
 			seekBar.setMax((int) (Hero.MAX_OFFENSIVE_POINT - Hero.MIN_OFFENSIVE_POINT));
 			offensiveTextViewNum.setText(String.valueOf(Math.round(mHero.getBaseOffensivePoint())));
@@ -182,8 +240,18 @@ public class HeroDetailFragment extends Fragment {
 			seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 				@Override
 				public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+					int lastBaseOffensiveImageID = mHero.getCharmImageID();
 					mHero.setOffensivePoint((float) progress + Hero.MIN_OFFENSIVE_POINT);
 					offensiveTextViewNum.setText(String.valueOf(progress + Hero.MIN_OFFENSIVE_POINT));
+
+					try{
+
+						mHero.setOffensivePoint((float) progress+Hero.MIN_OFFENSIVE_POINT);
+					}
+					catch (Exception e){ }
+					if (lastBaseOffensiveImageID != mHero.getOffensiveImageID()) {
+						loadOffensiveImageView(mHero.getOffensiveImageID());
+					}
 				}
 
 				@Override
@@ -194,7 +262,7 @@ public class HeroDetailFragment extends Fragment {
 				public void onStopTrackingTouch(SeekBar seekBar) {
 				}
 			});
-
+//Ez a defensivebar programozása
 			seekBar = (SeekBar) rootView.findViewById(R.id.defensiveBar);
 			seekBar.setMax((int) (Hero.MAX_DEFENSIVE_POINT - Hero.MIN_DEFENSIVE_POINT));
 			defensiveTextViewNum.setText(String.valueOf(Math.round(mHero.getBaseDefensivePoint())));
@@ -203,9 +271,17 @@ public class HeroDetailFragment extends Fragment {
 			seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 				@Override
 				public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+					int lastBaseDefensiveImageID = mHero.getCharmImageID();
 					defensiveTextViewNum=(TextView)rootView.findViewById(R.id.defensiveTextViewNum);
 					mHero.setDefensivePoint((float) progress + Hero.MIN_DEFENSIVE_POINT);
 					defensiveTextViewNum.setText(String.valueOf(progress + Hero.MIN_DEFENSIVE_POINT));
+					try {
+						mHero.setDefensivePoint((float) progress + Hero.MIN_DEFENSIVE_POINT);
+					}
+					catch (Exception e){}
+					if (lastBaseDefensiveImageID != mHero.getDefensiveImageID()) {
+						loadDefensiveImageView(mHero.getDefensiveImageID());
+					}
 				}
 
 				@Override
@@ -222,40 +298,40 @@ public class HeroDetailFragment extends Fragment {
 				@Override
 				public void onClick(View v) {
 					AlertDialog alert = new AlertDialog.Builder(getActivity())
-							                    .setTitle("Confirm")
-							                    .setMessage("Do you sure want to remove this hero from your repository?")
-							                    .setPositiveButton(getString(android.R.string.yes), new DialogInterface.OnClickListener() {
-								                    @Override
-								                    public void onClick(DialogInterface dialog, int which) {
+							.setTitle("Confirm")
+							.setMessage("Do you sure want to remove this hero from your repository?")
+							.setPositiveButton(getString(android.R.string.yes), new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
 
-									                    try {
-										                    final int position = mHero.getRepositoryIndex();
+									try {
+										final int position = mHero.getRepositoryIndex();
 
-										                    mHero.remove();
+										mHero.remove();
 
-										                    HeroListFragment heroListFragment = (HeroListFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.hero_list);
-										                    ((ArrayAdapter) heroListFragment.getListAdapter()).notifyDataSetChanged();
+										HeroListFragment heroListFragment = (HeroListFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.hero_list);
+										((ArrayAdapter) heroListFragment.getListAdapter()).notifyDataSetChanged();
 
-										                    if (Hero.countHeroes() == position) {
-											                    heroListFragment.selectItem(position - 1, false);
-										                    } else {
-											                    heroListFragment.selectItem(position, false);
-										                    }
+										if (Hero.countHeroes() == position) {
+											heroListFragment.selectItem(position - 1, false);
+										} else {
+											heroListFragment.selectItem(position, false);
+										}
 
-									                    } catch (Exception e) {
+									} catch (Exception e) {
 
-									                    }
-									                    dialog.dismiss();
-								                    }
+									}
+									dialog.dismiss();
+								}
 
-							                    })
-							                    .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
-								                    @Override
-								                    public void onClick(DialogInterface dialog, int which) {
-									                    dialog.dismiss();
-								                    }
-							                    })
-							                    .create();
+							})
+							.setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									dialog.dismiss();
+								}
+							})
+							.create();
 					alert.show();
 
 				}
