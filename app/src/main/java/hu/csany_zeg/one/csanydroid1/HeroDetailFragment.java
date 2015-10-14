@@ -71,21 +71,22 @@ public class HeroDetailFragment extends Fragment {
 	{
 		switch (imageID) {
 			case 0:
-				charmImageView.setImageDrawable(getResources().getDrawable(R.drawable.heart_1));
+				charmImageView.setImageDrawable(getResources().getDrawable(R.drawable.magic1));
 				break;
 			case 1:
-				charmImageView.setImageDrawable(getResources().getDrawable(R.drawable.shield1));
+				charmImageView.setImageDrawable(getResources().getDrawable(R.drawable.magic2));
 				break;
 			case 2:
-				charmImageView.setImageDrawable(getResources().getDrawable(R.drawable.heart_3));
+				charmImageView.setImageDrawable(getResources().getDrawable(R.drawable.magic3));
 				break;
 			case 3:
-				charmImageView.setImageDrawable(getResources().getDrawable(R.drawable.weapon_1));
+				charmImageView.setImageDrawable(getResources().getDrawable(R.drawable.magic4));
 				break;
 			case 4:
-				charmImageView.setImageDrawable(getResources().getDrawable(R.drawable.weapon_3));
+				charmImageView.setImageDrawable(getResources().getDrawable(R.drawable.magic5));
 				break;
 			default:
+				//charmImageView.setImageDrawable(getResources().getDrawable(R.drawable.weapon_3));
 				break;
 		}
 
@@ -95,21 +96,22 @@ public class HeroDetailFragment extends Fragment {
 	{
 		switch (imageID) {
 			case 0:
-				offensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.heart_1));
+				offensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.weapon_1s));
 				break;
 			case 1:
-				offensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.shield1));
+				offensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.weapon_2s));
 				break;
 			case 2:
-				offensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.heart_3));
-				break;
-			case 3:
-				offensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.weapon_1));
-				break;
-			case 4:
 				offensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.weapon_3));
 				break;
+			case 3:
+				offensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.weapon_4s));
+				break;
+			case 4:
+				offensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.weapon_5s));
+				break;
 			default:
+				//offensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.weapon_3));
 				break;
 		}
 
@@ -119,21 +121,22 @@ public class HeroDetailFragment extends Fragment {
 	{
 		switch (imageID) {
 			case 0:
-				defensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.heart_1));
-				break;
-			case 1:
 				defensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.shield1));
 				break;
+			case 1:
+				defensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.shield2));
+				break;
 			case 2:
-				defensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.heart_3));
+				defensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.shield3));
 				break;
 			case 3:
-				defensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.weapon_1));
+				defensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.shield4));
 				break;
 			case 4:
-				defensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.weapon_3));
+				defensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.shield5));
 				break;
 			default:
+				//defensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.weapon_3));
 				break;
 		}
 
@@ -193,13 +196,82 @@ public class HeroDetailFragment extends Fragment {
 */
 
 			SeekBar seekBar;
+
+
+
+//Ez a offensivebar porgramozása
+			seekBar = (SeekBar) rootView.findViewById(R.id.offensiveBar);
+			seekBar.setMax((int) (Hero.MAX_OFFENSIVE_POINT - Hero.MIN_OFFENSIVE_POINT));
+			offensiveTextViewNum.setText(String.valueOf(Math.round(mHero.getBaseOffensivePoint())));
+			seekBar.setProgress(Math.round(Math.round(mHero.getBaseOffensivePoint() - Hero.MIN_OFFENSIVE_POINT)));
+			seekBar.setEnabled(mHero.canModify());
+			loadOffensiveImageView(mHero.getOffensiveImageID());
+			seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+				@Override
+				public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+					int lastBaseOffensiveImageID = mHero.getCharmImageID();
+					mHero.setOffensivePoint((float) progress + Hero.MIN_OFFENSIVE_POINT);
+					offensiveTextViewNum.setText(String.valueOf(progress + Hero.MIN_OFFENSIVE_POINT));
+
+					try{
+
+						mHero.setOffensivePoint((float) progress+Hero.MIN_OFFENSIVE_POINT);
+					}
+					catch (Exception e){ }
+					if (lastBaseOffensiveImageID != mHero.getOffensiveImageID()) {
+						loadOffensiveImageView(mHero.getOffensiveImageID());
+					}
+				}
+
+				@Override
+				public void onStartTrackingTouch(SeekBar seekBar) {
+				}
+
+				@Override
+				public void onStopTrackingTouch(SeekBar seekBar) {
+				}
+			});
+
+
+
+//Ez a defensivebar programozása
+			seekBar = (SeekBar) rootView.findViewById(R.id.defensiveBar);
+			seekBar.setMax((int) (Hero.MAX_DEFENSIVE_POINT - Hero.MIN_DEFENSIVE_POINT));
+			defensiveTextViewNum.setText(String.valueOf(Math.round(mHero.getBaseDefensivePoint())));
+			seekBar.setProgress(Math.round(Math.round(mHero.getBaseDefensivePoint() - Hero.MIN_DEFENSIVE_POINT)));
+			seekBar.setEnabled(mHero.canModify());
+			loadDefensiveImageView(mHero.getDefensiveImageID());
+			seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+				@Override
+				public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+					int lastBaseDefensiveImageID = mHero.getCharmImageID();
+					defensiveTextViewNum=(TextView)rootView.findViewById(R.id.defensiveTextViewNum);
+					mHero.setDefensivePoint((float) progress + Hero.MIN_DEFENSIVE_POINT);
+					defensiveTextViewNum.setText(String.valueOf(progress + Hero.MIN_DEFENSIVE_POINT));
+					try {
+						mHero.setDefensivePoint((float) progress + Hero.MIN_DEFENSIVE_POINT);
+					}
+					catch (Exception e){}
+					if (lastBaseDefensiveImageID != mHero.getDefensiveImageID()) {
+						loadDefensiveImageView(mHero.getDefensiveImageID());
+					}
+				}
+
+				@Override
+				public void onStartTrackingTouch(SeekBar seekBar) { }
+
+				@Override
+				public void onStopTrackingTouch(SeekBar seekBar) { }
+			});
+
+
+
+
 //Ez a charmbar programozása
 			seekBar = (SeekBar) rootView.findViewById(R.id.charmBar);
 			seekBar.setMax((int) (Hero.MAX_CHARM - Hero.MIN_CHARM));
 			charmTextViewNum.setText(String.valueOf(Math.round(mHero.getCharm())));
 			loadCharmImageView(mHero.getCharmImageID());
-			loadOffensiveImageView(mHero.getCharmImageID());
-			loadDefensiveImageView(mHero.getCharmImageID());
 			seekBar.setProgress(Math.round(mHero.getCharm() - Hero.MIN_CHARM));
 			seekBar.setEnabled(mHero.canModify());
 			seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -231,65 +303,9 @@ public class HeroDetailFragment extends Fragment {
 				}
 			});
 
-//Ez a offensivebar porgramozása
-			seekBar = (SeekBar) rootView.findViewById(R.id.offensiveBar);
-			seekBar.setMax((int) (Hero.MAX_OFFENSIVE_POINT - Hero.MIN_OFFENSIVE_POINT));
-			offensiveTextViewNum.setText(String.valueOf(Math.round(mHero.getBaseOffensivePoint())));
-			seekBar.setProgress(Math.round(Math.round(mHero.getBaseOffensivePoint() - Hero.MIN_OFFENSIVE_POINT)));
-			seekBar.setEnabled(mHero.canModify());
-			seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-				@Override
-				public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-					int lastBaseOffensiveImageID = mHero.getCharmImageID();
-					mHero.setOffensivePoint((float) progress + Hero.MIN_OFFENSIVE_POINT);
-					offensiveTextViewNum.setText(String.valueOf(progress + Hero.MIN_OFFENSIVE_POINT));
 
-					try{
 
-						mHero.setOffensivePoint((float) progress+Hero.MIN_OFFENSIVE_POINT);
-					}
-					catch (Exception e){ }
-					if (lastBaseOffensiveImageID != mHero.getOffensiveImageID()) {
-						loadOffensiveImageView(mHero.getOffensiveImageID());
-					}
-				}
 
-				@Override
-				public void onStartTrackingTouch(SeekBar seekBar) {
-				}
-
-				@Override
-				public void onStopTrackingTouch(SeekBar seekBar) {
-				}
-			});
-//Ez a defensivebar programozása
-			seekBar = (SeekBar) rootView.findViewById(R.id.defensiveBar);
-			seekBar.setMax((int) (Hero.MAX_DEFENSIVE_POINT - Hero.MIN_DEFENSIVE_POINT));
-			defensiveTextViewNum.setText(String.valueOf(Math.round(mHero.getBaseDefensivePoint())));
-			seekBar.setProgress(Math.round(Math.round(mHero.getBaseDefensivePoint() - Hero.MIN_DEFENSIVE_POINT)));
-			seekBar.setEnabled(mHero.canModify());
-			seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-				@Override
-				public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-					int lastBaseDefensiveImageID = mHero.getCharmImageID();
-					defensiveTextViewNum=(TextView)rootView.findViewById(R.id.defensiveTextViewNum);
-					mHero.setDefensivePoint((float) progress + Hero.MIN_DEFENSIVE_POINT);
-					defensiveTextViewNum.setText(String.valueOf(progress + Hero.MIN_DEFENSIVE_POINT));
-					try {
-						mHero.setDefensivePoint((float) progress + Hero.MIN_DEFENSIVE_POINT);
-					}
-					catch (Exception e){}
-					if (lastBaseDefensiveImageID != mHero.getDefensiveImageID()) {
-						loadDefensiveImageView(mHero.getDefensiveImageID());
-					}
-				}
-
-				@Override
-				public void onStartTrackingTouch(SeekBar seekBar) { }
-
-				@Override
-				public void onStopTrackingTouch(SeekBar seekBar) { }
-			});
 
 			ImageButton button;
 			button = (ImageButton) rootView.findViewById(R.id.remove_hero);

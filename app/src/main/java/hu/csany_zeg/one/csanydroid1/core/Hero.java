@@ -148,19 +148,19 @@ private static DataSetObservable mGlobalObservable = new DataSetObservable();
 
 	public int getCharmImageID()
 	{
-		return Math.round(5f*((getCharm()-MIN_CHARM)/(MAX_CHARM-MIN_CHARM)));
+		return (int)(5f*((getCharm()-MIN_CHARM)/(MAX_CHARM-MIN_CHARM)));
 		//return (int)getCharm();
 	}
 
 	public int getOffensiveImageID()
 	{
-		return Math.round(5f*((getBaseOffensivePoint()-MIN_OFFENSIVE_POINT)/(MAX_OFFENSIVE_POINT-MIN_OFFENSIVE_POINT)));
+		return (int)(5f*((getBaseOffensivePoint()-MIN_OFFENSIVE_POINT)/(MAX_OFFENSIVE_POINT-MIN_OFFENSIVE_POINT)));
 
 	}
 
 	public int getDefensiveImageID()
 	{
-		return Math.round(5f*((getBaseDefensivePoint()-MIN_DEFENSIVE_POINT)/(MAX_DEFENSIVE_POINT-MIN_DEFENSIVE_POINT)));
+		return (int)(5f*((getBaseDefensivePoint()-MIN_DEFENSIVE_POINT)/(MAX_DEFENSIVE_POINT-MIN_DEFENSIVE_POINT)));
 
 	}
 
