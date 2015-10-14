@@ -64,7 +64,7 @@ public class HeroDetailFragment extends Fragment {
 	@Override
 	public View onCreateView(final LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
-		View rootView;
+		final View rootView;
 
 		if (mHero == null) {
 			rootView = inflater.inflate(R.layout.fragment_hero_overalldetail, container, false);
@@ -72,9 +72,11 @@ public class HeroDetailFragment extends Fragment {
 		} else {
 			rootView = inflater.inflate(R.layout.fragment_hero_detail, container, false);
 
-			final TextView textView;
+			//final TextView textViewCharmNum;
 
-			textView = (TextView) rootView.findViewById(R.id.charmTextView);
+
+			charmTextViewNum = (TextView) rootView.findViewById(R.id.charmTextViewNum);
+			defensiveTextViewNum = (TextView) rootView.findViewById(R.id.defensiveTextViewNum);
 			offensiveTextViewNum = (TextView) rootView.findViewById(R.id.offensiveTextViewNum);
 
 			EditText editText;
@@ -108,7 +110,7 @@ public class HeroDetailFragment extends Fragment {
 
 			seekBar = (SeekBar) rootView.findViewById(R.id.charmBar);
 			seekBar.setMax((int) (Hero.MAX_CHARM - Hero.MIN_CHARM));
-			textView.setText(String.valueOf(mHero.getCharm()));
+			charmTextViewNum.setText(String.valueOf(Math.round(mHero.getCharm())));
 			seekBar.setProgress(Math.round(mHero.getCharm() - Hero.MIN_CHARM));
 			seekBar.setEnabled(mHero.canModify());
 			seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -116,21 +118,26 @@ public class HeroDetailFragment extends Fragment {
 				public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 					try {
 						mHero.setBaseCharm((float) progress + Hero.MIN_CHARM);
-					} catch (Exception e) { }
+					} catch (Exception e) {
+					}
+
 					charmTextViewNum.setText(String.valueOf(progress + Hero.MIN_CHARM));
 				}
 
 				@Override
-				public void onStartTrackingTouch(SeekBar seekBar) { }
+				public void onStartTrackingTouch(SeekBar seekBar) {
+				}
 
 				@Override
-				public void onStopTrackingTouch(SeekBar seekBar) { }
+				public void onStopTrackingTouch(SeekBar seekBar) {
+				}
 			});
 
 
 			seekBar = (SeekBar) rootView.findViewById(R.id.offensiveBar);
 			seekBar.setMax((int) (Hero.MAX_OFFENSIVE_POINT - Hero.MIN_OFFENSIVE_POINT));
-			seekBar.setProgress(Math.round(mHero.getBaseOffensivePoint() - Hero.MIN_OFFENSIVE_POINT));
+			offensiveTextViewNum.setText(String.valueOf(Math.round(mHero.getBaseOffensivePoint())));
+			seekBar.setProgress(Math.round(Math.round(mHero.getBaseOffensivePoint() - Hero.MIN_OFFENSIVE_POINT)));
 			seekBar.setEnabled(mHero.canModify());
 			seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 				@Override
@@ -140,19 +147,23 @@ public class HeroDetailFragment extends Fragment {
 				}
 
 				@Override
-				public void onStartTrackingTouch(SeekBar seekBar) { }
+				public void onStartTrackingTouch(SeekBar seekBar) {
+				}
 
 				@Override
-				public void onStopTrackingTouch(SeekBar seekBar) { }
+				public void onStopTrackingTouch(SeekBar seekBar) {
+				}
 			});
 
 			seekBar = (SeekBar) rootView.findViewById(R.id.defensiveBar);
 			seekBar.setMax((int) (Hero.MAX_DEFENSIVE_POINT - Hero.MIN_DEFENSIVE_POINT));
-			seekBar.setProgress(Math.round(mHero.getBaseDefensivePoint() - Hero.MIN_DEFENSIVE_POINT));
+			defensiveTextViewNum.setText(String.valueOf(Math.round(mHero.getBaseDefensivePoint())));
+			seekBar.setProgress(Math.round(Math.round(mHero.getBaseDefensivePoint() - Hero.MIN_DEFENSIVE_POINT)));
 			seekBar.setEnabled(mHero.canModify());
 			seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 				@Override
 				public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+					defensiveTextViewNum=(TextView)rootView.findViewById(R.id.defensiveTextViewNum);
 					mHero.setDefensivePoint((float) progress + Hero.MIN_DEFENSIVE_POINT);
 					defensiveTextViewNum.setText(String.valueOf(progress + Hero.MIN_DEFENSIVE_POINT));
 				}
