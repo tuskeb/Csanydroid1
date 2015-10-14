@@ -1,67 +1,69 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+<RelativeLayout
+    android:id="@+id/linearLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    tools:context=".MainActivityFragment"
-    android:id="@+id/linearLayout"
-              android:weightSum="1">
+    android:weightSum="1"
+    tools:context=".MainActivityFragment">
 
     <TextView
+        android:id="@+id/textView"
+        style="@style/textview_style"
         android:layout_width="386dp"
         android:layout_height="wrap_content"
-        android:text="Battle Game"
-        android:id="@+id/textView"
-        android:layout_gravity="left|right"
-        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="left|right"
+        android:text="@string/app_name"
         android:textAlignment="center"
-        android:textAllCaps="false"
-        style="@style/textview_style" />
+        android:textAllCaps="false"/>
 
     <LinearLayout
-        android:orientation="vertical"
+        android:id="@+id/linearLayout2"
+        style="@style/teszt_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/linearLayout2"
-        android:layout_below="@+id/textView"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        style="@style/teszt_layout">
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/textView"
+        android:orientation="vertical">
 
         <Button
+            android:id="@+id/hero_repository_button"
+            style="@style/button_style"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hero repository"
-            android:id="@+id/hero_repository_button"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_alignTop="@+id/view_battles_button"
             android:layout_centerVertical="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
             android:layout_gravity="center_horizontal"
-            style="@style/button_style" />
+            android:text="Hero repository"/>
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Create battle"
             android:id="@+id/new_battle_button"
-            android:layout_centerVertical="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_gravity="center_horizontal"
-            style="@style/button_style" />
-
-        <Button
+            style="@style/button_style"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Battles"
-            android:id="@+id/view_battles_button"
-            android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
             android:layout_gravity="center_horizontal"
-            style="@style/button_style" />
+            android:text="Create battle"/>
+
+        <Button
+            android:id="@+id/view_battles_button"
+            style="@style/button_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_horizontal"
+            android:text="Battles"/>
     </LinearLayout>
 
 </RelativeLayout>

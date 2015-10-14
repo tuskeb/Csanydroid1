@@ -18,9 +18,11 @@ import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import hu.csany_zeg.one.csanydroid1.core.Battle;
+import hu.csany_zeg.one.csanydroid1.core.Hero;
 
 public class BattleActivity extends AppCompatActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 	
@@ -110,6 +112,14 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
 		                         Bundle savedInstanceState) {
 
 			View rootView = inflater.inflate(R.layout.fragment_battle, container, false);
+LinearLayout linearLayout = (LinearLayout)rootView.findViewById(R.id.hero_linear_layout);
+			HeroView heroView;
+
+			heroView = new HeroView(this.getContext(), Hero.getHero(0), true);
+			linearLayout.addView(heroView);
+
+			heroView = new HeroView(this.getContext(), Hero.getHero(1), false);
+			linearLayout.addView(heroView);
 
 			return rootView;
 		}

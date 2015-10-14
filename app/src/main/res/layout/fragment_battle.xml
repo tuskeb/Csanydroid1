@@ -4,8 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
+    android:id="@+id/hero_linear_layout"
     tools:context="hu.csany_zeg.one.csanydroid1.BattleActivity$PlaceholderFragment">
 
+    <!--
     <TextView
         android:id="@+id/section_label"
         android:layout_width="wrap_content"
@@ -29,5 +31,5 @@
         android:layout_toEndOf="@+id/section_label"
         android:layout_toRightOf="@+id/section_label"
         android:text="New CheckBox" />
-
+-->
 </LinearLayout>

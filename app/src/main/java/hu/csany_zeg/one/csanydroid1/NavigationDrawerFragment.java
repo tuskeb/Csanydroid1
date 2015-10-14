@@ -32,7 +32,6 @@ import android.widget.Toast;
 import android.widget.Toolbar;
 
 import hu.csany_zeg.one.csanydroid1.core.Battle;
-import hu.csany_zeg.one.csanydroid1.core.LocalHero;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.

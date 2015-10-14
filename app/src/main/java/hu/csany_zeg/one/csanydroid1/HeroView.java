@@ -26,7 +26,7 @@ public class HeroView extends View {
 	final boolean mIsAttacker;
 	private final float FRICTION = .15f;
 	private final float STICKING = FRICTION * 2f;
-	Bitmap heartBitmap; // TODO make static
+	private static Bitmap heartBitmap = null;
 	/*
 		@Override
 		protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -49,11 +49,11 @@ public class HeroView extends View {
 	private float y = 40;
 	private boolean mIsTouched = false;
 
-	public HeroView(final Context context, Hero hero) {
+	public HeroView(final Context context, Hero hero, boolean leftSide) {
 		super(context);
 
 		this.mHero = hero;
-		this.mIsAttacker = (hero == null);
+		this.mIsAttacker = leftSide;//hero.getBattle().geta;
 
 	    /*
 	    Timer timer = new Timer(false);
@@ -81,14 +81,17 @@ public class HeroView extends View {
 			@Override
 			public void onViewAttachedToWindow(View v) {
 				HeroView.this.mHero.registerObserver(dso);
-				heartBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.heart);
+				if(heartBitmap == null)
+					heartBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.heart);
 				mask = Bitmap.createBitmap(32, 32, Bitmap.Config.ARGB_8888);
+				onLifeLost(100);
+
 			}
 
 			@Override
 			public void onViewDetachedFromWindow(View v) {
 				HeroView.this.mHero.unregisterObserver(dso);
-				heartBitmap.recycle();
+				//heartBitmap.recycle();
 				mask.recycle();
 			}
 		});
@@ -98,7 +101,7 @@ public class HeroView extends View {
 
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-
+/*
 		final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
 		final int widthSize = MeasureSpec.getSize(widthMeasureSpec);
 		final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
@@ -131,16 +134,36 @@ public class HeroView extends View {
 			default:
 				height = desiredHeight;
 
-		}
+		}*/
 
-		setMeasuredDimension(mIsAttacker ? widthMeasureSpec / 2 - 10 : widthMeasureSpec - 10, heightMeasureSpec);
+		setMeasuredDimension(mIsAttacker ? widthMeasureSpec / 2 : widthMeasureSpec, heightMeasureSpec);
+
+	}
+
+	public void onLifeLost(float lostLife) {
+		addParticles(getHealthBarWidth(), 26, 10);
+	}
 
 
+	@Override
+	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+		super.onSizeChanged(w, h, oldw, oldh);
+
+		this.w = w - bitmap.getWidth();
+		this.h = h - bitmap.getHeight();
+
+	}
+
+	private static final float LIFE_PER_HEART = 100;
+
+	private float getHealthBarWidth() {
+
+		float life = mHero.getHealthPoint();
+		return (32f) * (life / LIFE_PER_HEART);
 	}
 
 	private void drawHealth(Canvas canvas) {
 
-		final float LIFE_PER_HEART = 100;
 		float life = mHero.getHealthPoint();
 		byte i = 0;
 
@@ -150,7 +173,7 @@ public class HeroView extends View {
 
 		{
 			Canvas maskCanvas = new Canvas(mask);
-			maskCanvas.drawRect(0, 0, (float) Math.floor(32 * life / LIFE_PER_HEART), 32, new Paint());
+			maskCanvas.drawRect(0, 0, (float) Math.floor(heartBitmap.getWidth() * life / LIFE_PER_HEART), 32, new Paint());
 
 			// you can change original image here and draw anything you want to be masked on it.
 
@@ -169,6 +192,22 @@ public class HeroView extends View {
 
 	}
 
+
+	Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.hero1_blue);
+	int w,h;
+	float tesztX,tesztY;
+	private void drawRacz(Canvas canvas) {
+		canvas.drawBitmap(bitmap, (float)(w*Math.random()), h, mPaint);
+		h+=2;
+		h %= this.getMeasuredHeight() - bitmap.getHeight();
+		//bitmap.recycle();
+
+
+
+		canvas.drawRect(tesztX-25, tesztY-25, tesztX + 25, tesztY + 25, mPaint);
+		invalidate();
+	}
+
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 		int w = this.getMeasuredWidth(), h = this.getMeasuredHeight();
@@ -181,6 +220,10 @@ public class HeroView extends View {
 		canvas.drawText(mHero.getName(), 50, y, mPaint);
 
 		drawHealth(canvas);
+
+		//canvas.drawArc(200, 200, 250, 300,0, (float)Math.PI, true, mPaint);
+
+		drawRacz(canvas);
 
 		mPaint.setTextSize(20.0f);
 		canvas.drawText(mHero.getHealthPoint() + "", 50, y + 20, mPaint);
@@ -212,16 +255,22 @@ public class HeroView extends View {
 	public boolean onTouchEvent(MotionEvent event) {
 		switch (event.getAction()) {
 			case MotionEvent.ACTION_DOWN:
+				/*
 				mIsTouched = true;
 				if (speedY == 0) {
-					//addParticles(event.getX(), event.getY(), 16 + (int)(Math.random() * 8));
+					addParticles(event.getX(), event.getY(), 16 + (int)(Math.random() * 8));
 
 					initialY = event.getY();
 					diffY = initialY - y;
 					beginTime = System.nanoTime();
 				}
+				*/
+				tesztX = event.getX();
+				tesztY = event.getY();
+				invalidate();
 				break;
 			case MotionEvent.ACTION_UP:
+				/*
 				mIsTouched = false;
 				if (speedY == 0) {
 					float elapsedSeconds = (System.nanoTime() - beginTime) / 1e9f;
@@ -229,14 +278,23 @@ public class HeroView extends View {
 						speedY = (event.getY() - initialY) / elapsedSeconds / 60f;
 					}
 				}
+				*/
+				tesztX=0;
+				tesztY=0;
 				invalidate();
 				break;
 			case MotionEvent.ACTION_MOVE:
+				/*
 				// TODO csillapítás után újra mozog
 				if (speedY == 0) {
 					y = event.getY() - diffY;
 					invalidate();
+
 				}
+				*/
+				tesztX = event.getX();
+				tesztY = event.getY();
+				invalidate();
 		}
 
 		//Animation animation1 = AnimationUtils.loadAnimation(this.getContext(), R.anim.barack);
