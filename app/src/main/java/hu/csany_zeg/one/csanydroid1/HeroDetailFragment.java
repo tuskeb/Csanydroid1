@@ -1,6 +1,7 @@
 package hu.csany_zeg.one.csanydroid1;
 
 import android.content.DialogInterface;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -39,6 +41,8 @@ public class HeroDetailFragment extends Fragment {
 	private TextView defensiveTextViewNum;
 	private TextView charmTextViewNum;
 
+	private ImageView charmImageView;
+
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
 	 * fragment (e.g. upon screen orientation changes).
@@ -60,7 +64,32 @@ public class HeroDetailFragment extends Fragment {
 		} else Log.v("mama", "karcsi");
 
 	}
-	
+
+	private void loadCharmImageView(int imageID)
+	{
+		switch (imageID) {
+			case 0:
+				charmImageView.setImageDrawable(getResources().getDrawable(R.drawable.heart_1));
+				break;
+			case 1:
+				charmImageView.setImageDrawable(getResources().getDrawable(R.drawable.shield1));
+				break;
+			case 2:
+				charmImageView.setImageDrawable(getResources().getDrawable(R.drawable.heart_3));
+				break;
+			case 3:
+				charmImageView.setImageDrawable(getResources().getDrawable(R.drawable.weapon_1));
+				break;
+			case 4:
+				charmImageView.setImageDrawable(getResources().getDrawable(R.drawable.weapon_3));
+				break;
+			default:
+				break;
+		}
+
+	}
+
+
 	@Override
 	public View onCreateView(final LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
@@ -78,6 +107,11 @@ public class HeroDetailFragment extends Fragment {
 			charmTextViewNum = (TextView) rootView.findViewById(R.id.charmTextViewNum);
 			defensiveTextViewNum = (TextView) rootView.findViewById(R.id.defensiveTextViewNum);
 			offensiveTextViewNum = (TextView) rootView.findViewById(R.id.offensiveTextViewNum);
+
+
+			charmImageView = (ImageView) rootView.findViewById(R.id.charmImageView);
+
+
 
 			EditText editText;
 
@@ -111,17 +145,23 @@ public class HeroDetailFragment extends Fragment {
 			seekBar = (SeekBar) rootView.findViewById(R.id.charmBar);
 			seekBar.setMax((int) (Hero.MAX_CHARM - Hero.MIN_CHARM));
 			charmTextViewNum.setText(String.valueOf(Math.round(mHero.getCharm())));
+			loadCharmImageView(mHero.getCharmImageID());
 			seekBar.setProgress(Math.round(mHero.getCharm() - Hero.MIN_CHARM));
 			seekBar.setEnabled(mHero.canModify());
 			seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 				@Override
 				public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+					int lastBaseCharmImageID=mHero.getCharmImageID();
 					try {
 						mHero.setBaseCharm((float) progress + Hero.MIN_CHARM);
 					} catch (Exception e) {
 					}
 
 					charmTextViewNum.setText(String.valueOf(progress + Hero.MIN_CHARM));
+					Log.e(String.valueOf(mHero.getCharmImageID()), "onProgressChanged ");
+					if (lastBaseCharmImageID!=mHero.getCharmImageID()) {
+						loadCharmImageView(mHero.getCharmImageID());
+					}
 				}
 
 				@Override

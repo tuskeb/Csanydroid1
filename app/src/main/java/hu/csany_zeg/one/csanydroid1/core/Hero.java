@@ -146,6 +146,12 @@ private static DataSetObservable mGlobalObservable = new DataSetObservable();
 		}
 	}
 
+	public int getCharmImageID()
+	{
+		return Math.round(5f*((getCharm()-MIN_CHARM)/(MAX_CHARM-MIN_CHARM)));
+		//return (int)getCharm();
+	}
+
 	public float getDrunkCharm() {
 		return mDrunkCharm;
 	}
