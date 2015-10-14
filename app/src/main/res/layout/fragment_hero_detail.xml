@@ -66,6 +66,7 @@
         android:layout_alignRight="@+id/defensiveTextView"
         android:layout_alignEnd="@+id/defensiveTextView" />
 
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -129,16 +130,16 @@
         android:layout_alignParentEnd="true" />
 
     <TextView
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="@string/charm_point"
-        android:id="@+id/charmTextView"
-        android:layout_above="@+id/charmBar"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/defensiveTextView"
-        android:layout_alignEnd="@+id/defensiveTextView" />
+    android:layout_width="200dp"
+    android:layout_height="wrap_content"
+    android:textAppearance="?android:attr/textAppearanceSmall"
+    android:text="@string/charm_point"
+    android:id="@+id/charmTextView"
+    android:layout_above="@+id/charmBar"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentStart="true"
+    android:layout_alignRight="@+id/defensiveTextView"
+    android:layout_alignEnd="@+id/defensiveTextView" />
 
     <TextView
         android:layout_width="wrap_content"

@@ -1,69 +1,67 @@
-<RelativeLayout
-    android:id="@+id/linearLayout"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:weightSum="1"
-    tools:context=".MainActivityFragment">
+    tools:context=".MainActivityFragment"
+    android:id="@+id/linearLayout"
+              android:weightSum="1">
 
     <TextView
-        android:id="@+id/textView"
-        style="@style/textview_style"
         android:layout_width="386dp"
         android:layout_height="wrap_content"
+        android:text="Battle Game"
+        android:id="@+id/textView"
+        android:layout_gravity="left|right"
+        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_gravity="left|right"
-        android:text="@string/app_name"
         android:textAlignment="center"
-        android:textAllCaps="false"/>
+        android:textAllCaps="false"
+        style="@style/textview_style" />
 
     <LinearLayout
-        android:id="@+id/linearLayout2"
-        style="@style/teszt_layout"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
+        android:id="@+id/linearLayout2"
         android:layout_below="@+id/textView"
-        android:orientation="vertical">
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        style="@style/teszt_layout">
 
         <Button
-            android:id="@+id/hero_repository_button"
-            style="@style/button_style"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
+            android:text="Hero repository"
+            android:id="@+id/hero_repository_button"
             android:layout_alignTop="@+id/view_battles_button"
             android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_gravity="center_horizontal"
-            android:text="Hero repository"/>
+            style="@style/button_style" />
 
         <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create battle"
             android:id="@+id/new_battle_button"
-            style="@style/button_style"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
             android:layout_gravity="center_horizontal"
-            android:text="Create battle"/>
+            style="@style/button_style" />
 
         <Button
-            android:id="@+id/view_battles_button"
-            style="@style/button_style"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="Battles"
+            android:id="@+id/view_battles_button"
+            android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
             android:layout_gravity="center_horizontal"
-            android:text="Battles"/>
+            style="@style/button_style" />
     </LinearLayout>
 
 </RelativeLayout>
