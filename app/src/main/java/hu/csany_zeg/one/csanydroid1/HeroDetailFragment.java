@@ -86,7 +86,7 @@ public class HeroDetailFragment extends Fragment {
 				charmImageView.setImageDrawable(getResources().getDrawable(R.drawable.magic5));
 				break;
 			default:
-				//charmImageView.setImageDrawable(getResources().getDrawable(R.drawable.weapon_3));
+
 				break;
 		}
 
@@ -111,7 +111,7 @@ public class HeroDetailFragment extends Fragment {
 				offensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.weapon_5s));
 				break;
 			default:
-				//offensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.weapon_3));
+
 				break;
 		}
 
@@ -136,7 +136,7 @@ public class HeroDetailFragment extends Fragment {
 				defensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.shield5));
 				break;
 			default:
-				//defensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.weapon_3));
+
 				break;
 		}
 
