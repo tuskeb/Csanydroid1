@@ -38,6 +38,16 @@ private static DataSetObservable mGlobalObservable = new DataSetObservable();
 	private Battle mBattle = null;
 	private HeroParams mParams = null;
 
+	public int getPictureID() {
+		return mPictureID;
+	}
+
+	public void setPictureID(int PictureID) {
+		this.mPictureID = PictureID;
+	}
+
+	protected int mPictureID;
+
 	/**
 	 * A hős neve.
 	 */
