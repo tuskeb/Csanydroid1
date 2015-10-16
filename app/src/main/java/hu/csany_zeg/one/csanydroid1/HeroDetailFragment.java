@@ -67,81 +67,6 @@ public class HeroDetailFragment extends Fragment {
 
 	}
 
-	private void loadCharmImageView(int imageID)
-	{
-		switch (imageID) {
-			case 0:
-				charmImageView.setImageDrawable(getResources().getDrawable(R.drawable.magic1));
-				break;
-			case 1:
-				charmImageView.setImageDrawable(getResources().getDrawable(R.drawable.magic2));
-				break;
-			case 2:
-				charmImageView.setImageDrawable(getResources().getDrawable(R.drawable.magic3));
-				break;
-			case 3:
-				charmImageView.setImageDrawable(getResources().getDrawable(R.drawable.magic4));
-				break;
-			case 4:
-				charmImageView.setImageDrawable(getResources().getDrawable(R.drawable.magic5));
-				break;
-			default:
-
-				break;
-		}
-
-	}
-
-	private void loadOffensiveImageView(int imageID)
-	{
-		switch (imageID) {
-			case 0:
-				offensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.weapon_1s));
-				break;
-			case 1:
-				offensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.weapon_2s));
-				break;
-			case 2:
-				offensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.weapon_3));
-				break;
-			case 3:
-				offensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.weapon_4s));
-				break;
-			case 4:
-				offensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.weapon_5s));
-				break;
-			default:
-
-				break;
-		}
-
-	}
-
-	private void loadDefensiveImageView(int imageID)
-	{
-		switch (imageID) {
-			case 0:
-				defensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.shield1));
-				break;
-			case 1:
-				defensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.shield2));
-				break;
-			case 2:
-				defensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.shield3));
-				break;
-			case 3:
-				defensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.shield4));
-				break;
-			case 4:
-				defensiveImageView.setImageDrawable(getResources().getDrawable(R.drawable.shield5));
-				break;
-			default:
-
-				break;
-		}
-
-	}
-
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, ViewGroup container,
@@ -205,7 +130,7 @@ public class HeroDetailFragment extends Fragment {
 			offensiveTextViewNum.setText(String.valueOf(Math.round(mHero.getBaseOffensivePoint())));
 			seekBar.setProgress(Math.round(Math.round(mHero.getBaseOffensivePoint() - Hero.MIN_OFFENSIVE_POINT)));
 			seekBar.setEnabled(mHero.canModify());
-			loadOffensiveImageView(mHero.getOffensiveImageID());
+			offensiveImageView.setImageDrawable(getResources().getDrawable(mHero.getOffensiveImageID()));
 			seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 				@Override
 				public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -219,7 +144,7 @@ public class HeroDetailFragment extends Fragment {
 					}
 					catch (Exception e){ }
 					if (lastBaseOffensiveImageID != mHero.getOffensiveImageID()) {
-						loadOffensiveImageView(mHero.getOffensiveImageID());
+						offensiveImageView.setImageDrawable(getResources().getDrawable(mHero.getOffensiveImageID()));
 					}
 				}
 
@@ -240,7 +165,7 @@ public class HeroDetailFragment extends Fragment {
 			defensiveTextViewNum.setText(String.valueOf(Math.round(mHero.getBaseDefensivePoint())));
 			seekBar.setProgress(Math.round(Math.round(mHero.getBaseDefensivePoint() - Hero.MIN_DEFENSIVE_POINT)));
 			seekBar.setEnabled(mHero.canModify());
-			loadDefensiveImageView(mHero.getDefensiveImageID());
+			defensiveImageView.setImageDrawable(getResources().getDrawable(mHero.getDefensiveImageID()));
 			seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 				@Override
 				public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -253,7 +178,7 @@ public class HeroDetailFragment extends Fragment {
 					}
 					catch (Exception e){}
 					if (lastBaseDefensiveImageID != mHero.getDefensiveImageID()) {
-						loadDefensiveImageView(mHero.getDefensiveImageID());
+						defensiveImageView.setImageDrawable(getResources().getDrawable(mHero.getDefensiveImageID()));
 					}
 				}
 
@@ -271,7 +196,8 @@ public class HeroDetailFragment extends Fragment {
 			seekBar = (SeekBar) rootView.findViewById(R.id.charmBar);
 			seekBar.setMax((int) (Hero.MAX_CHARM - Hero.MIN_CHARM));
 			charmTextViewNum.setText(String.valueOf(Math.round(mHero.getCharm())));
-			loadCharmImageView(mHero.getCharmImageID());
+			charmImageView.setImageDrawable(getResources().getDrawable(mHero.getCharmImageID()));
+
 			seekBar.setProgress(Math.round(mHero.getCharm() - Hero.MIN_CHARM));
 			seekBar.setEnabled(mHero.canModify());
 			seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -288,7 +214,7 @@ public class HeroDetailFragment extends Fragment {
 					charmTextViewNum.setText(String.valueOf(progress + Hero.MIN_CHARM));
 
 					if (lastBaseCharmImageID != mHero.getCharmImageID()) {
-						loadCharmImageView(mHero.getCharmImageID());
+						charmImageView.setImageDrawable(getResources().getDrawable(mHero.getCharmImageID()));
 					}
 
 

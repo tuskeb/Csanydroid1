@@ -173,6 +173,13 @@ e.printStackTrace();
 			}
 		});
 
+		((Button) findViewById(R.id.view_help_button)).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent myIntent = new Intent(MainActivity.this, HelpActivity.class);
+				MainActivity.this.startActivity(myIntent);
+			}
+		});
 
 	}
 

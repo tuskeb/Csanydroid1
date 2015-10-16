@@ -30,6 +30,13 @@ private static DataSetObservable mGlobalObservable = new DataSetObservable();
 		return mGlobalObservable;
 	}
 	public static short MIN_HEALTH = 10, MAX_HEALTH = 500;
+
+	public static int drawableHeroes[]={R.drawable.hero1_blue,R.drawable.hero1_green,R.drawable.hero1_purple,R.drawable.hero1_red};
+	public static int drawableOffensive[]={R.drawable.weapon_1s,R.drawable.weapon_2s,R.drawable.weapon_3,R.drawable.weapon_4s,R.drawable.weapon_5s};
+	public static int drawableDefensive[]={R.drawable.shield1,R.drawable.shield2,R.drawable.shield3,R.drawable.shield4,R.drawable.shield5};
+	public static int drawableCharms[]={R.drawable.magic1,R.drawable.magic2,R.drawable.magic3,R.drawable.magic4,R.drawable.magic5};
+	public static int drawableHealths[]={R.drawable.heart, R.drawable.heart_1,R.drawable.heart_2,R.drawable.heart_3,R.drawable.heart_4};
+
 	public static float MIN_CHARM = 0.0f, MAX_CHARM = 20.0f;
 	public static float MIN_OFFENSIVE_POINT = 1.0f, MAX_OFFENSIVE_POINT = 10.0f;
 	public static float MIN_DEFENSIVE_POINT = 1.0f, MAX_DEFENSIVE_POINT = 10.0f;
@@ -38,15 +45,19 @@ private static DataSetObservable mGlobalObservable = new DataSetObservable();
 	private Battle mBattle = null;
 	private HeroParams mParams = null;
 
-	public int getPictureID() {
-		return mPictureID;
+	public int getPicture() {
+		return mPicture;
 	}
 
-	public void setPictureID(int PictureID) {
-		this.mPictureID = PictureID;
+	public void setPicture(int Picture) {
+		this.mPicture = Picture;
 	}
 
-	protected int mPictureID;
+
+	/**
+	 * A hős képének az indexe az images tömbben
+	 */
+	protected int mPicture;
 
 	/**
 	 * A hős neve.
@@ -160,21 +171,61 @@ private static DataSetObservable mGlobalObservable = new DataSetObservable();
 		}
 	}
 
+	public int getHeroImageID()
+	{
+		return drawableHeroes[mPicture];
+	}
+
 	public int getCharmImageID()
 	{
-		return (int)(5f*((getCharm()-MIN_CHARM)/(MAX_CHARM-MIN_CHARM)));
-		//return (int)getCharm();
+		int x=(int)(((float)drawableCharms.length)*((getCharm()-MIN_CHARM)/(MAX_CHARM-MIN_CHARM)));
+		if (x>=drawableCharms.length)
+		{
+			return drawableCharms[drawableCharms.length-1];
+		}
+		else
+		{
+			return drawableCharms[x];
+		}
 	}
 
 	public int getOffensiveImageID()
 	{
-		return (int)(5f*((getBaseOffensivePoint()-MIN_OFFENSIVE_POINT)/(MAX_OFFENSIVE_POINT-MIN_OFFENSIVE_POINT)));
-
+		int x=(int)(((float)drawableOffensive.length)*((getBaseOffensivePoint()-MIN_OFFENSIVE_POINT)/(MAX_OFFENSIVE_POINT-MIN_OFFENSIVE_POINT)));
+		if (x>=drawableOffensive.length)
+		{
+			return drawableOffensive[drawableOffensive.length-1];
+		}
+		else
+		{
+			return drawableOffensive[x];
+		}
 	}
 
 	public int getDefensiveImageID()
 	{
-		return (int)(5f*((getBaseDefensivePoint()-MIN_DEFENSIVE_POINT)/(MAX_DEFENSIVE_POINT-MIN_DEFENSIVE_POINT)));
+		int x =(int)(((float)drawableDefensive.length)*((getBaseDefensivePoint()-MIN_DEFENSIVE_POINT)/(MAX_DEFENSIVE_POINT-MIN_DEFENSIVE_POINT)));
+		if (x>=drawableDefensive.length)
+		{
+			return drawableDefensive[drawableDefensive.length-1];
+		}
+		else
+		{
+			return drawableDefensive[x];
+		}
+	}
+
+	public int getHealthImageID()
+	{
+		int x = (int)(((float)drawableHealths.length)*((getHealthPoint()-MIN_HEALTH)/(MAX_HEALTH-MIN_HEALTH)));
+		if (x>=drawableHealths.length)
+		{
+			return drawableHealths[drawableHealths.length-1];
+		}
+		else
+		{
+			return drawableHealths[x];
+		}
 
 	}
 
