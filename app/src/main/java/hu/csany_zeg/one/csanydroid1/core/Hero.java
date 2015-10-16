@@ -125,7 +125,11 @@ private static DataSetObservable mGlobalObservable = new DataSetObservable();
 		}
 
 	}
-
+	public int getIndex(){
+		if(mOwner != Player.CURRENT)
+			return -1;
+		return sHeroRepository.indexOf(this);
+	}
 	public boolean isBattle() {
 		return mBattle != null;
 	}

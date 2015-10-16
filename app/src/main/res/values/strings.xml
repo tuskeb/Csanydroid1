@@ -23,4 +23,9 @@
     <string name="defensive_point">Defensive Point</string>
     <string name="charm_point">Charm Point</string>
     <string name="unnamed_battle">Unnamed Battle</string>
+    <string name="title_activity_hero_selector">HeroSelectorActivity</string>
+    <string name="hello_world">Hello world!</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

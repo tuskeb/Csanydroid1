@@ -88,6 +88,26 @@ e.printStackTrace();
 			new Hero("Bb");
 			new Hero("Cc");
 			new Hero("Dd");
+
+
+			{
+				Battle battle = new Battle("Waterló-i csata");
+				battle.addPlayer(Player.CURRENT, true);
+				try {
+					for (Hero hero : Hero.sHeroRepository) {
+						hero.setBattle(battle);
+					}
+				} catch (Battle.InvalidPlayerException e) {
+					e.printStackTrace();
+				}
+
+
+
+/*
+			battle.setPlayerReady(Player.CURRENT);
+*/
+			}
+
 		} else {
 			Log.v("mama", "!!!!!!!!!!!!!");
 		}
@@ -97,23 +117,6 @@ e.printStackTrace();
 		//display.getSize(size);
 		//setRequestedOrientation(size.x > size.y ? ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE : ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
 
-		{
-			Battle battle = new Battle("Waterló-i csata");
-			battle.addPlayer(Player.CURRENT, true);
-			try {
-				for (Hero hero : Hero.sHeroRepository) {
-					hero.setBattle(battle);
-				}
-			} catch (Battle.InvalidPlayerException e) {
-				e.printStackTrace();
-			}
-
-
-
-/*
-			battle.setPlayerReady(Player.CURRENT);
-*/
-		}
 
 		// http://developer.android.com/reference/android/bluetooth/BluetoothServerSocket.html
 // http://developer.android.com/guide/topics/connectivity/bluetooth.html#ManagingAConnection
@@ -157,8 +160,8 @@ e.printStackTrace();
 		((Button) findViewById(R.id.new_battle_button)).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				//Intent myIntent = new Intent(MainActivity.this, BattleActivity.class);
-				//MainActivity.this.startActivity(myIntent);
+				Intent myIntent = new Intent(MainActivity.this, HeroSelectorActivity.class);
+				MainActivity.this.startActivity(myIntent);
 			}
 		});
 
