@@ -18,28 +18,31 @@ public class Player {
 			ACTION_NO_OPERATION = 0,
 			ACTION_READY_FOR_BATTLE = 1,
 			ACTION_GIVE_UP = 2,
-			ACTION_GET_BATTLES = 3 | SCOPE_PLAYER,
-			ACTION_GET_BATTLE = 4,
-			ACTION_JOIN_TO_BATTLE = 5,
-			ACTION_JOIN_TO_BATTLE_ACCEPTED = 6,
-			ACTION_GET_HERO = 7,
-			ACTION_INVITE = 5;
+			ACTION_GET_NAME = 4 | SCOPE_PLAYER,
+			ACTION_GET_BATTLES = 5 | SCOPE_PLAYER,
+			ACTION_GET_BATTLE = 6,
+			ACTION_JOIN_TO_BATTLE = 7,
+			ACTION_JOIN_TO_BATTLE_ACCEPTED = 8,
+			ACTION_GET_HERO = 9,
+			ACTION_ADD_HERO_TO_BATTLE = 10,
+			ACTION_INVITE = 11;
 	private final static String TAG = "player";
 	private final static ArrayList<Player> sPlayers = new ArrayList<Player>();
 	private final OutputStream mOutputStream;
 	private final InputStream mInputStream;
-	private final UUID mUUID;
+	// private final UUID mUUID;
 	//private ArrayList<OnDataReceivedListener> mListeners = new ArrayList<OnDataReceivedListener>();
 	private String mName;
-	private Parcel mParcel = Parcel.obtain();
+	private final Parcel mParcel = Parcel.obtain();
 
 	public Player(BluetoothSocket bluetoothSocket) throws IOException {
 		this(bluetoothSocket.getRemoteDevice().getName(), bluetoothSocket.getOutputStream(), bluetoothSocket.getInputStream());
 	}
 
 	private Player() {
-		mName = "Ez vok én";
-		mUUID = UUID.randomUUID();
+		mName = "Player #" + (int)(Math.random() * 10);
+
+		//mUUID = UUID.randomUUID();
 		mOutputStream = null;
 		mInputStream = null;
 
@@ -49,7 +52,7 @@ public class Player {
 		Log.v(TAG, "player connected");
 
 		mName = name;
-		mUUID = UUID.randomUUID();
+		//mUUID = UUID.randomUUID();
 		mOutputStream = outputStream;
 		mInputStream = inputStream;
 
@@ -135,16 +138,15 @@ public class Player {
 			@Override
 			public void run() {
 				try {
-					while (true) {
-						final int length = mInputStream.read(buffer);
-						final Parcel parcel = Parcel.obtain();
-						parcel.unmarshall(buffer, 0, buffer.length);
-						Player.this.processMessage(parcel);
+					while (mInputStream.read(buffer) > -1) {
+						final Parcel m = Parcel.obtain();
+						m.unmarshall(buffer, 0, buffer.length);
+						Player.this.processMessage(m);
 
 					}
-				} catch (IOException e) {
-					Player.this.dispose();
-				}
+				} catch (IOException ignored) { }
+
+				Player.this.dispose();
 
 			}
 
@@ -154,21 +156,25 @@ public class Player {
 
 	}
 
-	public void writeHeaderToParcel(Parcel parcel) {
-		parcel.writeLong(mUUID.getMostSignificantBits());
-		parcel.writeLong(mUUID.getLeastSignificantBits());
-	}
+	//public void writeHeaderToParcel(Parcel parcel) {
+	//	parcel.writeLong(mUUID.getMostSignificantBits());
+	//	parcel.writeLong(mUUID.getLeastSignificantBits());
+	//}
 
 
-	private void processMessage(Parcel parcel) {
+	private void processMessage(Parcel m) {
 		try {
-			parcel.setDataPosition(0);
+			m.setDataPosition(0);
 
-			final byte action = parcel.readByte();
+			final byte action = m.readByte();
+
+			Log.v(TAG, "message received");
 
 			if ((action & SCOPE_PLAYER) != 0) {
+				Log.v(TAG, "process by cplayer");
+
 				final Parcel resp = Parcel.obtain();
-				this.writeHeaderToParcel(resp);
+				//this.writeHeaderToParcel(resp);
 
 				switch (action) {
 					case Player.ACTION_GET_BATTLES: {
@@ -181,34 +187,48 @@ public class Player {
 							}
 						}
 					}
+					break;
+					case Player.ACTION_GET_NAME: {
+						resp.writeString(mName);
+					}
+					break;
+					case Player.ACTION_GET_HERO: {
+						String heroName = m.readString();
+						Hero hero = Hero.findHeroByName(heroName);
+						if(hero == null) break;
 
+						resp.writeString(hero.getName());
+						resp.writeFloat(hero.getHealthPoint());
+						resp.writeFloat(hero.getCharm());
+						resp.writeFloat(hero.getBaseOffensivePoint());
+						resp.writeFloat(hero.getBaseDefensivePoint());
+						resp.writeInt(hero.getPicture());
+					}
+					break;
 					default:
 						break;
 
 				}
 
-				// válasz küldése
 				send(resp);
-
 			} else {
-				final String name = parcel.readString();
+				final String name = m.readString();
+				Log.v(TAG, "process by battle " + name + "(" + action + ")");
 				final Battle battle = Battle.findBattle(name);
 				if (battle == null) throw new NullPointerException();
 
-				battle.processMessage(action, parcel, this);
+				battle.processMessage(action, m, this);
 			}
 
 
 		} catch(Exception e) {
-			Log.v(TAG, "misformatted message");
+			Log.v(TAG, "malformed message");
 		}
 
 
 	}
 
-	public UUID getUUID() {
-		return mUUID;
-	}
+	// public UUID getUUID() { return mUUID; }
 
 	public void dispose() {
 
@@ -225,11 +245,14 @@ public class Player {
 
 	public void send(Message msg) {
 
+		Log.v(TAG, "begin send message");
+
 		synchronized (mParcel) {
 			mParcel.setDataPosition(0);
-			mParcel.writeString(msg.mName);
 
-			msg.obtain(mParcel);
+			mParcel.writeByte(msg.mAction);
+			if(msg.mName != null) mParcel.writeString(msg.mName);
+			msg.extra(mParcel);
 
 			send(mParcel);
 
@@ -242,8 +265,11 @@ public class Player {
 		if (mOutputStream != null) {
 			try {
 				mOutputStream.write(parcel.marshall());
-			} catch (IOException e) { }
+			} catch (IOException ignored) { };
+
+			Log.v(TAG, "message sent");
 		} else {
+			Log.v(TAG, "loopback message");
 			// loopback
 			// TODO? static player HANDLER
 			processMessage(mParcel);
@@ -254,27 +280,26 @@ public class Player {
 	public static abstract class Message {
 
 		final String mName;
+		final byte mAction;
 
-		public Message(Battle port) {
+		public Message(byte action, Hero port) {
+			mAction = action;
 			mName = port.getName();
 		}
 
-		public Message(Hero port) { mName = port.getName(); }
-
-		public abstract void obtain(Parcel parcel);
-
-	}
-/*
-	public static abstract class OnDataReceivedListener {
-
-		private final byte mAction;
-
-		public OnDataReceivedListener(byte action) {
+		public Message(byte action, Battle port) {
 			mAction = action;
+			mName = port.getName();
 		}
 
-		public abstract boolean OnDataReceived(Parcel data);
+		public Message(byte action) {
+			mAction = action;
+			mName = null;
+		}
+
+
+		public abstract void extra(Parcel m);
 
 	}
-*/
+
 }

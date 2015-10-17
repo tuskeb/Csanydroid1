@@ -5,10 +5,10 @@ import android.os.Looper;
 import android.os.Parcel;
 import android.util.Log;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.UUID;
-import java.util.concurrent.ArrayBlockingQueue;
 
 import hu.csany_zeg.one.csanydroid1.App;
 import hu.csany_zeg.one.csanydroid1.R;
@@ -23,11 +23,15 @@ public class Battle {
 			STATE_DRAW_START_PLAYER = 0,
 			STATE_CHOOSE_ATTACKER_HERO = 1,
 			STATE_CHOOSE_DEFENDER_HERO = 2,
-			STATE_ATTACKER_DRINK_CHARM = 3,
-			STATE_DEFENDER_DRINK_CHARM = 4,
-			STATE_ATTACK = 5,
-			STATE_TURN_FINISHED = 6,
-			STATE_NEXT_PLAYER = 7; // gondolkodási/elemzési idő
+			STATE_ATTACKER_DRINKS_CHARM = 3,
+			STATE_DEFENDER_DRINKS_CHARM = 4,
+			STATE_BEFORE_ATTACK = 5,
+			STATE_ATTACK = 6,
+			STATE_AFTER_ATTACK = 7,
+			STATE_TURN_FINISHED = 8,
+			STATE_NEXT_PLAYER = 9,
+			STATE_BEFORE_FINISH = 10,
+			STATE_FINISH = 11;
 	private static final String TAG = "battle";
 	public static ArrayList<Battle> sBattles = new ArrayList<Battle>();
 
@@ -50,62 +54,66 @@ public class Battle {
 	 */
 	public Hero mAttacker, mDefender;
 	public byte mLastAttackerA = -1, mLastAttackerB = -1;
-	ArrayBlockingQueue<Integer> mEventQueue = new ArrayBlockingQueue<Integer>(10);
 	private Player mOwner;
 
 	private ArrayList<Player> mPlayersA = new ArrayList<Player>(), mPlayersB = new ArrayList<Player>();
 	private ArrayList<Player> mReadyPlayers = new ArrayList<Player>();
 	private ArrayList<Hero> mHeroesA = new ArrayList<Hero>(), mHeroesB = new ArrayList<Hero>();
-	private short mTurn;
+	private short mTurn = 0;
 	/**
 	 * true:    A
 	 * false:   B
 	 */
-	private boolean mStartingPlayer;
+	private boolean mStartingTeam;
 	private Handler mHandler = new Handler(Looper.getMainLooper());
-	/**
-	 * Felkészült játékosok száma, majd a csata állapota
-	 */
+
 	private byte mState;
+
+	public void setListener(StateChangeListeners listener) {
+		mListener = listener;
+	}
+
 	private StateChangeListeners mListener = new StateChangeListeners() {};
+	private Parcel mParcel = Parcel.obtain();
 
 	/**
 	 * Létrehoz egy új csatát
 	 */
 	public Battle(String name) throws RuntimeException {
-		this(Player.CURRENT, name != null ? name : getNextName());
-		mTurn = 0;
+		mOwner = Player.CURRENT;
+		mName = name != null ? name : getNextName();
+
+		sBattles.add(this);
+
+	}
+
+	public Battle(Player owner, String name) throws RuntimeException {
+		if (findBattle(name) != null) throw new RuntimeException("Name must be unique.");
+
+		mOwner = owner;
+		mName = name;
+
+		sBattles.add(this);
+
+		mOwner.send(new Player.Message(Player.ACTION_GET_BATTLE, this) {
+			@Override
+			public void extra(Parcel m) {
+			}
+
+		});
 	}
 
 	private static String getNextName() {
 		final String baseName = App.getContext().getString(R.string.unnamed_battle); // TODO default_battle_prefix
 		String name;
 
-		for (long n = 0; findBattle((name = baseName + " " + NumberFormat.getInstance().format(++n))) != null; );
-
-		return name;
-	}
-
-	public Battle(Player owner, String name) throws RuntimeException {
-		synchronized (sBattles) {
-			if(findBattle(name) != null) throw new RuntimeException("Name must be unique.");
-
-			mOwner = owner;
-			mName = name;
-
-			sBattles.add(this);
-
-			mOwner.send(new Player.Message(this) {
-
-				@Override
-				public void obtain(Parcel parcel) {
-					parcel.writeByte(Player.ACTION_GET_BATTLE);
-				}
-
-			});
-
+		long n = 0;
+		while (true) {
+			if (findBattle((name = baseName + " " + NumberFormat.getInstance().format(++n))) == null)
+				break;
 		}
 
+		return name;
 	}
 
 	public static ArrayList<Battle> getOwnBattles() {
@@ -140,55 +148,51 @@ public class Battle {
 	}
 
 	public void giveUp() {
-		mOwner.send(new Player.Message(this) {
-
+		mOwner.send(new Player.Message(Player.ACTION_GIVE_UP, this) {
 			@Override
-			public void obtain(Parcel parcel) {
-				parcel.writeByte(Player.ACTION_GIVE_UP);
-			}
+			public void extra(Parcel m) { }
 		});
 
 		// dispose();
 	}
 
 	public void setNextState() {
-		if (mState < STATE_NEXT_PLAYER) ++mState; // következő állapot
-		else mState = STATE_CHOOSE_ATTACKER_HERO; // kezdje előről
+		if (mState < STATE_NEXT_PLAYER && mState >= STATE_DRAW_START_PLAYER) ++mState; // következő állapot
+		else if (mState == STATE_NEXT_PLAYER) mState = STATE_CHOOSE_ATTACKER_HERO; // kezdje előről
 
-		Log.v(TAG, "state changed: " + mState);
+		// Log.v(TAG, "state changed: " + mState);
 
-		switch (mState) {
-			case STATE_CHOOSE_ATTACKER_HERO:
-				mListener.OnChooseAttackerHero();
-				break;
-			case STATE_CHOOSE_DEFENDER_HERO:
-				mListener.OnChooseDefenderHero();
-				break;
-			case STATE_ATTACKER_DRINK_CHARM:
-				mListener.OnAttackerDrinkCharm();
-				break;
-			case STATE_DEFENDER_DRINK_CHARM:
-				mListener.OnDefenderDrinkCharm();
-				break;
-			case STATE_ATTACK:
-				mListener.OnAttack();
-				break;
-			case STATE_TURN_FINISHED:
-				mListener.OnTurnFinished();
-				break;
-			case STATE_NEXT_PLAYER:
-				mListener.OnNextPlayer();
-				break;
+		for (final Method method : mListener.getClass().getMethods()) {
+			final BattleState annotation = method.getAnnotation(BattleState.class);
+			if (annotation == null) continue;
 
+			if (mState == annotation.value()) {
+				try {
+
+					// Log.v(TAG, "invoking method(" + mState + ")");
+
+					method.invoke(mListener);
+				} catch (InvocationTargetException e) {
+					Log.e(TAG, ">>>>>invoke <<<<<< failed(" + mState + ")");
+					e.printStackTrace();
+				} catch (Exception e) {
+					Log.e(TAG, "invoke failed(" + mState + ")");
+					e.printStackTrace();
+				}
+				return;
+			}
 		}
+
+		assert false;
+
 	}
 
 	public boolean getCurrentPlayerAsBoolean() {
-		return (mTurn % 2 == 0) == mStartingPlayer;
+		return (mTurn % 2 == 0) == mStartingTeam;
 	}
 
-	public ArrayList<Hero> getHeroes(boolean playerA) {
-		return playerA ? mHeroesA : mHeroesB;
+	public ArrayList<Hero> getHeroes(boolean team) {
+		return team ? mHeroesA : mHeroesB;
 	}
 
 	public Hero nextAttacker() {
@@ -196,13 +200,18 @@ public class Battle {
 
 		final ArrayList<Hero> heroes = getHeroes(getCurrentPlayerAsBoolean());
 
-		if (getCurrentPlayerAsBoolean()) { // A
-			mLastAttackerA = (byte) ((mLastAttackerA + 1) % heroes.size());
-			mAttacker = heroes.get(mLastAttackerA);
-		} else { // B
-			mLastAttackerB = (byte) ((mLastAttackerB + 1) % heroes.size());
-			mAttacker = heroes.get(mLastAttackerB);
+		byte lastAttacker = getCurrentPlayerAsBoolean() ? mLastAttackerA : mLastAttackerB;
+
+		while (true) {
+			lastAttacker = (byte) ((lastAttacker + 1) % heroes.size());
+			mAttacker = heroes.get(lastAttacker);
+			if (mAttacker.isAlive()) break;
 		}
+
+		if (getCurrentPlayerAsBoolean())
+			mLastAttackerA = lastAttacker;
+		else
+			mLastAttackerB = lastAttacker;
 
 		return oldHero;
 	}
@@ -210,11 +219,27 @@ public class Battle {
 	public Hero nextDefender() {
 		final Hero oldHero = mDefender;
 
-		Hero newDefender;
 		final ArrayList<Hero> heroes = getHeroes(!getCurrentPlayerAsBoolean());
-		while (mAttacker == (newDefender = heroes.get((int) (Math.random() * heroes.size()))) || mDefender == newDefender)
-			;
+/*
+		boolean b = false;
+		for (int i = heroes.size(); i > 0;) {
+			if(heroes.get(--i).isAlive()) {
+				b = true;
+				break;
+			}
+		}*/
+
+		//if(b) {
+		Hero newDefender;
+		while (true) {
+			if (mAttacker != (newDefender = heroes.get((int) (Math.random() * heroes.size()))) && newDefender.isAlive())
+				break;
+		}
+
 		mDefender = newDefender;
+		//} else {
+		//	mDefender = null;
+		//}
 
 		return oldHero;
 	}
@@ -227,20 +252,37 @@ public class Battle {
 		return mTurn;
 	}
 
-	public void duel() {
+	protected void duel() {
 
 		final float offensivePoint = mAttacker.getBaseOffensivePoint() * ((OFF_RAND_MIN + (float) Math.random() * (OFF_RAND_MAX - OFF_RAND_MIN)) + (mAttacker.getDrunkCharm() * OFF_CHARM_FACTOR));
 		final float defensivePoint = mDefender.getBaseDefensivePoint() * ((DEF_RAND_MIN + (float) Math.random() * (DEF_RAND_MAX - DEF_RAND_MIN)) + (mDefender.getDrunkCharm() * DEF_CHARM_FACTOR));
+		// Log.v(TAG, offensivePoint + " vs " + defensivePoint);
+
+		++mAttacker.mTotalAttacks;
+		++mDefender.mTotalDefensives;
 
 		if (mDefender.receiveDamage(offensivePoint - defensivePoint)) { // vesztett életet?
+			Log.v(TAG, "defender received damage. health: " + mDefender.getHealthPoint());
 
 			if (!mDefender.isAlive()) { // most ölte meg
 
-				// gratulálunk a győztesnek
+				Log.v(TAG, "!! the defender died !!");
 
-					// ++((LocalHero) mAttacker).mTotalKills;
+				int c = 0;
+				for(Hero hero : getHeroes(getHeroTeam(mDefender))) {
+					if(hero.isAlive()) {
+						++c;
+					}
+				}
 
-					mAttacker.notifyChanged();
+				if((c == 0) || (mHeroesA == mHeroesB && c == 1)) {
+					mState = STATE_BEFORE_FINISH;
+					Log.v(TAG, "!! team is dead !!");
+				}
+
+
+				++mAttacker.mTotalKills;
+				mAttacker.notifyChanged();
 
 			}
 
@@ -248,18 +290,7 @@ public class Battle {
 
 	}
 
-	public Player findPlayerByUUID(UUID uuid) {
-		for (Player player : mReadyPlayers) {
-			if (player.getUUID() == uuid) {
-				return player;
-			}
-		}
-
-		return null;
-
-	}
-
-	public void processMessage(byte action, Parcel data, Player player) {
+	public void processMessage(byte action, Parcel m, Player player) {
 		switch (action) {
 			case Player.ACTION_READY_FOR_BATTLE: {
 				if (mReadyPlayers.contains(player)) break;
@@ -274,16 +305,28 @@ public class Battle {
 				} catch (InvalidPlayerException e) { }
 			}
 			break;
+			case Player.ACTION_ADD_HERO_TO_BATTLE: {
+				String heroName = m.readString();
+				Hero hero = (player == Player.CURRENT ? Hero.findHeroByName(heroName) : new Hero(player, heroName));
+				if (hero == null) break;
+				// IMPORTANT! only one instance is allowed
 
+				try {
+					if (!hero.setBattle(this)) break;
+					getHeroes(getPlayerTeam(hero.getOwner())).add(hero);
+				} catch (InvalidPlayerException ignored) { }
+			}
+			break;
+			default:
+				Log.e(TAG, "unimplemented operation (" + action + ")");
+				break;
 		}
 
 	}
 
-
-
 	private void tryStartMassacre() {
 		// mindegyik játékos készen áll?
-		if(mPlayersA.size() + mPlayersB.size() > mReadyPlayers.size()) return;
+		if (mPlayersA.size() + mPlayersB.size() > mReadyPlayers.size()) return;
 
 
 		// nincs ellenfél
@@ -304,96 +347,22 @@ public class Battle {
 
 	}
 
+	/*
 	private void broadcastMessage(Parcel data) {
 		for (Player player : mReadyPlayers) {
 			if (player == Player.CURRENT) continue;
 			player.send(new Player.Message(this) {
 
 				@Override
-				public void obtain(Parcel parcel) {
-
-				}
+				public void extra(Parcel m) { }
 			});
 		}
 	}
+*/
 
 	@Override
 	public String toString() {
 		return getName();
-	}
-
-	public abstract class StateChangeListeners {
-		public void OnDrawStartPlayer() {
-			mStartingPlayer = Math.random() > Math.random();
-			setNextState();
-		}
-
-		public void OnChooseAttackerHero() {
-			Hero oldAttacker = nextAttacker();
-			setNextState();
-		}
-
-		public void OnChooseDefenderHero() {
-			Hero oldDefender = nextDefender();
-			setNextState();
-		}
-
-		public void OnAttackerDrinkCharm() {
-			if (mAttacker.drinkCharm(.5) > 0) {
-				mHandler.postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						setNextState();
-					}
-				}, 1000);
-			} else {
-				setNextState();
-			}
-		}
-
-		public void OnDefenderDrinkCharm() {
-			if (mDefender.drinkCharm(.5) > 0) {
-				mHandler.postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						setNextState();
-					}
-				}, 1000);
-			} else {
-				setNextState();
-			}
-		}
-
-		public void OnAttack() {
-
-			mHandler.postDelayed(new Runnable() {
-				@Override
-				public void run() {
-					setNextState();
-				}
-			}, 1000);
-
-		}
-
-		public void OnTurnFinished() {
-
-			mHandler.postDelayed(new Runnable() {
-				@Override
-				public void run() {
-					setNextState();
-				}
-			}, 5000);
-
-		}
-
-
-		public void OnNextPlayer() {
-
-			setNextState();
-
-		}
-
-
 	}
 
 	public void finish() {
@@ -403,39 +372,20 @@ public class Battle {
 
 	}
 
-
-	private Parcel mParcel = Parcel.obtain();
-	private void broadcast(Player.Message message) {
-		synchronized (mParcel) {
-			mParcel.recycle();
-			message.obtain(mParcel);
-
-			for (Player player : mReadyPlayers)
-				player.send(mParcel);
-
-		}
-	}
-
 	public void setPlayerReady(Player player) {
-		broadcast(new Player.Message(this) {
+		mOwner.send(new Player.Message(Player.ACTION_READY_FOR_BATTLE, this) {
 			@Override
-			public void obtain(Parcel parcel) {
-				parcel.writeByte(Player.ACTION_READY_FOR_BATTLE);
-			}
+			public void extra(Parcel m) { }
 		});
 	}
 
 	private void updateHero(final Hero hero) {
 		final Player owner = hero.getOwner();
-		for(Player player : mReadyPlayers) {
-			if(owner != player) {
-				player.send(new Player.Message(this) {
+		for (Player player : mReadyPlayers) {
+			if (owner != player) {
+				player.send(new Player.Message(Player.ACTION_GET_HERO, this) {
 					@Override
-					public void obtain(Parcel parcel) {
-						parcel.writeByte(Player.ACTION_GET_HERO);
-
-
-					}
+					public void extra(Parcel m) { }
 				});
 			}
 		}
@@ -451,10 +401,17 @@ public class Battle {
 
 	public boolean isStarted() {return mTurn > 0;}
 
-	private boolean getPlayerRole(Player player) throws InvalidPlayerException {
+	private boolean getPlayerTeam(Player player) throws InvalidPlayerException {
 		if (mPlayersA.contains(player)) return true;
 		else if (mPlayersB.contains(player)) return false;
 		else throw new InvalidPlayerException();
+	}
+
+	private boolean getHeroTeam(Hero hero) {
+		if (mHeroesA.contains(hero)) return true;
+		else if (mHeroesB.contains(hero)) return false;
+		else throw new NullPointerException();
+
 	}
 
 	public void addPlayer(Player player, boolean isAttacker) {
@@ -467,7 +424,7 @@ public class Battle {
 	}
 
 	private void removePlayerHeroes(Player player) throws InvalidPlayerException {
-		ArrayList<Hero> heroes = getHeroes(getPlayerRole(player));
+		ArrayList<Hero> heroes = getHeroes(getPlayerTeam(player));
 		for (int i = heroes.size(); i > 0; ) {
 			Hero hero = heroes.get(--i);
 			if (hero.getOwner() == player) {
@@ -476,12 +433,15 @@ public class Battle {
 		}
 	}
 
-	public boolean addHero(Hero hero) throws InvalidPlayerException {
-		if (isStarted()) return false;
 
-		getHeroes(getPlayerRole(hero.getOwner())).add(hero);
+	public void addHero(final Hero hero) {
+		mOwner.send(new Player.Message(Player.ACTION_ADD_HERO_TO_BATTLE, this) {
+			@Override
+			public void extra(Parcel m) {
+				m.writeString(hero.getName());
+			}
+		});
 
-		return true;
 	}
 
 	public boolean removeHero(Hero hero) {
@@ -490,13 +450,104 @@ public class Battle {
 		}
 
 		try {
-			getHeroes(getPlayerRole(hero.getOwner())).remove(hero);
+			getHeroes(getHeroTeam(hero)).remove(hero);
 
-		} catch (InvalidPlayerException e) { }
+		} catch (NullPointerException ignored) { }
 
 		return true;
 	}
 
+	public abstract class StateChangeListeners {
+		@BattleState(Battle.STATE_DRAW_START_PLAYER)
+		public void OnDrawStartPlayer() {
+			mStartingTeam = Math.random() - .25 < Math.random(); // +25% chance for team `A`
+			Log.v(TAG, "starting team: " + (mStartingTeam ? "A" : "B"));
+
+			setNextState();
+		}
+
+		@BattleState(Battle.STATE_CHOOSE_ATTACKER_HERO)
+		public void OnChooseAttackerHero() {
+			Hero oldAttacker = nextAttacker();
+			setNextState();
+		}
+
+		@BattleState(Battle.STATE_CHOOSE_DEFENDER_HERO)
+		public void OnChooseDefenderHero() {
+			Hero oldDefender = nextDefender();
+			setNextState();
+		}
+
+		@BattleState(Battle.STATE_ATTACKER_DRINKS_CHARM)
+		public void OnAttackerDrinksCharm() {
+			if (mAttacker.drinkCharm(.5f) > 0) {
+				mHandler.postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						setNextState();
+					}
+				}, 1000);
+			} else {
+				setNextState();
+			}
+		}
+
+		@BattleState(Battle.STATE_DEFENDER_DRINKS_CHARM)
+		public void OnDefenderDrinksCharm() {
+			if (mDefender.drinkCharm(.5f) > 0) {
+				mHandler.postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						setNextState();
+					}
+				}, 1000);
+			} else {
+				setNextState();
+			}
+		}
+
+		@BattleState(Battle.STATE_BEFORE_ATTACK)
+		public void OnBeforeAttack() {
+			setNextState();
+		}
+
+		@BattleState(Battle.STATE_ATTACK)
+		public void OnAttack() {
+
+			Battle.this.duel();
+
+			setNextState();
+		}
+
+		@BattleState(Battle.STATE_AFTER_ATTACK)
+		public void OnAfterAttack() {
+			setNextState();
+		}
+
+		@BattleState(Battle.STATE_TURN_FINISHED)
+		public void OnTurnFinished() {
+
+			mHandler.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					setNextState();
+				}
+			}, 500);
+
+		}
+
+		@BattleState(Battle.STATE_NEXT_PLAYER)
+		public void OnNextPlayer() {
+			setNextState();
+		}
+
+		@BattleState(Battle.STATE_BEFORE_FINISH)
+		public void OnWin() {
+Log.v(TAG, "yuuppppppiiiiiie!");
+		}
+
+
+	}
 
 	public class InvalidPlayerException extends Throwable {}
 

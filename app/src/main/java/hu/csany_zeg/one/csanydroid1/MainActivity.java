@@ -88,24 +88,18 @@ e.printStackTrace();
 			new Hero("Bb");
 			new Hero("Cc");
 			new Hero("Dd");
-
+			//new Hero("Ee");
 
 			{
-				Battle battle = new Battle("Waterló-i csata");
+				Battle battle = new Battle(null);
 				battle.addPlayer(Player.CURRENT, true);
-				try {
-					for (Hero hero : Hero.sHeroRepository) {
-						hero.setBattle(battle);
-					}
-				} catch (Battle.InvalidPlayerException e) {
-					e.printStackTrace();
+
+				for (Hero hero : Hero.sHeroRepository) {
+					battle.addHero(hero);
+					//hero.setBattle(battle);
 				}
 
-
-
-/*
-			battle.setPlayerReady(Player.CURRENT);
-*/
+				battle.setPlayerReady(Player.CURRENT);
 			}
 
 		} else {

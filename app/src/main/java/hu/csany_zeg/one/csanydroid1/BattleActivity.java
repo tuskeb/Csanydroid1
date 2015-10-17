@@ -1,28 +1,20 @@
 package hu.csany_zeg.one.csanydroid1;
 
-import android.app.Activity;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.ActionBar;
+import android.content.Context;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.content.Context;
-import android.os.Build;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.Gravity;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v4.widget.DrawerLayout;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import hu.csany_zeg.one.csanydroid1.core.Battle;
-import hu.csany_zeg.one.csanydroid1.core.Hero;
 
 public class BattleActivity extends AppCompatActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 	
@@ -63,9 +55,11 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
 
 	public void restoreActionBar() {
 		ActionBar actionBar = getSupportActionBar();
-		actionBar.setDisplayShowTitleEnabled(true);
-		//actionBar.setSubtitle("Pirates");
-		actionBar.setTitle(mTitle);
+		if (actionBar != null) {
+			actionBar.setDisplayShowTitleEnabled(true);
+			//actionBar.setSubtitle("Pirates");
+			actionBar.setTitle(mTitle);
+		}
 	}
 	
 	
@@ -91,7 +85,6 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
 		 * fragment.
 		 */
 		private static final String ARG_SECTION_NUMBER = "battle_number";
-		
 		/**
 		 * Returns a new instance of this fragment for the given section
 		 * number.
@@ -103,22 +96,27 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
 			fragment.setArguments(args);
 			return fragment;
 		}
-		
-		public PlaceholderFragment() {
+
+		@Override
+		public void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+
 		}
-		
+
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 		                         Bundle savedInstanceState) {
 
+			final Battle battle = Battle.sBattles.get(getArguments().getInt(ARG_SECTION_NUMBER));
+
 			View rootView = inflater.inflate(R.layout.fragment_battle, container, false);
-LinearLayout linearLayout = (LinearLayout)rootView.findViewById(R.id.hero_linear_layout);
+			LinearLayout linearLayout = (LinearLayout) rootView.findViewById(R.id.hero_linear_layout);
 			HeroView heroView;
 
-			heroView = new HeroView(this.getContext(), Hero.getHero(0), true);
+			heroView = new HeroView(this.getContext(), battle.mAttacker, true);
 			linearLayout.addView(heroView);
 
-			heroView = new HeroView(this.getContext(), Hero.getHero(1), false);
+			heroView = new HeroView(this.getContext(), battle.mDefender, false);
 			linearLayout.addView(heroView);
 
 			return rootView;
@@ -139,6 +137,11 @@ LinearLayout linearLayout = (LinearLayout)rootView.findViewById(R.id.hero_linear
 			selectItem(getArguments().getInt(ARG_SECTION_NUMBER));
 
 
+		}
+
+		@Override
+		public void onDetach() {
+			super.onDetach();
 		}
 	}
 	

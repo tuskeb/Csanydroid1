@@ -11,14 +11,11 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
-import hu.csany_zeg.one.csanydroid1.core.Battle;
 import hu.csany_zeg.one.csanydroid1.core.Hero;
 
 public class HeroView extends View {
@@ -93,6 +90,7 @@ public class HeroView extends View {
 				HeroView.this.mHero.unregisterObserver(dso);
 				//heartBitmap.recycle();
 				mask.recycle();
+
 			}
 		});
 
@@ -312,7 +310,7 @@ public class HeroView extends View {
 
 	private class Particle {
 		private final float GRAVITY_Y = .55f;
-		private final float AIR_RESISTENCE_X = .08f;
+		private final float AIR_RESISTANCE_X = .08f;
 		private final float MIN_FORCE = 3.5f, MAX_FORCE = 8f;
 		private final double ANGLE = 75 * (Math.PI / 180); // [rad] TODO find a name
 
@@ -346,9 +344,9 @@ public class HeroView extends View {
 
 			mVelocityY += GRAVITY_Y;
 			if (mVelocityX > 0) {
-				if ((mVelocityX -= AIR_RESISTENCE_X) < 0) mVelocityX = 0;
+				if ((mVelocityX -= AIR_RESISTANCE_X) < 0) mVelocityX = 0;
 			} else if (mVelocityX < 0) {
-				if ((mVelocityX += AIR_RESISTENCE_X) > 0) mVelocityX = 0;
+				if ((mVelocityX += AIR_RESISTANCE_X) > 0) mVelocityX = 0;
 			}
 
 
