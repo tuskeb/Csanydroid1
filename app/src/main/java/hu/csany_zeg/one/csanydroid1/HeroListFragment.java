@@ -13,8 +13,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.Observable;
-
 import hu.csany_zeg.one.csanydroid1.core.Hero;
 
 /**
@@ -42,13 +40,13 @@ public class HeroListFragment extends ListFragment {
 		public void onItemSelected(String id) {
 		}
 	};
-	ArrayAdapter<Hero> arrayAdapter;
+	ArrayAdapter<Hero> mArrayAdapter;
 
 	DataSetObserver arrayAdapterObserver = new DataSetObserver() {
 		@Override
 		public void onChanged() {
 			super.onChanged();
-			arrayAdapter.notifyDataSetChanged();
+			mArrayAdapter.notifyDataSetChanged();
 		}
 	};
 
@@ -75,7 +73,7 @@ public class HeroListFragment extends ListFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		arrayAdapter = new ArrayAdapter<Hero>(getActivity(), R.layout.listitem_hero, Hero.sHeroRepository) {
+		mArrayAdapter = new ArrayAdapter<Hero>(getActivity(), R.layout.listitem_hero, Hero.sHeroRepository) {
 
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
@@ -86,7 +84,7 @@ public class HeroListFragment extends ListFragment {
 
 				final Hero hero = getItem(position);
 
-				((TextView) convertView.findViewById(R.id.text1)).setText(hero.getName() + "");
+				((TextView) convertView.findViewById(R.id.text1)).setText(hero.getName());
 				((ImageView) convertView.findViewById(R.id.imageview1)).setImageResource(hero.IsFavourite() ? android.R.drawable.btn_star_big_on : android.R.drawable.btn_star_big_off);
 
 				return convertView;
@@ -95,7 +93,7 @@ public class HeroListFragment extends ListFragment {
 		};
 
 		Hero.getGlobalObservable().registerObserver(arrayAdapterObserver);
-		setListAdapter(arrayAdapter);
+		setListAdapter(mArrayAdapter);
 
 	}
 

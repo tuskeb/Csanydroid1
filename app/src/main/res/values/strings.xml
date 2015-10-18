@@ -29,4 +29,12 @@
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_help">HelpActivity</string>
+    <string name="total_offensive_point">Total offensive point</string>
+    <string name="total_defensive_point">Total defensive point</string>
+    <string name="total_drunk_charm">Total drunk charm</string>
+    <string name="total_defences">Total defences</string>
+    <string name="total_battles">Total battles</string>
+    <string name="total_attacks">Total attacks</string>
+    <string name="total_deaths">Total deaths</string>
+    <string name="total_kills">Total kills</string>
 </resources>

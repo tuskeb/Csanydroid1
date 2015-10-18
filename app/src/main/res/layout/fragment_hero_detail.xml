@@ -10,7 +10,7 @@
 
             android:background="@android:color/transparent"/>
             -->
-    <EditText
+    <TextView
         android:id="@+id/hero_name"
         android:layout_width="wrap_content"
         android:layout_height="90dp"
@@ -23,133 +23,233 @@
         android:id="@+id/remove_hero"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:text="@string/remove_hero"
-        android:src="@android:drawable/ic_menu_delete"
         android:layout_alignParentTop="true"
         android:layout_toLeftOf="@+id/add_to_favourites_hero"
-        android:layout_toStartOf="@+id/add_to_favourites_hero" />
+        android:layout_toStartOf="@+id/add_to_favourites_hero"
+        android:src="@android:drawable/ic_menu_delete"
+        android:text="@string/remove_hero"/>
 
     <ImageButton
         android:id="@+id/add_to_favourites_hero"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentTop="true"/>
 
     <SeekBar
         android:id="@+id/offensiveBar"
         android:layout_width="400dp"
         android:layout_height="35dp"
-        android:layout_below="@+id/offensiveImageView"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <ImageView
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:id="@+id/offensiveImageView"
-        android:layout_below="@+id/hero_name"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <TextView
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="@string/offensive_point"
-        android:id="@+id/offensiveTextView"
-        android:layout_above="@+id/offensiveBar"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:singleLine="true"
+        android:layout_below="@+id/offensive_imageview"
+        android:layout_alignParentEnd="true"/>
+
+    <ImageView
+        android:id="@+id/offensive_imageview"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/hero_name"/>
+
+    <TextView
+        android:id="@+id/offensiveTextView"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/offensiveBar"
+        android:layout_alignEnd="@+id/defensiveTextView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignRight="@+id/defensiveTextView"
-        android:layout_alignEnd="@+id/defensiveTextView" />
+        android:layout_marginLeft="12dp"
+        android:singleLine="true"
+        android:text="@string/offensive_point"
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
 
 
     <TextView
+        android:id="@+id/offensive_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="0"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Small Text"
-        android:id="@+id/offensiveTextViewNum"
         android:layout_alignTop="@+id/offensiveTextView"
-        android:layout_toRightOf="@+id/offensiveTextView"
-        android:layout_toEndOf="@+id/offensiveTextView" />
+        android:layout_alignRight="@+id/offensiveTextView"
+        android:layout_alignEnd="@+id/offensiveTextView"/>
 
     <SeekBar
         android:id="@+id/defensiveBar"
         android:layout_width="400dp"
         android:layout_height="35dp"
-        android:layout_below="@+id/defensiveImageView"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/defensive_imageview"
+        android:layout_alignParentEnd="true"/>
 
     <ImageView
+        android:id="@+id/defensive_imageview"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:id="@+id/defensiveImageView"
         android:layout_below="@+id/offensiveBar"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignRight="@+id/add_to_favourites_hero"
+        android:layout_alignEnd="@+id/add_to_favourites_hero"/>
 
     <TextView
+        android:id="@+id/defensiveTextView"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="@string/defensive_point"
-        android:id="@+id/defensiveTextView"
         android:layout_above="@+id/defensiveBar"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="12dp"
+        android:text="@string/defensive_point"
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
 
     <TextView
+        android:id="@+id/defensive_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="0"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Small Text"
-        android:id="@+id/defensiveTextViewNum"
         android:layout_alignTop="@+id/defensiveTextView"
-        android:layout_toRightOf="@+id/defensiveTextView"
-        android:layout_toEndOf="@+id/defensiveTextView" />
+        android:layout_alignRight="@+id/defensiveTextView"
+        android:layout_alignEnd="@+id/defensiveTextView"/>
 
     <SeekBar
         android:id="@+id/charmBar"
         android:layout_width="400dp"
         android:layout_height="35dp"
-        android:layout_below="@+id/charmImageView"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/charm_imageview"
+        android:layout_alignParentEnd="true"/>
 
     <ImageView
+        android:id="@+id/charm_imageview"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:id="@+id/charmImageView"
-        android:layout_below="@+id/defensiveBar"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_below="@+id/defensiveBar"/>
 
     <TextView
-    android:layout_width="200dp"
-    android:layout_height="wrap_content"
-    android:textAppearance="?android:attr/textAppearanceSmall"
-    android:text="@string/charm_point"
-    android:id="@+id/charmTextView"
-    android:layout_above="@+id/charmBar"
-    android:layout_alignParentLeft="true"
-    android:layout_alignParentStart="true"
-    android:layout_alignRight="@+id/defensiveTextView"
-    android:layout_alignEnd="@+id/defensiveTextView" />
+        android:id="@+id/charmTextView"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/charmBar"
+        android:layout_alignEnd="@+id/defensiveTextView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/defensiveTextView"
+        android:layout_marginLeft="12dp"
+        android:text="@string/charm_point"
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
 
     <TextView
+        android:id="@+id/charm_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="0"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Small Text"
-        android:id="@+id/charmTextViewNum"
         android:layout_alignTop="@+id/charmTextView"
-        android:layout_toRightOf="@+id/charmTextView"
-        android:layout_toEndOf="@+id/charmTextView" />
+        android:layout_alignRight="@+id/charmTextView"
+        android:layout_alignEnd="@+id/charmTextView"/>
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignEnd="@+id/charm_imageview"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/charm_imageview"
+        android:layout_below="@+id/charmBar"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp">
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:text="@string/total_offensive_point"
+                style="@style/hero_detail_stat_name"/>
+            <TextView
+                android:id="@+id/total_offensive_point_textview"
+                style="@style/hero_detail_stat_value"/>
+        </TableRow>
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:text="@string/total_defensive_point"
+                style="@style/hero_detail_stat_name"/>
+            <TextView
+                android:id="@+id/total_defensive_point_textview"
+                style="@style/hero_detail_stat_value"/>
+        </TableRow>
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:text="@string/total_drunk_charm"
+                style="@style/hero_detail_stat_name"/>
+            <TextView
+                android:id="@+id/total_drunk_charm_textview"
+                style="@style/hero_detail_stat_value"/>
+        </TableRow>
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:text="@string/total_kills"
+                style="@style/hero_detail_stat_name"/>
+            <TextView
+                android:id="@+id/total_kills_textview"
+                style="@style/hero_detail_stat_value"/>
+        </TableRow>
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:text="@string/total_deaths"
+                style="@style/hero_detail_stat_name"/>
+            <TextView
+                android:id="@+id/total_deaths_textview"
+                style="@style/hero_detail_stat_value"/>
+        </TableRow>
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:text="@string/total_attacks"
+                style="@style/hero_detail_stat_name"/>
+            <TextView
+                android:id="@+id/total_attacks_textview"
+                style="@style/hero_detail_stat_value"/>
+        </TableRow>
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:text="@string/total_defences"
+                style="@style/hero_detail_stat_name"/>
+            <TextView
+                android:id="@+id/total_defences_textview"
+                style="@style/hero_detail_stat_value"/>
+        </TableRow>
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:text="@string/total_battles"
+                style="@style/hero_detail_stat_name"/>
+            <TextView
+                android:id="@+id/total_battles_textview"
+                style="@style/hero_detail_stat_value"/>
+        </TableRow>
+
+    </TableLayout>
 
 
 </RelativeLayout>

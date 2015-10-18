@@ -20,14 +20,14 @@ public class Hero extends DataSetObservable implements Cloneable {
 	public static ArrayList<Hero> sHeroRepository;
 
 	public static short MIN_HEALTH = 10, MAX_HEALTH = 20;
-	public static int drawableHeroes[] =
+	private static int drawableHeroes[] =
 			{
 					R.drawable.hero1_blue,
 					R.drawable.hero1_green,
 					R.drawable.hero1_purple,
 					R.drawable.hero1_red
 			};
-	public static int drawableOffensive[] =
+	private static int drawableOffensive[] =
 			{
 					R.drawable.weapon_1s,
 					R.drawable.weapon_2s,
@@ -35,7 +35,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 					R.drawable.weapon_4s,
 					R.drawable.weapon_5s
 			};
-	public static int drawableDefensive[] =
+	private static int drawableDefensive[] =
 			{
 					R.drawable.shield1,
 					R.drawable.shield2,
@@ -43,7 +43,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 					R.drawable.shield4,
 					R.drawable.shield5
 			};
-	public static int drawableCharms[] =
+	private static int drawableCharms[] =
 			{
 					R.drawable.magic1,
 					R.drawable.magic2,
@@ -51,7 +51,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 					R.drawable.magic4,
 					R.drawable.magic5
 			};
-	public static int drawableHealths[] =
+	private static int drawableHealths[] =
 			{
 					R.drawable.heart,
 					R.drawable.heart_1,
@@ -62,8 +62,8 @@ public class Hero extends DataSetObservable implements Cloneable {
 
 	public static ArrayList<Hero> getFreeHeroes() {
 		ArrayList<Hero> heroes = new ArrayList<>();
-		for(Hero hero : sHeroRepository) {
-			if(hero.getBattle() == null) heroes.add(hero);
+		for (Hero hero : sHeroRepository) {
+			if (hero.getBattle() == null) heroes.add(hero);
 		}
 
 		Collections.sort(heroes, new Comparator<Hero>() {
@@ -174,7 +174,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 
 			try {
 				field.setAccessible(true);
-				return (Number)field.get(this);
+				return (Number) field.get(this);
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 				return null;
@@ -212,10 +212,10 @@ public class Hero extends DataSetObservable implements Cloneable {
 		mBaseCharm = (float) Math.random() * (MAX_CHARM + Float.MIN_VALUE);
 		mOffensivePoint = (float) Math.random() * (MAX_OFFENSIVE_POINT - MIN_OFFENSIVE_POINT + Float.MIN_VALUE) + MIN_OFFENSIVE_POINT;
 		mDefensivePoint = (float) Math.random() * (MAX_OFFENSIVE_POINT - MIN_OFFENSIVE_POINT + Float.MIN_VALUE) + MIN_OFFENSIVE_POINT;
-		mPicture = (int)(Math.random()*drawableHeroes.length);
+		mPicture = (int) (Math.random() * drawableHeroes.length);
 
 		sHeroRepository.add(this);
-		super.notifyChanged();
+		notifyChanged();
 
 	}
 
@@ -243,8 +243,14 @@ public class Hero extends DataSetObservable implements Cloneable {
 		mTotalBattles = parcel.readInt();
 
 		sHeroRepository.add(this);
-		super.notifyChanged();
+		notifyChanged();
 
+	}
+
+	@Override
+	public void notifyChanged() {
+		super.notifyChanged();
+		mGlobalObservable.notifyChanged();
 	}
 
 	public void obtainProperties(Parcel parcel) {
@@ -252,7 +258,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 
 		// general
 		parcel.writeString(getName());
-		parcel.writeByte((byte)(mIsFavourite ? 1 : 0));
+		parcel.writeByte((byte) (mIsFavourite ? 1 : 0));
 		parcel.writeFloat(mHealthPoint);
 		parcel.writeFloat(mBaseCharm);
 		parcel.writeFloat(mOffensivePoint);
@@ -284,7 +290,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 			}
 		});
 
-		super.notifyChanged();
+		notifyChanged();
 
 	}
 
@@ -304,11 +310,11 @@ public class Hero extends DataSetObservable implements Cloneable {
 
 	public static String getNextName(String prefix) {
 
-		if(prefix == null || (prefix = prefix.trim()).length() == 0)
+		if (prefix == null || (prefix = prefix.trim()).length() == 0)
 			prefix = App.getContext().getString(R.string.default_hero_name_prefix);
 		String name;
 
-		if(findHero(prefix) == null) return prefix;
+		if (findHero(prefix) == null) return prefix;
 
 		prefix += " ";
 
@@ -398,40 +404,19 @@ public class Hero extends DataSetObservable implements Cloneable {
 	}
 
 	public int getCharmImageID() {
-		int x = (int) (((float) drawableCharms.length) * ((getCharm() - MIN_CHARM) / (MAX_CHARM - MIN_CHARM)));
-		if (x >= drawableCharms.length) {
-			return drawableCharms[drawableCharms.length - 1];
-		} else {
-			return drawableCharms[x];
-		}
+		return drawableCharms[Math.min((int)((getBaseOffensivePoint() - MIN_CHARM) / ((float)(MAX_CHARM - MIN_CHARM) / (float) drawableCharms.length)), drawableCharms.length - 1)];
 	}
 
 	public int getOffensiveImageID() {
-		int x = (int) (((float) drawableOffensive.length) * ((getBaseOffensivePoint() - MIN_OFFENSIVE_POINT) / (MAX_OFFENSIVE_POINT - MIN_OFFENSIVE_POINT)));
-		if (x >= drawableOffensive.length) {
-			return drawableOffensive[drawableOffensive.length - 1];
-		} else {
-			return drawableOffensive[x];
-		}
+		return drawableOffensive[Math.min((int)((getBaseOffensivePoint() - MIN_OFFENSIVE_POINT) / ((float)(MAX_OFFENSIVE_POINT - MIN_OFFENSIVE_POINT) / (float) drawableOffensive.length)), drawableOffensive.length - 1)];
 	}
 
 	public int getDefensiveImageID() {
-		int x = (int) (((float) drawableDefensive.length) * ((getBaseDefensivePoint() - MIN_DEFENSIVE_POINT) / (MAX_DEFENSIVE_POINT - MIN_DEFENSIVE_POINT)));
-		if (x >= drawableDefensive.length) {
-			return drawableDefensive[drawableDefensive.length - 1];
-		} else {
-			return drawableDefensive[x];
-		}
+		return drawableDefensive[Math.min((int) ((getBaseDefensivePoint() - MIN_DEFENSIVE_POINT) / ((float) (MAX_DEFENSIVE_POINT - MIN_DEFENSIVE_POINT) / (float) drawableDefensive.length)), drawableDefensive.length - 1)];
 	}
 
 	public int getHealthImageID() {
-		int x = (int) (((float) drawableHealths.length) * ((getHealthPoint() - MIN_HEALTH) / (MAX_HEALTH - MIN_HEALTH)));
-		if (x >= drawableHealths.length) {
-			return drawableHealths[drawableHealths.length - 1];
-		} else {
-			return drawableHealths[x];
-		}
-
+		return drawableHealths[Math.min((int) ((getBaseDefensivePoint() - MIN_HEALTH) / ((float) (MAX_HEALTH - MIN_HEALTH) / (float) drawableHealths.length)), drawableHealths.length - 1)];
 	}
 
 	public float getDrunkCharm() {
@@ -455,7 +440,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 			mDrunkCharm = 0;
 		}
 
-		super.notifyChanged();
+		notifyChanged();
 		return mDrunkCharm;
 	}
 
@@ -473,7 +458,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 		if ((this.mHealthPoint -= lostLife) < 0) this.mHealthPoint = 0;
 
 		if (!this.isAlive()) {
-			super.notifyChanged();
+			notifyChanged();
 		}
 		return true;
 
@@ -507,13 +492,17 @@ public class Hero extends DataSetObservable implements Cloneable {
 
 	public void setFavourite(boolean isFavourite) {
 		mIsFavourite = isFavourite;
+		notifyChanged();
 	}
 
-	public void setBaseCharm(float baseCharm) throws Exception {
-		if (mBattle != null)
-			throw new Exception();
+	public void setBaseCharm(float baseCharm) throws RuntimeException {
+		if (!canModify()) throw new RuntimeException("Value cannot be modified.");
 
-		mBaseCharm = baseCharm;
+		if(baseCharm < MIN_CHARM) mBaseCharm = MIN_CHARM;
+		else if(baseCharm > MAX_CHARM) mBaseCharm = MAX_CHARM;
+		else mBaseCharm = baseCharm;
+
+		notifyChanged();
 	}
 
 	public boolean isValidName(String text) {
@@ -531,12 +520,24 @@ public class Hero extends DataSetObservable implements Cloneable {
 		return true;
 	}
 
-	public void setOffensivePoint(float offensivePoint) {
-		mOffensivePoint = offensivePoint;
+	public void setOffensivePoint(float offensivePoint) throws RuntimeException {
+		if (!canModify()) throw new RuntimeException("Value cannot be modified");
+
+		if (offensivePoint < MIN_OFFENSIVE_POINT) mOffensivePoint = MIN_OFFENSIVE_POINT;
+		else if (offensivePoint > MAX_OFFENSIVE_POINT) mOffensivePoint = MAX_OFFENSIVE_POINT;
+		else mOffensivePoint = offensivePoint;
+
+		notifyChanged();
 	}
 
-	public void setDefensivePoint(float defensivePoint) {
-		mDefensivePoint = defensivePoint;
+	public void setDefensivePoint(float defensivePoint) throws RuntimeException {
+		if (!canModify()) throw new RuntimeException("Value cannot be modified");
+
+		if (defensivePoint < MIN_DEFENSIVE_POINT) mDefensivePoint = MIN_DEFENSIVE_POINT;
+		else if (defensivePoint > MAX_DEFENSIVE_POINT) mDefensivePoint = MAX_DEFENSIVE_POINT;
+		else mDefensivePoint = defensivePoint;
+
+		notifyChanged();
 	}
 
 	@Override

@@ -27,9 +27,9 @@ import hu.csany_zeg.one.csanydroid1.core.Hero;
 import hu.csany_zeg.one.csanydroid1.core.Player;
 
 public class MainActivity extends AppCompatActivity {
+/*
 	private final static int REQUEST_ENABLE_BT = 1;
 	BluetoothAdapter bluetoothAdapter;
-
 	private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
 		public void onReceive(Context context, Intent intent) {
 			switch (intent.getAction()) {
@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
 		}
 	};
-
+*/
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_ACTION_BAR);
@@ -64,25 +64,8 @@ public class MainActivity extends AppCompatActivity {
 
 		getSupportActionBar().hide();
 
-/*
-		try {
-			FileInputStream fis = openFileInput("hero_repository");
-
-			byte[] bytes = new byte[fis.available()];
-
-			Parcel parcel = Parcel.obtain();
-			parcel.unmarshall(bytes, 0, bytes.length);
-
-			parcel.readTypedList(LocalHero.sHeros, LocalHero.CREATOR);
-
-			parcel.recycle();
-			Log.v("mama", "end" + LocalHero.sHeros.size());
-
-		} catch (java.io.IOException e) {
-e.printStackTrace();
-		}
-*/
-
+		setContentView(R.layout.activity_main);
+		
 		if(Hero.sHeroRepository == null) {
 			Hero.sHeroRepository = new ArrayList<>();
 
@@ -115,9 +98,6 @@ e.printStackTrace();
 					} catch (IOException ignored) { }
 				}
 			}
-
-
-
 
 		}
 
@@ -157,7 +137,6 @@ e.printStackTrace();
 			Log.v("bluetooth", "not supported");
 		}
 */
-		setContentView(R.layout.activity_main);
 
 		findViewById(R.id.hero_repository_button).setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -197,6 +176,7 @@ e.printStackTrace();
 	protected void onDestroy() {
 		super.onDestroy();
 
+
 		FileOutputStream fos = null;
 		try {
 			fos = openFileOutput("hero_repository", MODE_PRIVATE);
@@ -213,7 +193,7 @@ e.printStackTrace();
 
 			parcel.recycle();
 		} catch (java.io.IOException e) {
-e.printStackTrace();
+			e.printStackTrace();
 		} finally {
 			if (fos != null) {
 				try {
