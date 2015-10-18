@@ -4,9 +4,9 @@ import android.database.DataSetObservable;
 import android.os.Parcel;
 import android.util.Log;
 
+import java.lang.reflect.Field;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Random;
 
 import hu.csany_zeg.one.csanydroid1.App;
 import hu.csany_zeg.one.csanydroid1.R;
@@ -90,48 +90,100 @@ public class Hero extends DataSetObservable implements Cloneable {
 	 * Védekezési értéke.
 	 */
 	protected float mDefensivePoint;
+
+	public static final String STATISTICS_OFFENSIVE_POINT = "offensivePoint",
+			STATISTICS_DEFENSIVE_POINT = "defensivePoint",
+			STATISTICS_DRUNK_CHARM = "drunkCharm",
+			STATISTICS_KILLS = "kills",
+			STATISTICS_DEATHS = "deaths",
+			STATISTICS_ATTACKS = "attacks",
+			STATISTICS_DEFENCES = "defences",
+			STATISTICS_BATTLES = "battles";
+
 	/**
 	 * A hős összes védekezésének mértéke.
 	 */
-	float mTotalOffensivePoints;
+	@HeroStatistics(STATISTICS_OFFENSIVE_POINT)
+	private float mTotalOffensivePoint;
 	/**
 	 * A hős összes támadásának mértéke.
 	 */
-	float mTotalDefensivePoints;
+	@HeroStatistics(STATISTICS_DEFENSIVE_POINT)
+	private float mTotalDefensivePoint;
 	/**
 	 * A hős összes varázsereje.
 	 */
-	short mTotalDrunkCharm;
+	@HeroStatistics(STATISTICS_DRUNK_CHARM)
+	private int mTotalDrunkCharm;
 	/**
 	 * A hős által legyőzött ellenfelek.
 	 */
-	short mTotalKills = 0;
+	@HeroStatistics(STATISTICS_KILLS)
+	private int mTotalKills = 0;
 	/**
 	 * A hős halálainak száma.
 	 */
-	short mTotalDeathes = 0;
+	@HeroStatistics(STATISTICS_DEATHS)
+	private int mTotalDeaths = 0;
 	/**
 	 * A hős összes támadása.
 	 */
-	short mTotalAttacks;
+	@HeroStatistics(STATISTICS_ATTACKS)
+	private int mTotalAttacks;
 	/**
 	 * A hős összes védekezése.
 	 */
-	short mTotalDefensives;
+	@HeroStatistics(STATISTICS_DEFENCES)
+	private int mTotalDefences;
 	/**
 	 * A hős összes küzdelme.
 	 */
-	short mTotalBattles;
+	@HeroStatistics(STATISTICS_BATTLES)
+	private int mTotalBattles;
+
 	boolean mIsFavourite;
 	private Battle mBattle = null;
 	private HeroParams mParams = null;
 	private float mDrunkCharm;
 
+	public Number getStatistics(String name) {
+		for (final Field field : this.getClass().getDeclaredFields()) {
+			final HeroStatistics annotation = field.getAnnotation(HeroStatistics.class);
+			if (annotation == null) continue;
+			if (annotation.value().compareTo(name) != 0) continue;
+
+			try {
+				field.setAccessible(true);
+				return (Number)field.get(this);
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+				return null;
+			}
+
+		}
+
+		return null;
+	}
+
+	public void updateStatistics(final String name, final Number number) {
+		mOwner.send(new Player.Message(Player.ACTION_UPDATE_HERO_STAT, this) {
+			@Override
+			public void extra(Parcel m) {
+				m.writeString(name);
+				m.writeValue(number);
+			}
+		});
+
+
+		Log.v(TAG, "cannot found");
+
+	}
+
 	/**
 	 * Létrehoz egy helyi hőst.
 	 */
 	public Hero(String name) throws RuntimeException {
-		if(name == null) name = getNextName();
+		if (name == null) name = getNextName();
 		else if (findHeroByName(name) != null) throw new RuntimeException("Name must be unique.");
 
 		mOwner = Player.CURRENT;
@@ -190,10 +242,11 @@ public class Hero extends DataSetObservable implements Cloneable {
 	}
 
 	public static Hero findHeroByName(String name) {
-
-		for (Hero hero : sHeroRepository) {
-			if (hero.getName().compareToIgnoreCase(name) == 0) {
-				return hero;
+		if (name != null) {
+			for (Hero hero : sHeroRepository) {
+				if (hero.getName().compareToIgnoreCase(name) == 0) {
+					return hero;
+				}
 			}
 		}
 
@@ -210,27 +263,30 @@ public class Hero extends DataSetObservable implements Cloneable {
 	}
 
 	public boolean setBattle(Battle battle) {
+		if (battle != null) {
+			if (mBattle != null) // már csatázik
+				return false;
 
-		if (mBattle != null) {
-			// csatázik már
-			return false;
+			mParams = new HeroParams();
+
+		} else {
+			if (mBattle == null) // amúgy sem csatázott
+				return true;
+
+			if (mBattle.getState() != Battle.STATE_FINISH)
+				return false;
+
+			assert mParams != null;
+
+			mParams.restore();
+
+
+			mParams = null;
 		}
 
 		mBattle = battle;
 
 		return true;
-
-	}
-
-	public void removeBattle() throws Exception {
-		if (mBattle != null) return;
-
-		if (mBattle.getState() == 1) {
-			// befejeződött
-			mBattle = null;
-		} else {
-			throw new Exception();
-		}
 
 	}
 
@@ -303,14 +359,12 @@ public class Hero extends DataSetObservable implements Cloneable {
 
 	public boolean isAlive() { return this.mHealthPoint > 0; }
 
-	private static final Random RANDOM = new Random();
-
 	/**
 	 * @param r A megivás valószínűsége.
 	 */
 	public float drinkCharm(float r) {
 
-		if (RANDOM.nextFloat() < r) {
+		if (Math.random() < r) {
 			mDrunkCharm = Math.min(mCharm, mBattle.MAX_USABLE_CHARM); // "maximális varázsereje"??
 			mCharm -= mDrunkCharm;
 
@@ -335,7 +389,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 	public boolean receiveDamage(float lostLife) {
 		if (lostLife <= 0) return false;
 
-		if((this.mHealthPoint -= lostLife) < 0) this.mHealthPoint = 0;
+		if ((this.mHealthPoint -= lostLife) < 0) this.mHealthPoint = 0;
 
 		if (!this.isAlive()) {
 			super.notifyChanged();
@@ -406,14 +460,29 @@ public class Hero extends DataSetObservable implements Cloneable {
 
 	@Override
 	public String toString() {
-		return String.format("%s [ name=\"%s\", hept=%f, chrm=%f, oppt=%f, dept=%f ]\n", getClass().getName(), mName, mHealthPoint, mCharm, mOffensivePoint, mDefensivePoint);
+		return String.format("%s [ name=\"%s\", hept=%f, chrm=%f, oppt=%f, dept=%f ]", getClass().getName(), mName, mHealthPoint, mCharm, mOffensivePoint, mDefensivePoint);
 	}
 
-	public class HeroParams {
+	private class HeroParams {
 		public float mHealthPoint;
 		public float mOffensivePoint;
 		public float mDefensivePoint;
 		public float mCharm;
+
+		public HeroParams() {
+			mHealthPoint = Hero.this.mHealthPoint;
+			mOffensivePoint = Hero.this.mOffensivePoint;
+			mDefensivePoint = Hero.this.mDefensivePoint;
+			mCharm = Hero.this.mCharm;
+		}
+
+		public void restore() {
+			Hero.this.mHealthPoint = mHealthPoint;
+			Hero.this.mOffensivePoint = mOffensivePoint;
+			Hero.this.mDefensivePoint = mDefensivePoint;
+			Hero.this.mCharm = mCharm;
+
+		}
 
 	}
 

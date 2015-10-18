@@ -258,15 +258,18 @@ public class Battle {
 		final float defensivePoint = mDefender.getBaseDefensivePoint() * ((DEF_RAND_MIN + (float) Math.random() * (DEF_RAND_MAX - DEF_RAND_MIN)) + (mDefender.getDrunkCharm() * DEF_CHARM_FACTOR));
 		// Log.v(TAG, offensivePoint + " vs " + defensivePoint);
 
-		++mAttacker.mTotalAttacks;
-		++mDefender.mTotalDefensives;
+		mAttacker.updateStatistics(Hero.STATISTICS_OFFENSIVE_POINT, offensivePoint);
+		mDefender.updateStatistics(Hero.STATISTICS_DEFENSIVE_POINT, defensivePoint);
+
+		mAttacker.updateStatistics(Hero.STATISTICS_ATTACKS, (int)1);
+		mDefender.updateStatistics(Hero.STATISTICS_DEFENCES, (int)1);
 
 		if (mDefender.receiveDamage(offensivePoint - defensivePoint)) { // vesztett életet?
-			Log.v(TAG, "defender received damage. health: " + mDefender.getHealthPoint());
+			Log.v(TAG, "defender received damage");
 
 			if (!mDefender.isAlive()) { // most ölte meg
 
-				Log.v(TAG, "!! the defender died !!");
+				Log.v(TAG, "  ...and died from his wounds");
 
 				int c = 0;
 				for(Hero hero : getHeroes(getHeroTeam(mDefender))) {
@@ -275,13 +278,15 @@ public class Battle {
 					}
 				}
 
-				if((c == 0) || (mHeroesA == mHeroesB && c == 1)) {
+				if((c == 0) || (!isMultiPlayer() && c == 1)) {
 					mState = STATE_BEFORE_FINISH;
-					Log.v(TAG, "!! team is dead !!");
+					Log.v(TAG, "  ...and unfortunately its team is died too :(");
 				}
 
 
-				++mAttacker.mTotalKills;
+				mAttacker.updateStatistics(Hero.STATISTICS_KILLS, (int)1);
+				mDefender.updateStatistics(Hero.STATISTICS_DEATHS, (int)1);
+
 				mAttacker.notifyChanged();
 
 			}
@@ -324,13 +329,28 @@ public class Battle {
 
 	}
 
+	public boolean isMultiPlayer() {
+		return mHeroesA != mHeroesB;
+	}
+
 	private void tryStartMassacre() {
 		// mindegyik játékos készen áll?
 		if (mPlayersA.size() + mPlayersB.size() > mReadyPlayers.size()) return;
 
+		final ArrayList<Hero> heroes = new ArrayList<>();
+		heroes.addAll(mHeroesA);
+		heroes.addAll(mHeroesB);
+
+		for(Hero hero : heroes) {
+			//++hero.mTotalBattles;
+			hero.updateStatistics("battles", (short)1);
+		}
+
+
 
 		// nincs ellenfél
 		if (mPlayersB.size() == 0) {
+			// single player
 			mPlayersB = mPlayersA;
 			mHeroesB = mHeroesA;
 		}
@@ -480,30 +500,23 @@ public class Battle {
 
 		@BattleState(Battle.STATE_ATTACKER_DRINKS_CHARM)
 		public void OnAttackerDrinksCharm() {
-			if (mAttacker.drinkCharm(.5f) > 0) {
+			mAttacker.drinkCharm(.5f);
+			setNextState();
+			/*
 				mHandler.postDelayed(new Runnable() {
 					@Override
 					public void run() {
 						setNextState();
 					}
 				}, 1000);
-			} else {
-				setNextState();
-			}
+				*/
 		}
 
 		@BattleState(Battle.STATE_DEFENDER_DRINKS_CHARM)
 		public void OnDefenderDrinksCharm() {
-			if (mDefender.drinkCharm(.5f) > 0) {
-				mHandler.postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						setNextState();
-					}
-				}, 1000);
-			} else {
-				setNextState();
-			}
+			mDefender.drinkCharm(.5f);
+			setNextState();
+
 		}
 
 		@BattleState(Battle.STATE_BEFORE_ATTACK)
@@ -513,11 +526,10 @@ public class Battle {
 
 		@BattleState(Battle.STATE_ATTACK)
 		public void OnAttack() {
-
 			Battle.this.duel();
-
 			setNextState();
 		}
+
 
 		@BattleState(Battle.STATE_AFTER_ATTACK)
 		public void OnAfterAttack() {
@@ -526,24 +538,27 @@ public class Battle {
 
 		@BattleState(Battle.STATE_TURN_FINISHED)
 		public void OnTurnFinished() {
+			setNextState();
+
+		}
+
+		@BattleState(Battle.STATE_NEXT_PLAYER)
+		public void OnNextPlayer() {
+			// setNextState();
 
 			mHandler.postDelayed(new Runnable() {
 				@Override
 				public void run() {
 					setNextState();
 				}
-			}, 500);
-
-		}
-
-		@BattleState(Battle.STATE_NEXT_PLAYER)
-		public void OnNextPlayer() {
-			setNextState();
+			}, 0);
 		}
 
 		@BattleState(Battle.STATE_BEFORE_FINISH)
 		public void OnWin() {
-Log.v(TAG, "yuuppppppiiiiiie!");
+			Log.v(TAG, "yuuppppppiiiiiie!");
+			//Log.v(TAG, "k" + mHeroesA.get(0).getStatistics(Hero.STATISTICS_ATTACKS).intValue());
+
 		}
 
 
