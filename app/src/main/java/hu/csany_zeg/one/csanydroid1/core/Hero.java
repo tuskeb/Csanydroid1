@@ -3,10 +3,13 @@ package hu.csany_zeg.one.csanydroid1.core;
 import android.database.DataSetObservable;
 import android.os.Parcel;
 import android.util.Log;
+import android.view.ViewDebug;
 
 import java.lang.reflect.Field;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import hu.csany_zeg.one.csanydroid1.App;
 import hu.csany_zeg.one.csanydroid1.R;
@@ -56,6 +59,22 @@ public class Hero extends DataSetObservable implements Cloneable {
 					R.drawable.heart_3,
 					R.drawable.heart_4
 			};
+
+	public static ArrayList<Hero> getFreeHeroes() {
+		ArrayList<Hero> heroes = new ArrayList<>();
+		for(Hero hero : sHeroRepository) {
+			if(hero.getBattle() == null) heroes.add(hero);
+		}
+
+		Collections.sort(heroes, new Comparator<Hero>() {
+			@Override
+			public int compare(Hero lhs, Hero rhs) {
+				return lhs.getName().compareTo(rhs.getName());
+			}
+		});
+
+		return heroes;
+	}
 
 	public static float MIN_CHARM = 0.0f, MAX_CHARM = 20.0f;
 	public static float MIN_OFFENSIVE_POINT = 1.0f, MAX_OFFENSIVE_POINT = 10.0f;
