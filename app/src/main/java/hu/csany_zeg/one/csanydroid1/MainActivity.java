@@ -90,6 +90,7 @@ e.printStackTrace();
 			new Hero("Dd");
 
 
+
 			{
 				Battle battle = new Battle("Waterló-i csata");
 				battle.addPlayer(Player.CURRENT, true);
@@ -107,7 +108,11 @@ e.printStackTrace();
 			battle.setPlayerReady(Player.CURRENT);
 */
 			}
-
+			new Hero("T1");
+			new Hero("T2");
+			new Hero("T3");
+			new Hero("T4");
+			new Hero("T5");
 		} else {
 			Log.v("mama", "!!!!!!!!!!!!!");
 		}

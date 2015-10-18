@@ -1,24 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="5dp" >
+    android:padding="5dp"
+    android:minWidth="150dp">
 
-    <ImageView
-        android:id="@+id/grid_item_image"
-        android:layout_width="50px"
-        android:layout_height="50px"
-        android:layout_marginRight="10px"
-        android:src="@drawable/heart" >
-    </ImageView>
 
-    <TextView
-        android:id="@+id/grid_item_label"
+
+    <CheckBox
+        android:id="@+id/grid_HeroSelectHeroName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@+id/label"
-        android:layout_marginTop="5px"
-        android:textSize="15px" >
+        android:textSize="30dp"
+        android:text="123"
+        android:layout_alignParentTop="true"
+        />
+    <ImageView
+        android:id="@+id/grid_HeroSelectHeroImage"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/heart"
+        android:layout_below="@+id/grid_HeroSelectHeroName"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+    </ImageView>
+    <ImageView
+        android:id="@+id/grid_HeroSelectHealthImage"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:src="@drawable/heart"
+        android:layout_alignTop="@+id/grid_HeroSelectHeroImage"
+        android:layout_toRightOf="@+id/grid_HeroSelectHeroImage"
+        android:layout_toEndOf="@+id/grid_HeroSelectHeroImage">
+    </ImageView>
+    <TextView
+        android:id="@+id/grid_HeroSelectHealthText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:text="123"
+        android:layout_alignTop="@+id/grid_HeroSelectHealthImage"
+        android:layout_toRightOf="@+id/grid_HeroSelectHealthImage"
+        android:layout_toEndOf="@+id/grid_HeroSelectHealthImage">
+    </TextView>
+    <ImageView
+        android:id="@+id/grid_HeroSelectCharmImage"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:src="@drawable/heart"
+        android:layout_below="@+id/grid_HeroSelectHealthText"
+        android:layout_toLeftOf="@+id/grid_HeroSelectHealthText"
+        android:layout_toStartOf="@+id/grid_HeroSelectHealthText">
+    </ImageView>
+    <TextView
+        android:id="@+id/grid_HeroSelectCharmText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:text="123"
+        android:layout_alignTop="@+id/grid_HeroSelectCharmImage"
+        android:layout_toRightOf="@+id/grid_HeroSelectHealthImage"
+        android:layout_toEndOf="@+id/grid_HeroSelectHealthImage">
+    </TextView>
+    <ImageView
+        android:id="@+id/grid_HeroSelectOffensiveImage"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:src="@drawable/heart"
+        android:layout_below="@+id/grid_HeroSelectCharmImage"
+        android:layout_toLeftOf="@+id/grid_HeroSelectCharmText"
+        android:layout_toStartOf="@+id/grid_HeroSelectCharmText">
+    </ImageView>
+    <TextView
+        android:id="@+id/grid_HeroSelectOffensiveText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:text="123"
+        android:layout_below="@+id/grid_HeroSelectCharmText"
+        android:layout_alignLeft="@+id/grid_HeroSelectCharmText"
+        android:layout_alignStart="@+id/grid_HeroSelectCharmText">
+    </TextView>
+    <ImageView
+        android:id="@+id/grid_HeroSelectDefensiveImage"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:src="@drawable/heart"
+        android:layout_below="@+id/grid_HeroSelectOffensiveText"
+        android:layout_toLeftOf="@+id/grid_HeroSelectOffensiveText"
+        android:layout_toStartOf="@+id/grid_HeroSelectOffensiveText">
+    </ImageView>
+    <TextView
+        android:id="@+id/grid_HeroSelectDefensiveText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:text="123"
+        android:layout_below="@+id/grid_HeroSelectOffensiveText"
+        android:layout_alignLeft="@+id/grid_HeroSelectOffensiveText"
+        android:layout_alignStart="@+id/grid_HeroSelectOffensiveText">
     </TextView>
 
-</LinearLayout>
+</RelativeLayout>
