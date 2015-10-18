@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
 		getSupportActionBar().hide();
 
 		setContentView(R.layout.activity_main);
-		
+
 		if(Hero.sHeroRepository == null) {
 			Hero.sHeroRepository = new ArrayList<>();
 
@@ -174,9 +174,6 @@ public class MainActivity extends AppCompatActivity {
 
 	@Override
 	protected void onDestroy() {
-		super.onDestroy();
-
-
 		FileOutputStream fos = null;
 		try {
 			fos = openFileOutput("hero_repository", MODE_PRIVATE);
@@ -202,12 +199,7 @@ public class MainActivity extends AppCompatActivity {
 			}
 		}
 
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
+		super.onDestroy();
 	}
 
 

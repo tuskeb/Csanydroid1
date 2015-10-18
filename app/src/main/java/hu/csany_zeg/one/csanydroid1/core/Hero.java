@@ -69,12 +69,14 @@ public class Hero extends DataSetObservable implements Cloneable {
 		Collections.sort(heroes, new Comparator<Hero>() {
 			@Override
 			public int compare(Hero lhs, Hero rhs) {
-				return lhs.getName().compareTo(rhs.getName());
+				return lhs.mIsFavourite != rhs.mIsFavourite ? (lhs.mIsFavourite ? 1 : -1) : lhs.getName().compareTo(rhs.getName());
 			}
 		});
 
 		return heroes;
 	}
+
+
 
 	public static float MIN_CHARM = 0.0f, MAX_CHARM = 20.0f;
 	public static float MIN_OFFENSIVE_POINT = 1.0f, MAX_OFFENSIVE_POINT = 10.0f;
