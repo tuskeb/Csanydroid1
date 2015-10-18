@@ -69,7 +69,7 @@ public class HeroSelectorActivityFragment extends Fragment {
                 ((TextView) gridView.findViewById(R.id.grid_HeroSelectDefensiveText)).setText(String.valueOf((int) heroList.get(position).getBaseDefensivePoint()));
                 ((ImageView) gridView.findViewById(R.id.grid_HeroSelectDefensiveImage)).setImageResource(heroList.get(position).getDefensiveImageID());
 
-                if (heroList.get(position).isBattle())
+                if (heroList.get(position).getBattle() != null)
                 {
                     ((CheckBox) gridView.findViewById(R.id.grid_HeroSelectHeroName)).setEnabled(false);
                     gridView.setAlpha(0.2f);
@@ -117,15 +117,7 @@ public class HeroSelectorActivityFragment extends Fragment {
         final Button create = (Button) view.findViewById(R.id.heroSelectOK);
         final EditText name = (EditText) view.findViewById(R.id.battleNameEditText);
         final Activity activity = this.getActivity();
-        String defaultBattleName="New Battle";
-        String defaultBattleName2=defaultBattleName;
-        int bn=2;
-        while (Battle.findBattle(defaultBattleName2)!=null)
-        {
-            defaultBattleName2=defaultBattleName+" " + bn;
-            bn++;
-        }
-        name.setText(defaultBattleName2);
+        name.setText(Battle.getNextName());
         name.selectAll();
 
         create.setOnClickListener(new View.OnClickListener() {
@@ -147,12 +139,8 @@ public class HeroSelectorActivityFragment extends Fragment {
                         try {
                             Battle battle = new Battle(name.getText().toString());
                             battle.addPlayer(Player.CURRENT, true);
-                            for (String s : names) {
-                                try {
-                                    Hero.findHeroByName(s).setBattle(battle);
-                                } catch (Battle.InvalidPlayerException e) {
-                                    e.printStackTrace();
-                                }
+                            for (String name : names) {
+	                            battle.addHero(Hero.findHeroByName(name));
                             }
                             //battle.setPlayerReady(Player.CURRENT);
                             activity.finish();
@@ -163,6 +151,8 @@ public class HeroSelectorActivityFragment extends Fragment {
                 }
             }
         });
+
+	    // TODO a létrehozás és, hogy kész a játékos más gombon kell, hogy legyenek.
 
         gridView.setAdapter(new heroSelectViewAdapter(this.getActivity(), Hero.sHeroRepository));
 

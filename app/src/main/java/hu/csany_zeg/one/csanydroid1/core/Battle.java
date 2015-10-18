@@ -103,7 +103,7 @@ public class Battle {
 		});
 	}
 
-	private static String getNextName() {
+	public static String getNextName() {
 		final String baseName = App.getContext().getString(R.string.unnamed_battle); // TODO default_battle_prefix
 		String name;
 
