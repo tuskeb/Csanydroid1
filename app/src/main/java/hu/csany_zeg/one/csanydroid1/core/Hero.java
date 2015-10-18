@@ -194,7 +194,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 		mBaseCharm = (float) Math.random() * (MAX_CHARM + Float.MIN_VALUE);
 		mOffensivePoint = (float) Math.random() * (MAX_OFFENSIVE_POINT - MIN_OFFENSIVE_POINT + Float.MIN_VALUE) + MIN_OFFENSIVE_POINT;
 		mDefensivePoint = (float) Math.random() * (MAX_OFFENSIVE_POINT - MIN_OFFENSIVE_POINT + Float.MIN_VALUE) + MIN_OFFENSIVE_POINT;
-
+		mPicture = (int)(Math.random()*drawableHeroes.length);
 		sHeroRepository.add(this);
 
 		Log.v(TAG, "created");

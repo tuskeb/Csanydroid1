@@ -90,6 +90,7 @@ e.printStackTrace();
 			new Hero("Dd");
 			//new Hero("Ee");
 
+
 			{
 				Battle battle = new Battle(null);
 				battle.addPlayer(Player.CURRENT, true);
@@ -101,7 +102,11 @@ e.printStackTrace();
 
 				battle.setPlayerReady(Player.CURRENT);
 			}
-
+			new Hero("T1");
+			new Hero("T2");
+			new Hero("T3");
+			new Hero("T4");
+			new Hero("T5");
 		} else {
 			Log.v("mama", "!!!!!!!!!!!!!");
 		}
