@@ -13,7 +13,7 @@
     <string name="title_hero_list">Heros</string>
     <string name="title_hero_detail">Hero Repository</string>
 
-    <string name="default_hero_name">Hero</string>
+    <string name="default_hero_name_prefix">Hero</string>
     <string name="create_hero">New Hero</string>
     <string name="remove_hero">Delete</string>
 
@@ -22,7 +22,7 @@
     <string name="offensive_point">Offensive Point</string>
     <string name="defensive_point">Defensive Point</string>
     <string name="charm_point">Charm Point</string>
-    <string name="unnamed_battle">Unnamed Battle</string>
+    <string name="default_battle_name_prefix">Unnamed Battle</string>
     <string name="title_activity_hero_selector">HeroSelectorActivity</string>
     <string name="hello_world">Hello world!</string>
 

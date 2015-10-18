@@ -196,7 +196,7 @@ public class Player {
 					}
 					break;
 					case Player.ACTION_GET_HERO: {
-						final Hero hero = Hero.findHeroByName(m.readString());
+						final Hero hero = Hero.findHero(m.readString());
 						if (hero == null) break;
 
 						resp.writeString(hero.getName());
@@ -208,7 +208,7 @@ public class Player {
 					}
 					break;
 					case Player.ACTION_UPDATE_HERO: {
-						final Hero hero = Hero.findHeroByName(m.readString());
+						final Hero hero = Hero.findHero(m.readString());
 						if (hero == null) break;
 
 
@@ -216,7 +216,7 @@ public class Player {
 					break;
 					case Player.ACTION_UPDATE_HERO_STAT: {
 
-						final Hero hero = Hero.findHeroByName(m.readString());
+						final Hero hero = Hero.findHero(m.readString());
 						final String name = m.readString();
 						final Number number = (Number)m.readValue(null);
 
@@ -253,7 +253,7 @@ public class Player {
 				resp.recycle();
 			} else {
 				final String name = m.readString();
-				Log.v(TAG, "process by battle " + name + "(" + action + ")");
+				// Log.v(TAG, "process by battle " + name + "(" + action + ")");
 				final Battle battle = Battle.findBattle(name);
 				if (battle == null) throw new NullPointerException();
 

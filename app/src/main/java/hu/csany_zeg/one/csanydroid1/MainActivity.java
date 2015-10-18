@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Parcel;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,6 +16,12 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+
 import hu.csany_zeg.one.csanydroid1.core.Battle;
 import hu.csany_zeg.one.csanydroid1.core.Hero;
 import hu.csany_zeg.one.csanydroid1.core.Player;
@@ -22,7 +29,7 @@ import hu.csany_zeg.one.csanydroid1.core.Player;
 public class MainActivity extends AppCompatActivity {
 	private final static int REQUEST_ENABLE_BT = 1;
 	BluetoothAdapter bluetoothAdapter;
-	// Create a BroadcastReceiver for ACTION_FOUND
+
 	private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
 		public void onReceive(Context context, Intent intent) {
 			switch (intent.getAction()) {
@@ -48,13 +55,6 @@ public class MainActivity extends AppCompatActivity {
 
 		}
 	};
-
-	@Override
-	public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-		super.onSaveInstanceState(outState, outPersistentState);
-
-		outState.putString("malac", "laci");
-	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -83,33 +83,44 @@ e.printStackTrace();
 		}
 */
 
-		if (Hero.sHeroRepository.size() == 0) {
-			new Hero("Aa");
-			new Hero("Bb");
-			new Hero("Cc");
-			new Hero("Dd");
-			//new Hero("Ee");
+		if(Hero.sHeroRepository == null) {
+			Hero.sHeroRepository = new ArrayList<>();
 
+			FileInputStream fis = null;
+			try {
+				// if(Math.random() < 2f) throw new Exception();
 
-			{
-				Battle battle = new Battle(null);
-				battle.addPlayer(Player.CURRENT, true);
+				fis = openFileInput("hero_repository");
+				final byte bytes[] = new byte[fis.available()];
+				fis.read(bytes);
 
-				for (Hero hero : Hero.sHeroRepository) {
-					battle.addHero(hero);
-					//hero.setBattle(battle);
+				final Parcel parcel = Parcel.obtain();
+				parcel.unmarshall(bytes, 0, bytes.length);
+				parcel.setDataPosition(0);
+
+				int size = parcel.readInt();
+				Log.v("hero", size + " heroes to load");
+				while(--size >= 0) {
+					new Hero(parcel);
 				}
 
-				battle.setPlayerReady(Player.CURRENT);
+			} catch (Exception e) {
+				for (int i = 0; i < 12; i++) {
+					new Hero(Hero.getNextName(null));
+				}
+			} finally {
+				if (fis != null) {
+					try {
+						fis.close();
+					} catch (IOException ignored) { }
+				}
 			}
-			new Hero("T1");
-			new Hero("T2");
-			new Hero("T3");
-			new Hero("T4");
-			new Hero("T5");
-		} else {
-			Log.v("mama", "!!!!!!!!!!!!!");
+
+
+
+
 		}
+
 
 		//Display display = getWindowManager().getDefaultDisplay();
 		//Point size = new Point();
@@ -148,7 +159,7 @@ e.printStackTrace();
 */
 		setContentView(R.layout.activity_main);
 
-		((Button) findViewById(R.id.hero_repository_button)).setOnClickListener(new View.OnClickListener() {
+		findViewById(R.id.hero_repository_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				Intent myIntent = new Intent(MainActivity.this, HeroListActivity.class);
@@ -156,7 +167,7 @@ e.printStackTrace();
 			}
 		});
 
-		((Button) findViewById(R.id.new_battle_button)).setOnClickListener(new View.OnClickListener() {
+		findViewById(R.id.new_battle_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				Intent myIntent = new Intent(MainActivity.this, HeroSelectorActivity.class);
@@ -164,7 +175,7 @@ e.printStackTrace();
 			}
 		});
 
-		((Button) findViewById(R.id.view_battles_button)).setOnClickListener(new View.OnClickListener() {
+		findViewById(R.id.view_battles_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				Intent myIntent = new Intent(MainActivity.this, BattleActivity.class);
@@ -172,7 +183,7 @@ e.printStackTrace();
 			}
 		});
 
-		((Button) findViewById(R.id.view_help_button)).setOnClickListener(new View.OnClickListener() {
+		findViewById(R.id.view_help_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				Intent myIntent = new Intent(MainActivity.this, HelpActivity.class);
@@ -183,55 +194,46 @@ e.printStackTrace();
 	}
 
 	@Override
-	protected void onPause() {
-		super.onPause();
-		/*
+	protected void onDestroy() {
+		super.onDestroy();
+
+		FileOutputStream fos = null;
 		try {
-			FileOutputStream fos = openFileOutput("hero_repository", MODE_PRIVATE);
+			fos = openFileOutput("hero_repository", MODE_PRIVATE);
 
-			Parcel parcel = Parcel.obtain();
+			final Parcel parcel = Parcel.obtain();
+			parcel.setDataPosition(0);
 
-			LocalHero[] heroList = new LocalHero[LocalHero.sHeros.size()];
-			parcel.writeTypedArray(LocalHero.sHeros.toArray(heroList), 0);
+			parcel.writeInt(Hero.sHeroRepository.size());
+			for(Hero hero : Hero.sHeroRepository) {
+				hero.obtainProperties(parcel);
+			}
 
 			fos.write(parcel.marshall());
 
 			parcel.recycle();
-
 		} catch (java.io.IOException e) {
-
+e.printStackTrace();
+		} finally {
+			if (fos != null) {
+				try {
+					fos.close();
+				} catch (IOException ignored) { }
+			}
 		}
-		*/
+
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 
 	}
 
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-
-
-	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		// getMenuInflater().inflate(R.menu.menu_main, menu);
 		return true;
 	}
 
-		/*
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-
-		//noinspection SimplifiableIfStatement
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-*/
 }

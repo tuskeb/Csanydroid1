@@ -1,12 +1,10 @@
 package hu.csany_zeg.one.csanydroid1;
 
 import android.content.DialogInterface;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +60,7 @@ public class HeroDetailFragment extends Fragment {
 			// arguments. In a real-world scenario, use a Loader
 			// to load content from a content provider.
 			String itemId = getArguments().getString(ARG_ITEM_ID);
-			mHero = itemId != null ? Hero.findHeroByName(itemId) : null;
+			mHero = itemId != null ? Hero.findHero(itemId) : null;
 		} else Log.v("mama", "karcsi");
 
 	}

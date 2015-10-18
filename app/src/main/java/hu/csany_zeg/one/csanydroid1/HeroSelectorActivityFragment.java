@@ -3,7 +3,6 @@ package hu.csany_zeg.one.csanydroid1;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import hu.csany_zeg.one.csanydroid1.core.Battle;
@@ -50,6 +48,8 @@ public class HeroSelectorActivityFragment extends Fragment {
 
 					mTheBattle.addPlayer(Player.CURRENT, true);
 
+					Toast.makeText(getActivity(), "Battle successfully created. Waiting for other players...", Toast.LENGTH_SHORT).show();
+
 					return;
 				}
 
@@ -66,7 +66,7 @@ public class HeroSelectorActivityFragment extends Fragment {
 				} else {
 					try {
 						for (String name : names) {
-							mTheBattle.addHero(Hero.findHeroByName(name));
+							mTheBattle.addHero(Hero.findHero(name));
 						}
 
 						mTheBattle.setPlayerReady(Player.CURRENT);
@@ -186,4 +186,5 @@ public class HeroSelectorActivityFragment extends Fragment {
 		return view;
 
 	}
+
 }

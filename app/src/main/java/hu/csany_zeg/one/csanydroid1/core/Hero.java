@@ -3,7 +3,6 @@ package hu.csany_zeg.one.csanydroid1.core;
 import android.database.DataSetObservable;
 import android.os.Parcel;
 import android.util.Log;
-import android.view.ViewDebug;
 
 import java.lang.reflect.Field;
 import java.text.NumberFormat;
@@ -18,7 +17,8 @@ public class Hero extends DataSetObservable implements Cloneable {
 
 	private static final String TAG = "hero";
 
-	public static ArrayList<Hero> sHeroRepository = new ArrayList<Hero>();
+	public static ArrayList<Hero> sHeroRepository;
+
 	public static short MIN_HEALTH = 10, MAX_HEALTH = 20;
 	public static int drawableHeroes[] =
 			{
@@ -110,7 +110,8 @@ public class Hero extends DataSetObservable implements Cloneable {
 	 */
 	protected float mDefensivePoint;
 
-	public static final String STATISTICS_OFFENSIVE_POINT = "offensivePoint",
+	public static final String
+			STATISTICS_OFFENSIVE_POINT = "offensivePoint",
 			STATISTICS_DEFENSIVE_POINT = "defensivePoint",
 			STATISTICS_DRUNK_CHARM = "drunkCharm",
 			STATISTICS_KILLS = "kills",
@@ -133,7 +134,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 	 * A hős összes varázsereje.
 	 */
 	@HeroStatistics(STATISTICS_DRUNK_CHARM)
-	private int mTotalDrunkCharm;
+	private float mTotalDrunkCharm;
 	/**
 	 * A hős által legyőzött ellenfelek.
 	 */
@@ -193,7 +194,6 @@ public class Hero extends DataSetObservable implements Cloneable {
 			}
 		});
 
-
 		Log.v(TAG, "cannot found");
 
 	}
@@ -201,9 +201,8 @@ public class Hero extends DataSetObservable implements Cloneable {
 	/**
 	 * Létrehoz egy helyi hőst.
 	 */
-	public Hero(String name) throws RuntimeException {
-		if (name == null) name = getNextName();
-		else if (findHeroByName(name) != null) throw new RuntimeException("Name must be unique.");
+	public Hero(String name) {
+		name = getNextName(name);
 
 		mOwner = Player.CURRENT;
 		mName = name;
@@ -214,12 +213,65 @@ public class Hero extends DataSetObservable implements Cloneable {
 		mOffensivePoint = (float) Math.random() * (MAX_OFFENSIVE_POINT - MIN_OFFENSIVE_POINT + Float.MIN_VALUE) + MIN_OFFENSIVE_POINT;
 		mDefensivePoint = (float) Math.random() * (MAX_OFFENSIVE_POINT - MIN_OFFENSIVE_POINT + Float.MIN_VALUE) + MIN_OFFENSIVE_POINT;
 		mPicture = (int)(Math.random()*drawableHeroes.length);
-		sHeroRepository.add(this);
 
-		Log.v(TAG, "created");
+		sHeroRepository.add(this);
 		super.notifyChanged();
 
 	}
+
+	public Hero(Parcel parcel) {
+		mOwner = Player.CURRENT;
+		// Log.v(TAG, "load");
+
+		// general
+		mName = parcel.readString();
+		mIsFavourite = parcel.readByte() > 0;
+		mHealthPoint = parcel.readFloat();
+		mBaseCharm = parcel.readFloat();
+		mOffensivePoint = parcel.readFloat();
+		mDefensivePoint = parcel.readFloat();
+		mPicture = parcel.readInt();
+
+		// statistics
+		mTotalOffensivePoint = parcel.readFloat();
+		mTotalDefensivePoint = parcel.readFloat();
+		mTotalDrunkCharm = parcel.readFloat();
+		mTotalKills = parcel.readInt();
+		mTotalDeaths = parcel.readInt();
+		mTotalAttacks = parcel.readInt();
+		mTotalDefences = parcel.readInt();
+		mTotalBattles = parcel.readInt();
+
+		sHeroRepository.add(this);
+		super.notifyChanged();
+
+	}
+
+	public void obtainProperties(Parcel parcel) {
+		// Log.v(TAG, "save");
+
+		// general
+		parcel.writeString(getName());
+		parcel.writeByte((byte)(mIsFavourite ? 1 : 0));
+		parcel.writeFloat(mHealthPoint);
+		parcel.writeFloat(mBaseCharm);
+		parcel.writeFloat(mOffensivePoint);
+		parcel.writeFloat(mDefensivePoint);
+		parcel.writeInt(mPicture);
+
+		// statistics
+		parcel.writeFloat(mTotalOffensivePoint);
+		parcel.writeFloat(mTotalDefensivePoint);
+		parcel.writeFloat(mTotalDrunkCharm);
+		parcel.writeInt(mTotalKills);
+		parcel.writeInt(mTotalDeaths);
+		parcel.writeInt(mTotalAttacks);
+		parcel.writeInt(mTotalDefences);
+		parcel.writeInt(mTotalBattles);
+
+
+	}
+
 
 	public Hero(Player owner, String name) {
 		mOwner = owner;
@@ -249,18 +301,28 @@ public class Hero extends DataSetObservable implements Cloneable {
 		return sHeroRepository.size();
 	}
 
-	private static String getNextName() {
-		final String baseName = App.getContext().getString(R.string.default_hero_name);
+
+	public static String getNextName(String prefix) {
+
+		if(prefix == null || (prefix = prefix.trim()).length() == 0)
+			prefix = App.getContext().getString(R.string.default_hero_name_prefix);
 		String name;
 
-		for (long n = 0; findHeroByName((name = baseName + " " + NumberFormat.getInstance().format(++n))) != null; )
-			;
+		if(findHero(prefix) == null) return prefix;
+
+		prefix += " ";
+
+		long n = 0;
+		while (true) {
+			if (findHero((name = prefix + NumberFormat.getInstance().format(++n))) == null)
+				break;
+		}
 
 		return name;
 
 	}
 
-	public static Hero findHeroByName(String name) {
+	public static Hero findHero(String name) {
 		if (name != null) {
 			for (Hero hero : sHeroRepository) {
 				if (hero.getName().compareToIgnoreCase(name) == 0) {
@@ -387,7 +449,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 			mDrunkCharm = Math.min(mCharm, mBattle.MAX_USABLE_CHARM); // "maximális varázsereje"??
 			mCharm -= mDrunkCharm;
 
-			this.mTotalDrunkCharm += mDrunkCharm;
+			updateStatistics(STATISTICS_DRUNK_CHARM, mDrunkCharm);
 
 		} else { // ne használjon ilyen szereket
 			mDrunkCharm = 0;

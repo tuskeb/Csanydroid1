@@ -104,7 +104,7 @@ Log.v(TAG, "battle created: " + mName);
 
 	public static String getNextName(String prefix) {
 		if(prefix == null || (prefix = prefix.trim()).length() == 0)
-			prefix = App.getContext().getString(R.string.unnamed_battle); // TODO default_battle_prefix
+			prefix = App.getContext().getString(R.string.default_battle_name_prefix); // TODO default_battle_prefix
 		String name;
 
 		if(findBattle(prefix) == null) return prefix;
@@ -316,7 +316,7 @@ Log.v(TAG, "battle created: " + mName);
 			break;
 			case Player.ACTION_ADD_HERO_TO_BATTLE: {
 				String heroName = m.readString();
-				Hero hero = (player == Player.CURRENT ? Hero.findHeroByName(heroName) : new Hero(player, heroName));
+				Hero hero = (player == Player.CURRENT ? Hero.findHero(heroName) : new Hero(player, heroName));
 				if (hero == null) break;
 				// IMPORTANT! only one instance is allowed
 
