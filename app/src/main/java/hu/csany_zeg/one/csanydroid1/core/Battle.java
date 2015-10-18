@@ -81,10 +81,9 @@ public class Battle {
 	 */
 	public Battle(String name) throws RuntimeException {
 		mOwner = Player.CURRENT;
-		mName = name != null ? name : getNextName();
-
+		mName = getNextName(name);
+Log.v(TAG, "battle created: " + mName);
 		sBattles.add(this);
-
 	}
 
 	public Battle(Player owner, String name) throws RuntimeException {
@@ -103,13 +102,18 @@ public class Battle {
 		});
 	}
 
-	public static String getNextName() {
-		final String baseName = App.getContext().getString(R.string.unnamed_battle); // TODO default_battle_prefix
+	public static String getNextName(String prefix) {
+		if(prefix == null || (prefix = prefix.trim()).length() == 0)
+			prefix = App.getContext().getString(R.string.unnamed_battle); // TODO default_battle_prefix
 		String name;
+
+		if(findBattle(prefix) == null) return prefix;
+
+		prefix += " ";
 
 		long n = 0;
 		while (true) {
-			if (findBattle((name = baseName + " " + NumberFormat.getInstance().format(++n))) == null)
+			if (findBattle((name = prefix + NumberFormat.getInstance().format(++n))) == null)
 				break;
 		}
 
