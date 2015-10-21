@@ -125,11 +125,11 @@ Log.v(TAG, "battle created: " + mName);
 		sBattles.add(this);
 
 		mOwner.send(new Player.Message(Player.ACTION_GET_BATTLE, this) {
-			@Override
-			public void extra(Parcel m) {
-			}
+            @Override
+            public void extra(Parcel m) {
+            }
 
-		});
+        });
 	}
 
 	public static String getNextName(String prefix) {
@@ -528,7 +528,8 @@ Log.v(TAG, "battle created: " + mName);
 		return true;
 	}
 
-    public Battle setOnStateChangeListener(OnStateChange onStateChangeListener) {
+    public void setOnStateChangeListener(OnStateChange onStateChangeListener) {
+
         mOnStateChangeListener = onStateChangeListener != null ? onStateChangeListener :
                 new OnStateChange() {
                     @Override
@@ -537,7 +538,6 @@ Log.v(TAG, "battle created: " + mName);
                     }
                 };
 
-        return this;
     }
 
     OnStateChange mOnStateChangeListener;
@@ -547,19 +547,21 @@ Log.v(TAG, "battle created: " + mName);
 
     public static abstract class OnStateChange {
         public void onChange(final Battle battle, final Object param) {
-            battle.mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    battle.nextState();
-                }
-            });
         }
     }
 
 
-    public Handler mHandler;
+    private Handler mHandler;
 
 
+    public void delayNextState(int delay) {
+        mHandler.postAtTime(new Runnable() {
+            @Override
+            public void run() {
+                nextState();
+            }
+        }, delay);
+    }
 
 	public abstract class StateChangeListeners {
 
@@ -568,6 +570,7 @@ Log.v(TAG, "battle created: " + mName);
                 next = Battle.STATE_DRAW_START_PLAYER
         )
         public void OnWait() {
+            delayNextState(0);
             mOnStateChangeListener.onChange(Battle.this, null);
         }
 
@@ -575,7 +578,7 @@ Log.v(TAG, "battle created: " + mName);
 		public void OnDrawStartPlayer() {
 			mStartingTeam = Math.random() - .25 < Math.random(); // +25% chance for team `A`
             Log.v(TAG, "starting team: " + (mStartingTeam ? "A" : "B"));
-
+            delayNextState(5000);
             mOnStateChangeListener.onChange(Battle.this, mStartingTeam);
 
 		}
@@ -583,7 +586,7 @@ Log.v(TAG, "battle created: " + mName);
 		@BattleState(Battle.STATE_CHOOSE_ATTACKER_HERO)
 		public void OnChooseAttackerHero() {
 			Hero oldAttacker = nextAttacker();
-
+delayNextState(3000);
             mOnStateChangeListener.onChange(Battle.this, oldAttacker);
 
 		}
@@ -591,6 +594,7 @@ Log.v(TAG, "battle created: " + mName);
 		@BattleState(Battle.STATE_CHOOSE_DEFENDER_HERO)
 		public void OnChooseDefenderHero() {
 			Hero oldDefender = nextDefender();
+            delayNextState(3000);
 
             mOnStateChangeListener.onChange(Battle.this, oldDefender);
 
@@ -599,6 +603,7 @@ Log.v(TAG, "battle created: " + mName);
 		@BattleState(Battle.STATE_ATTACKER_DRINKS_CHARM)
 		public void OnAttackerDrinksCharm() {
 			mAttacker.drinkCharm(.5f);
+            delayNextState(3000);
             mOnStateChangeListener.onChange(Battle.this, mAttacker);
 
 		}
@@ -606,17 +611,20 @@ Log.v(TAG, "battle created: " + mName);
 		@BattleState(Battle.STATE_DEFENDER_DRINKS_CHARM)
 		public void OnDefenderDrinksCharm() {
 			mDefender.drinkCharm(.5f);
+            delayNextState(3000);
             mOnStateChangeListener.onChange(Battle.this, mDefender);
 
 		}
 
 		@BattleState(Battle.STATE_BEFORE_ATTACK)
 		public void OnBeforeAttack() {
+            delayNextState(1000);
             mOnStateChangeListener.onChange(Battle.this, null);
 		}
 
 		@BattleState(Battle.STATE_ATTACK)
 		public void OnAttack() {
+            delayNextState(3000);
 			Battle.this.duel();
             mOnStateChangeListener.onChange(Battle.this, null);
 		}
@@ -648,7 +656,7 @@ Log.v(TAG, "battle created: " + mName);
 
         @BattleState(value = Battle.STATE_FINISH)
         public void OnFinish() {
-            dispose();
+           // dispose();
             Log.v(TAG, "disposed");
         }
 
