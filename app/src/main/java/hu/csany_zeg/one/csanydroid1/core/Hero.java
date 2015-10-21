@@ -19,7 +19,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 
 	public static ArrayList<Hero> sHeroRepository;
 
-	public static short MIN_HEALTH = 10, MAX_HEALTH = 20;
+	public static short MIN_HEALTH = 10, MAX_HEALTH = 500;
 	private static int drawableHeroes[] =
 			{
 					R.drawable.ch1_basic_stay,
@@ -129,10 +129,10 @@ public class Hero extends DataSetObservable implements Cloneable {
 
 	private static int drawableDefensive[] =
 			{
-					R.drawable.shield1,
-					R.drawable.shield2,
-					R.drawable.shield4,
-					R.drawable.shield5
+					R.drawable.shield1_icon,
+					R.drawable.shield2_icon,
+					R.drawable.shield3_icon,
+					R.drawable.shield4_icon
 			};
 	private static int drawableCharms[] =
 			{
@@ -516,7 +516,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 	}
 
 	public int getCharmImageIndex() {
-		return Math.min((int)((getBaseOffensivePoint() - MIN_CHARM) / ((float)(MAX_CHARM - MIN_CHARM) / (float) drawableCharms.length)), drawableCharms.length - 1);
+		return Math.min((int)((getCharm() - MIN_CHARM) / ((float)(MAX_CHARM - MIN_CHARM) / (float) drawableCharms.length)), drawableCharms.length - 1);
 	}
 
 	public int getOffensiveImageIndex() {

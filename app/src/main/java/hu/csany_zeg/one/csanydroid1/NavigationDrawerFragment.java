@@ -303,7 +303,6 @@ public class NavigationDrawerFragment extends Fragment {
 									                    selectItem(mCurrentSelectedPosition - 1);
 								                    } else {
 									                    selectItem(mCurrentSelectedPosition);
-									                    //getActivity().finish();
 								                    }
 
 								                    getActivity().supportInvalidateOptionsMenu(); // calls onPrepareOptionsMenu()

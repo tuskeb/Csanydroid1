@@ -160,10 +160,12 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
         }
 
         public void selectItem(int position) {
+
             final Battle battle = Battle.get(position);
             final BattleActivity activity = (BattleActivity) getActivity();
 
             activity.mTitle = battle.getName();
+
 
         }
 

@@ -183,8 +183,7 @@ public class Battle {
     public void giveUp() {
         mOwner.send(new Player.Message(Player.ACTION_GIVE_UP, this) {
             @Override
-            public void extra(Parcel m) {
-            }
+            public void extra(Parcel m) { }
         });
 
         // dispose();
@@ -291,6 +290,7 @@ public class Battle {
         if (mHandler != null) {
             mHandler.getLooper().quit();
         }
+        mDisposed = true;
     }
 
     public short getTurn() {
@@ -352,8 +352,7 @@ public class Battle {
             case Player.ACTION_GIVE_UP: {
                 try {
                     removePlayerHeroes(player);
-                } catch (InvalidPlayerException e) {
-                }
+                } catch (InvalidPlayerException e) { }
             }
             break;
             case Player.ACTION_ADD_HERO_TO_BATTLE: {
@@ -502,8 +501,18 @@ public class Battle {
                 heroes.remove(i);
             }
         }
+        mReadyPlayers.remove(player);
+
+        if(mReadyPlayers.size() == 0 && !isMultiPlayer()) {
+            dispose();
+        }
+
     }
 
+    boolean mDisposed = false;
+    public boolean isDisposed() {
+        return mDisposed;
+    }
 
     public void addHero(final Hero hero) {
         mOwner.send(new Player.Message(Player.ACTION_ADD_HERO_TO_BATTLE, this) {
@@ -576,7 +585,7 @@ public class Battle {
         public void OnDrawStartPlayer() {
             mStartingTeam = Math.random() - .25 < Math.random(); // +25% chance for team `A`
             Log.v(TAG, "starting team: " + (mStartingTeam ? "A" : "B"));
-            delayNextState(3000);
+            delayNextState(2000);
             mOnStateChangeListener.onChange(Battle.this, mStartingTeam);
 
         }
@@ -584,8 +593,8 @@ public class Battle {
         @BattleState(Battle.STATE_ATTACKER_CHANGE)
         public void OnChooseAttackerHero() {
             Hero oldAttacker = nextAttacker();
-            Log.v(TAG, "SET ATTACKER: " +  + getAttacker().getIndex() );
-            delayNextState(600);
+            Log.v(TAG, "SET ATTACKER: " + +getAttacker().getIndex() );
+            delayNextState(100);
             mOnStateChangeListener.onChange(Battle.this, oldAttacker);
 
         }
@@ -594,7 +603,7 @@ public class Battle {
         public void OnChooseDefenderHero() {
             Hero oldDefender = nextDefender();
             Log.v(TAG, "SET DEFENDER: " + getDefender().getIndex());
-            delayNextState(600);
+            delayNextState(100);
 
             mOnStateChangeListener.onChange(Battle.this, oldDefender);
 
@@ -603,7 +612,7 @@ public class Battle {
         @BattleState(Battle.STATE_ATTACKER_DRINKS_CHARM)
         public void OnAttackerDrinksCharm() {
             mAttacker.drinkCharm(.5f);
-            delayNextState(500);
+            delayNextState(400);
             mOnStateChangeListener.onChange(Battle.this, mAttacker);
 
         }
@@ -611,7 +620,7 @@ public class Battle {
         @BattleState(Battle.STATE_DEFENDER_DRINKS_CHARM)
         public void OnDefenderDrinksCharm() {
             mDefender.drinkCharm(.5f);
-            delayNextState(500);
+            delayNextState(400);
             mOnStateChangeListener.onChange(Battle.this, mDefender);
 
         }
