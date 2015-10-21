@@ -575,9 +575,8 @@ public class Hero extends DataSetObservable implements Cloneable {
 
 		if ((this.mHealthPoint -= lostLife) < 0) this.mHealthPoint = 0;
 
-		if (!this.isAlive()) {
-			notifyChanged();
-		}
+        notifyChanged();
+
 		return true;
 
 	}
