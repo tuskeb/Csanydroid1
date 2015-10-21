@@ -35,7 +35,8 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         if (Battle.sBattles.size() == 0) {
             finish();
@@ -112,6 +113,7 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
             mBattle = Battle.get(getArguments().getInt(ARG_BATTLE_NUMBER));
             mBattle.setOnStateChangeListener(mStateChangeListeners);
 
+
             super.onCreate(savedInstanceState);
 
         }
@@ -147,6 +149,9 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
 
             mHeroViewA = new HeroView(getContext(), true);
             mHeroViewB = new HeroView(getContext(), true);
+
+            mHeroViewA.setHero(mBattle.getAttacker());
+            mHeroViewB.setHero(mBattle.getDefender());
 
             linearLayout.addView(mHeroViewA);
             linearLayout.addView(mHeroViewB);
