@@ -81,7 +81,7 @@ public class HeroView extends View {
             @Override
             public void onViewAttachedToWindow(View v) {
                 if (heartBitmap == null)
-                    heartBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.heart);
+                    heartBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.heartasd);
                 mask = Bitmap.createBitmap(32, 32, Bitmap.Config.ARGB_8888);
             }
 

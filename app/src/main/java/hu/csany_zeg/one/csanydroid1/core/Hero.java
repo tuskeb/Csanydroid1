@@ -123,7 +123,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 
 	private static int drawableHealthToHero[]=
 			{
-					R.drawable.heart,
+					R.drawable.heart_1,
 					R.drawable.heart_1,
 					R.drawable.heart_2,
 					R.drawable.heart_3,
@@ -148,7 +148,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 			};
 	private static int drawableHealths[] =
 			{
-					R.drawable.heart,
+					R.drawable.heart_1,
 					R.drawable.heart_1,
 					R.drawable.heart_2,
 					R.drawable.heart_3,
