@@ -145,7 +145,6 @@ public class HeroDetailFragment extends Fragment {
 					try {
 						mHero.setOffensivePoint((float) progress + Hero.MIN_OFFENSIVE_POINT);
 					} catch (RuntimeException ignored) { }
-
 					offensiveValueTextView.setText(String.valueOf(Math.round(mHero.getBaseOffensivePoint())));
 
 					offensiveImageView.setImageDrawable(getResources().getDrawable(mHero.getOffensiveImageID()));
