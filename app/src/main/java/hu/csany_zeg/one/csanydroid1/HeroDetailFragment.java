@@ -43,12 +43,14 @@ public class HeroDetailFragment extends Fragment {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+
+        if (getArguments().containsKey(ARG_ITEM_ID)) {
+            String itemId = getArguments().getString(ARG_ITEM_ID);
+            mHero = itemId != null ? Hero.findHero(itemId) : null;
+        }
+
 		super.onCreate(savedInstanceState);
 
-		if (getArguments().containsKey(ARG_ITEM_ID)) {
-			String itemId = getArguments().getString(ARG_ITEM_ID);
-			mHero = itemId != null ? Hero.findHero(itemId) : null;
-		}
 
 	}
 
@@ -57,6 +59,7 @@ public class HeroDetailFragment extends Fragment {
 	                         Bundle savedInstanceState) {
 		final View rootView;
 
+        Log.v("mamma", mHero + "");
 		if (mHero == null) {
 			rootView = inflater.inflate(R.layout.fragment_hero_overalldetail, container, false);
 			((TextView) rootView.findViewById(R.id.number_of_heros)).setText(String.valueOf(Hero.countHeroes()));
