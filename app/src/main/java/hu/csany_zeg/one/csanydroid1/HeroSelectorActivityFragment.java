@@ -48,9 +48,9 @@ public class HeroSelectorActivityFragment extends Fragment {
 
 					mTheBattle.addPlayer(Player.CURRENT, true);
 
-					Toast.makeText(getActivity(), "Battle successfully created. Waiting for other players...", Toast.LENGTH_SHORT).show();
+					//Toast.makeText(getActivity(), "Battle successfully created. Waiting for other players...", Toast.LENGTH_SHORT).show();
 
-					return;
+					//return;
 				}
 
 				ArrayList<String> names = new ArrayList<String>();

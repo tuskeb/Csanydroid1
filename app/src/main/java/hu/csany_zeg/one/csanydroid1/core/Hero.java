@@ -22,18 +22,62 @@ public class Hero extends DataSetObservable implements Cloneable {
 	public static short MIN_HEALTH = 10, MAX_HEALTH = 20;
 	private static int drawableHeroes[] =
 			{
-					R.drawable.hero1_blue,
-					R.drawable.hero1_green,
-					R.drawable.hero1_purple,
-					R.drawable.hero1_red
+					R.drawable.ch1_basic_stay,
+					R.drawable.ch2_basic_stay,
+					R.drawable.ch3_basic_stay,
+					R.drawable.ch4_basic_stay
 			};
+
+
+	private static int drawableHeroesRanged[][] =
+			{
+				{
+					R.drawable.ch1_basic_ranged,
+							R.drawable.ch2_basic_ranged,
+							R.drawable.ch3_basic_ranged,
+							R.drawable.ch4_basic_ranged
+				},
+					{
+							R.drawable.ch1_ranged1,
+							R.drawable.ch2_ranged1,
+							R.drawable.ch3_ranged1,
+							R.drawable.ch4_ranged1
+					},
+					{
+							R.drawable.ch1_ranged2,
+							R.drawable.ch2_ranged2,
+							R.drawable.ch3_ranged2,
+							R.drawable.ch4_ranged2
+					}
+			};
+	private static int drawableHeroesNonRanged[][] =
+			{
+					{
+							R.drawable.ch1_basic_non_ranged,
+							R.drawable.ch2_basic_non_ranged,
+							R.drawable.ch3_basic_non_ranged,
+							R.drawable.ch4_basic_non_ranged
+					},
+					{
+							R.drawable.ch1_non_ranged1,
+							R.drawable.ch2_non_ranged1,
+							R.drawable.ch3_non_ranged1,
+							R.drawable.ch4_non_ranged1
+					},
+					{
+							R.drawable.ch1_non_ranged2,
+							R.drawable.ch2_non_ranged2,
+							R.drawable.ch3_non_ranged2,
+							R.drawable.ch4_non_ranged2
+					}
+			};
+
 	private static int drawableOffensive[] =
 			{
-					R.drawable.weapon_1s,
-					R.drawable.weapon_2s,
-					R.drawable.weapon_3,
-					R.drawable.weapon_4s,
-					R.drawable.weapon_5s
+					R.drawable.weapon_icon_dagger,
+					R.drawable.weapon_icon_sword,
+					R.drawable.weapon_icon_gun,
+					R.drawable.weapon_icon_laser
 			};
 	private static int drawableDefensive[] =
 			{
