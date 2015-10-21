@@ -9,6 +9,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.MotionEvent;
@@ -150,6 +152,22 @@ public class HeroView extends View {
 		return (32f) * (life / LIFE_PER_HEART);
 	}
 
+	private void drawTest(Canvas canvas) {
+		ArrayList<Integer> a = mHero.getOffensiveImageArray(0);
+		ArrayList<Integer> b = mHero.getOffensiveImageArray(1);
+		ArrayList<Integer> c = mHero.getOffensiveImageArray(2);
+		for (Integer i: a) {
+			canvas.drawBitmap(BitmapFactory.decodeResource(getResources(),i),0,100,null);
+		}
+		for (Integer i: b) {
+			canvas.drawBitmap(BitmapFactory.decodeResource(getResources(),i),0,200,null);
+		}
+		for (Integer i: c) {
+			canvas.drawBitmap(BitmapFactory.decodeResource(getResources(),i),0,300,null);
+		}
+
+	}
+
 	private void drawHealth(Canvas canvas) {
 
 		float life = mHero.getHealthPoint();
@@ -220,7 +238,7 @@ public class HeroView extends View {
 		}
 
 		y %= h;
-
+		drawTest(canvas);
 	}
 
 	@Override
