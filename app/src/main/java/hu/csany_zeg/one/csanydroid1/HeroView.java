@@ -157,13 +157,13 @@ public class HeroView extends View {
 		ArrayList<Integer> b = mHero.getOffensiveImageArray(1);
 		ArrayList<Integer> c = mHero.getOffensiveImageArray(2);
 		for (Integer i: a) {
-			canvas.drawBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ch1_basic_non_ranged),0,100,null);
+			canvas.drawBitmap(BitmapFactory.decodeResource(getResources(),i),0,100,null);
 		}
 		for (Integer i: b) {
-			canvas.drawBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ch1_basic_non_ranged),0,200,null);
+			canvas.drawBitmap(BitmapFactory.decodeResource(getResources(),i),0,200,null);
 		}
 		for (Integer i: c) {
-			canvas.drawBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ch1_basic_non_ranged),0,300,null);
+			canvas.drawBitmap(BitmapFactory.decodeResource(getResources(),i),0,300,null);
 		}
 
 	}

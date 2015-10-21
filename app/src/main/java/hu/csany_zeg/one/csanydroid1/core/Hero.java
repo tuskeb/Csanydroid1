@@ -77,7 +77,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 			{
 					R.drawable.weapon_icon_dagger,
 					R.drawable.weapon_icon_sword,
-					R.drawable.weapon_icon_gun,
+					R.drawable.weapon_icon_pistol,
 					R.drawable.weapon_icon_laser
 			};
 	private static int drawableDefensive[] =
@@ -647,10 +647,11 @@ public class Hero extends DataSetObservable implements Cloneable {
 
 	}
 
-
+	/** Index 0,1,2 */
 	public ArrayList<Integer> getOffensiveImageArray(int animIndex)
 	{
 		ArrayList<Integer> a= new ArrayList<>();
+		a.add(drawableOffensive[getOffensiveImageIndex()]);
 		switch (getOffensiveImageIndex()) {
 			case 1:
 			case 2:
@@ -661,9 +662,14 @@ public class Hero extends DataSetObservable implements Cloneable {
 				a.add(drawableHeroesRanged[animIndex][getHeroImageIndex()]);
 				break;
 		}
-		a.add(drawableOffensive[getOffensiveImageIndex()]);
 
 		return a;
 	}
 
+
+	public ArrayList<Integer> getDefensiveImageArray() {
+		ArrayList<Integer> a= new ArrayList<>();
+		a.add(drawableOffensive[getOffensiveImageIndex()]);
+		return a;
+	}
 }
