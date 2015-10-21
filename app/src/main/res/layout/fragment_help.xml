@@ -41,7 +41,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Az elmentett hősök raktárába lehet eljutni! Bal felső sarokban található + jellel adhatunk hozzá hőst. Először egy nevet kell megadni. A csúszkák segítségével adható meg a hős különféle adata. A mentés autómatikusan, a törlés a szemetesláda ikon megnyomásával történik."
+        android:text="Az elmentett hősök raktárába lehet eljutni! Bal felső sarokban található + jellel adhatunk hozzá hőst. Először egy nevet kell megadni. A csúszkák segítségével adható meg a hős különféle adata. A harcban lévő hősök datai nem módosíthatók. Egy hős csak egy csatában vehet részt. A mentés automatikus, a törlés a szemetesláda ikon megnyomásával történik."
         android:id="@+id/textView4"
         android:textSize="25dp"
         android:textColor="#014225"
