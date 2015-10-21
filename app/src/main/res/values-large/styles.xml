@@ -38,5 +38,8 @@
     <style name="teszt_layout">
         <item name="android:background">#D2D2D2</item>
     </style>
+    <style name="linear_layout">
+        <item name="android:background">#D2D2D2</item>
+    </style>
 
 </resources>

@@ -161,6 +161,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 	public static final String
 			STATISTICS_OFFENSIVE_POINT = "offensivePoint",
 			STATISTICS_DEFENSIVE_POINT = "defensivePoint",
+			STATISTICS_HEALTH_POINT = "healthpoint",
 			STATISTICS_DRUNK_CHARM = "drunkCharm",
 			STATISTICS_KILLS = "kills",
 			STATISTICS_DEATHS = "deaths",

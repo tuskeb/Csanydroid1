@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name" translatable="false">CsataSzimulátor</string>
     <string name="action_settings">Beállítások</string>
+    <string name="create_hero_inhelp">Hős létrehozása</string>
+    <string name="hero_repository_inhelp">Hős raktár</string>
+    <string name="battle_inhelp">Csata indítása</string>
+    <string name="help_inhelp">Súgó</string>
     <string name="new_battle_button">Csata létrehozása</string>
-    <string name="hero_repository_button">Hős raktár</string>
+    <string name="hero_repository">Hős raktár</string>
     <string name="battle_button">Csata indítása</string>
     <string name="help_button">Segítség</string>
     <string name="give_up">Feladom</string>
