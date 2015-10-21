@@ -323,7 +323,6 @@ public class Battle {
                         ++c;
                     }
                 }
-
                 if ((c == 0) || (!isMultiPlayer() && c == 1)) {
                     mState = STATE_BEFORE_FINISH;
                     Log.v(TAG, "  ...and unfortunately its team is died too :(");
