@@ -11,6 +11,7 @@ Megvalósított funkciók, az előírtakon kívül
 	-	Csak azok a hősök adhatók a csatához, akik nem harconak
 	-	A csaták a háttérben folyamatosan futnak (ha nincs megjelenítve akkor is)
 	-	Félbehagyott fejlesztés: Bluetooth többjátékos mód
+	-	Elforgatás támogatása
 	-	Súgó
  */
 package hu.csany_zeg.one.csanydroid1;

@@ -28,7 +28,7 @@
         android:id="@+id/grid_HeroSelectHealthImage"
         android:layout_width="25dp"
         android:layout_height="25dp"
-        android:src="@drawable/heart4_icon"
+        android:src="@drawable/heart1_icon"
         android:layout_alignTop="@+id/grid_HeroSelectHeroImage"
         android:layout_toRightOf="@+id/grid_HeroSelectHeroImage"
         android:layout_toEndOf="@+id/grid_HeroSelectHeroImage">
@@ -47,7 +47,7 @@
         android:id="@+id/grid_HeroSelectCharmImage"
         android:layout_width="25dp"
         android:layout_height="25dp"
-        android:src="@drawable/heart4_icon"
+        android:src="@drawable/magic1_icon"
         android:layout_below="@+id/grid_HeroSelectHealthText"
         android:layout_toLeftOf="@+id/grid_HeroSelectHealthText"
         android:layout_toStartOf="@+id/grid_HeroSelectHealthText">
@@ -66,7 +66,7 @@
         android:id="@+id/grid_HeroSelectOffensiveImage"
         android:layout_width="25dp"
         android:layout_height="25dp"
-        android:src="@drawable/heart4_icon"
+        android:src="@drawable/weapon_icon_sword"
         android:layout_below="@+id/grid_HeroSelectCharmImage"
         android:layout_toLeftOf="@+id/grid_HeroSelectCharmText"
         android:layout_toStartOf="@+id/grid_HeroSelectCharmText">
@@ -85,7 +85,7 @@
         android:id="@+id/grid_HeroSelectDefensiveImage"
         android:layout_width="25dp"
         android:layout_height="25dp"
-        android:src="@drawable/heart4_icon"
+        android:src="@drawable/shield1_icon"
         android:layout_below="@+id/grid_HeroSelectOffensiveText"
         android:layout_toLeftOf="@+id/grid_HeroSelectOffensiveText"
         android:layout_toStartOf="@+id/grid_HeroSelectOffensiveText">
