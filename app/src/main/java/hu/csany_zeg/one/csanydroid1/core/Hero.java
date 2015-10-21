@@ -108,51 +108,45 @@ public class Hero extends DataSetObservable implements Cloneable {
 					R.drawable.shield1,
 					R.drawable.shield2,
 					R.drawable.shield3,
-					R.drawable.shield4,
-					R.drawable.shield5
+					R.drawable.shield4
 			};
 
 	private static int drawableCharmToHero[]=
 			{
-					R.drawable.magic1,
-					R.drawable.magic2,
-					R.drawable.magic3,
 					R.drawable.magic4,
-					R.drawable.magic5
+					R.drawable.magic3,
+					R.drawable.magic2,
+					R.drawable.magic1,
 			};
 
 	private static int drawableHealthToHero[]=
 			{
-					R.drawable.heart_1,
-					R.drawable.heart_1,
-					R.drawable.heart_2,
-					R.drawable.heart_3,
-					R.drawable.heart_4
+					R.drawable.heart4,
+					R.drawable.heart3,
+					R.drawable.heart2,
+					R.drawable.heart1,
 			};
 
 	private static int drawableDefensive[] =
 			{
-					R.drawable.shield1,
-					R.drawable.shield2,
-					R.drawable.shield3,
-					R.drawable.shield4,
-					R.drawable.shield5
+					R.drawable.shield_icon1,
+					R.drawable.shield_icon2,
+					R.drawable.shield_icon3,
+					R.drawable.shield_icon4
 			};
 	private static int drawableCharms[] =
 			{
-					R.drawable.magic1,
-					R.drawable.magic2,
-					R.drawable.magic3,
-					R.drawable.magic4,
-					R.drawable.magic5
+					R.drawable.magic4_icon,
+					R.drawable.magic3_icon,
+					R.drawable.magic2_icon,
+					R.drawable.magic1_icon
 			};
 	private static int drawableHealths[] =
 			{
-					R.drawable.heart_1,
-					R.drawable.heart_1,
-					R.drawable.heart_2,
-					R.drawable.heart_3,
-					R.drawable.heart_4
+					R.drawable.heart4_icon,
+					R.drawable.heart3_icon,
+					R.drawable.heart2_icon,
+					R.drawable.heart1_icon
 			};
 
 	public static ArrayList<Hero> getFreeHeroes() {
@@ -211,7 +205,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 	public static final String
 			STATISTICS_OFFENSIVE_POINT = "offensivePoint",
 			STATISTICS_DEFENSIVE_POINT = "defensivePoint",
-			STATISTICS_DRUNK_CHARM = "drunkCharm",
+				STATISTICS_DRUNK_CHARM = "drunkCharm",
 			STATISTICS_KILLS = "kills",
 			STATISTICS_DEATHS = "deaths",
 			STATISTICS_ATTACKS = "attacks",
@@ -522,7 +516,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 	}
 
 	public int getCharmImageIndex() {
-		return Math.min((int)((getBaseOffensivePoint() - MIN_CHARM) / ((float)(MAX_CHARM - MIN_CHARM) / (float) drawableCharms.length)), drawableCharms.length - 1);
+		return Math.min((int)((getCharm() - MIN_CHARM) / ((float)(MAX_CHARM - MIN_CHARM) / (float) drawableCharms.length)), drawableCharms.length - 1);
 	}
 
 	public int getOffensiveImageIndex() {
@@ -711,9 +705,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 				break;
 		}
 		a.add(drawableOffensiveToHero[animIndex][getOffensiveImageIndex()]);
-/*		a.add(drawableDefensiveToHero[getDefensiveImageIndex()]);
-		a.add(drawableHealthToHero[getHealthImageIndex()]);
-		a.add(drawableCharmToHero[getCharmImageIndex()]);*/
+		addBasicImages(a);
 		return a;
 	}
 
@@ -722,9 +714,16 @@ public class Hero extends DataSetObservable implements Cloneable {
 		ArrayList<Integer> a= new ArrayList<>();
 		a.add(drawableOffensiveToHero[0][getOffensiveImageIndex()]);
 		a.add(drawableOffensiveToHero[getOffensiveImageIndex()][0]);
-/*		a.add(drawableDefensiveToHero[getDefensiveImageIndex()]);
-		a.add(drawableHealthToHero[getHealthImageIndex()]);
-		a.add(drawableCharmToHero[getCharmImageIndex()]);*/
+		addBasicImages(a);
 		return a;
+	}
+
+	private void addBasicImages(ArrayList<Integer>  a)
+	{
+
+		a.add(drawableDefensiveToHero[getDefensiveImageIndex()]);
+		a.add(drawableHealthToHero[getHealthImageIndex()]);
+		a.add(drawableCharmToHero[getCharmImageIndex()]);
+
 	}
 }

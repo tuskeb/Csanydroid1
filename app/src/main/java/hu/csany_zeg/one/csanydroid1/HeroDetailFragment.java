@@ -32,12 +32,14 @@ public class HeroDetailFragment extends Fragment {
 	private TextView
 			offensiveValueTextView,
 			defensiveValueTextView,
-			charmValueTextView;
+			charmValueTextView,
+			healthValueTextView;
 
 	private ImageView
 			charmImageView,
 			offensiveImageView,
-			defensiveImageView;
+			defensiveImageView,
+			healthImageView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -68,14 +70,17 @@ public class HeroDetailFragment extends Fragment {
 			charmValueTextView = (TextView) rootView.findViewById(R.id.charm_textview);
 			defensiveValueTextView = (TextView) rootView.findViewById(R.id.defensive_textview);
 			offensiveValueTextView = (TextView) rootView.findViewById(R.id.offensive_textview);
+			healthValueTextView = (TextView) rootView.findViewById(R.id.health_textview);
 
 			charmImageView = (ImageView) rootView.findViewById(R.id.charm_imageview);
 			offensiveImageView = (ImageView) rootView.findViewById(R.id.offensive_imageview);
 			defensiveImageView = (ImageView) rootView.findViewById(R.id.defensive_imageview);
+			healthImageView = (ImageView) rootView.findViewById(R.id.health_imageview);
 
 			((TextView) rootView.findViewById(R.id.hero_name)).setText(mHero.getName());
 
 			// TODO load from array
+
 			((TextView) rootView.findViewById(R.id.total_offensive_point_textview))
 					.setText(String.valueOf(mHero.getStatistics(Hero.STATISTICS_OFFENSIVE_POINT).floatValue()));
 
@@ -130,7 +135,7 @@ public class HeroDetailFragment extends Fragment {
 			seekBar = (SeekBar) rootView.findViewById(R.id.offensiveBar);
 			seekBar.setMax((int) (Hero.MAX_OFFENSIVE_POINT - Hero.MIN_OFFENSIVE_POINT));
 			offensiveValueTextView.setText(String.valueOf(Math.round(mHero.getBaseOffensivePoint())));
-			seekBar.setProgress(Math.round(Math.round(mHero.getBaseOffensivePoint() - Hero.MIN_OFFENSIVE_POINT)));
+			seekBar.setProgress(Math.round(mHero.getBaseOffensivePoint() - Hero.MIN_OFFENSIVE_POINT));
 			seekBar.setEnabled(mHero.canModify());
 			offensiveImageView.setImageDrawable(getResources().getDrawable(mHero.getOffensiveImageID()));
 
@@ -158,7 +163,7 @@ public class HeroDetailFragment extends Fragment {
 			seekBar = (SeekBar) rootView.findViewById(R.id.defensiveBar);
 			seekBar.setMax((int) (Hero.MAX_DEFENSIVE_POINT - Hero.MIN_DEFENSIVE_POINT));
 			defensiveValueTextView.setText(String.valueOf(Math.round(mHero.getBaseDefensivePoint())));
-			seekBar.setProgress(Math.round(Math.round(mHero.getBaseDefensivePoint() - Hero.MIN_DEFENSIVE_POINT)));
+			seekBar.setProgress(Math.round(mHero.getBaseDefensivePoint() - Hero.MIN_DEFENSIVE_POINT));
 			seekBar.setEnabled(mHero.canModify());
 			defensiveImageView.setImageDrawable(getResources().getDrawable(mHero.getDefensiveImageID()));
 			seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -173,6 +178,34 @@ public class HeroDetailFragment extends Fragment {
 
 					defensiveImageView.setImageDrawable(getResources().getDrawable(mHero.getDefensiveImageID()));
 
+				}
+
+				@Override
+				public void onStartTrackingTouch(SeekBar seekBar) { }
+
+				@Override
+				public void onStopTrackingTouch(SeekBar seekBar) { }
+			});
+
+			// Ez a healthbar programozása
+			seekBar = (SeekBar) rootView.findViewById(R.id.healthBar);
+			seekBar.setMax((int) (Hero.MAX_HEALTH - Hero.MIN_HEALTH));
+			healthValueTextView.setText(String.valueOf(Math.round(mHero.getHealthPoint() - Hero.MIN_HEALTH)));
+			seekBar.setProgress(Math.round(mHero.getHealthPoint() - Hero.MIN_HEALTH));
+			seekBar.setEnabled(mHero.canModify());
+			Log.v("mama", mHero.getHealthPoint() + "");
+			healthImageView.setImageDrawable(getResources().getDrawable(mHero.getHealthImageID()));
+
+			seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+				@Override
+				public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+					try {
+						mHero.setHealthPoint((float) progress + Hero.MIN_HEALTH);
+					} catch (RuntimeException ignored) { }
+
+					healthValueTextView.setText(String.valueOf(Math.round(mHero.getHealthPoint()-Hero.MIN_HEALTH)));
+
+					healthImageView.setImageDrawable(getResources().getDrawable(mHero.getHealthImageID()));
 				}
 
 				@Override
@@ -273,5 +306,6 @@ public class HeroDetailFragment extends Fragment {
 		}
 
 		return rootView;
+
 	}
 }

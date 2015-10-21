@@ -16,26 +16,69 @@
         android:layout_height="90dp"
         android:padding="16dp"
         android:singleLine="true"
-        android:text="hory"
-        android:textSize="32dp"/>
+        android:text="Hero"
+        android:textSize="32dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
 
     <ImageButton
         android:id="@+id/remove_hero"
         android:layout_width="70dp"
         android:layout_height="70dp"
+        android:src="@android:drawable/ic_menu_delete"
+        android:text="@string/remove_hero"
         android:layout_alignParentTop="true"
         android:layout_toLeftOf="@+id/add_to_favourites_hero"
-        android:layout_toStartOf="@+id/add_to_favourites_hero"
-        android:src="@android:drawable/ic_menu_delete"
-        android:text="@string/remove_hero"/>
+        android:layout_toStartOf="@+id/add_to_favourites_hero" />
 
     <ImageButton
         android:id="@+id/add_to_favourites_hero"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"/>
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:id="@+id/health_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_alignBaseline="@+id/health_TextView"
+        android:layout_alignBottom="@+id/health_TextView"
+        android:layout_alignRight="@+id/health_TextView"
+        android:layout_alignEnd="@+id/health_TextView" />
+
+    <SeekBar
+        android:id="@+id/healthBar"
+        android:layout_width="400dp"
+        android:layout_height="35dp"
+        android:layout_below="@+id/health_imageview"
+        android:layout_alignLeft="@+id/offensiveTextView"
+        android:layout_alignStart="@+id/offensiveTextView"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/health_TextView"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:text="@string/health_point"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_above="@+id/healthBar"
+        android:layout_alignLeft="@+id/offensiveTextView"
+        android:layout_alignStart="@+id/offensiveTextView" />
+    <ImageView
+        android:id="@+id/health_imageview"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/add_to_favourites_hero"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <SeekBar
         android:id="@+id/offensiveBar"
@@ -50,9 +93,9 @@
         android:id="@+id/offensive_imageview"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/hero_name"/>
+        android:layout_below="@+id/healthBar"
+        android:layout_alignLeft="@+id/defensive_imageview"
+        android:layout_alignStart="@+id/defensive_imageview" />
 
     <TextView
         android:id="@+id/offensiveTextView"
@@ -93,8 +136,8 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_below="@+id/offensiveBar"
-        android:layout_alignRight="@+id/add_to_favourites_hero"
-        android:layout_alignEnd="@+id/add_to_favourites_hero"/>
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <TextView
         android:id="@+id/defensiveTextView"
@@ -126,6 +169,7 @@
         android:layout_below="@+id/charm_imageview"
         android:layout_alignParentEnd="true"/>
 
+
     <ImageView
         android:id="@+id/charm_imageview"
         android:layout_width="50dp"
@@ -147,6 +191,7 @@
         android:text="@string/charm_point"
         android:textAppearance="?android:attr/textAppearanceSmall"/>
 
+
     <TextView
         android:id="@+id/charm_textview"
         android:layout_width="wrap_content"
@@ -156,6 +201,8 @@
         android:layout_alignTop="@+id/charmTextView"
         android:layout_alignRight="@+id/charmTextView"
         android:layout_alignEnd="@+id/charmTextView"/>
+
+
 
     <TableLayout
         android:layout_width="match_parent"

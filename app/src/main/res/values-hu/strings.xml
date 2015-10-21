@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name" translatable="false">CsataSzimulátor</string>
     <string name="action_settings">Beállítások</string>
+    <string name="create_hero_inhelp">Hős létrehozása</string>
+    <string name="hero_repository_inhelp">Hős raktár</string>
+    <string name="battle_inhelp">Csata indítása</string>
+    <string name="help_inhelp">Súgó</string>
     <string name="new_battle_button">Csata létrehozása</string>
-    <string name="hero_repository_button">Hős raktár</string>
+    <string name="hero_repository">Hős raktár</string>
     <string name="battle_button">Csata indítása</string>
     <string name="help_button">Segítség</string>
     <string name="give_up">Feladom</string>
@@ -20,6 +25,7 @@
     <string name="defensive_point">Védekezőérték</string>
     <string name="charm_point">Varázserő pont</string>
     <string name="default_battle_name_prefix">Névtelen Csata</string>
+    <string name="health_point">Életerő pontjai</string>
     <string name="total_offensive_point">Összes támadó pont</string>
     <string name="total_defensive_point">Összes védekező pont</string>
     <string name="total_drunk_charm">Eddig megivott varázsital</string>
