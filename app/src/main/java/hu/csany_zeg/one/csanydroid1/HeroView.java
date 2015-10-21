@@ -241,6 +241,7 @@ public class HeroView extends View {
 		*/
 
 
+            drawTest(canvas);
         }
 
         if (mParticles.size() > 0) {
@@ -255,7 +256,6 @@ public class HeroView extends View {
         y %= h;
 
 
-        drawTest(canvas);
 
     }
 
