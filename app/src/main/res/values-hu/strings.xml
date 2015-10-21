@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="action_settings">Beállítások</string>
+    <string name="new_battle_button">Csata létrehozása</string>
+    <string name="hero_repository_button">Hős raktár</string>
+    <string name="battle_button">Csata indítása</string>
+    <string name="help_button">Segítség</string>
     <string name="give_up">Feladom</string>
     <string name="title_activity_battle">Csaták</string>
     <string name="title_section_add">Új</string>
