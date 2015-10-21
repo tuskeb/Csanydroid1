@@ -129,10 +129,10 @@ public class Hero extends DataSetObservable implements Cloneable {
 
 	private static int drawableDefensive[] =
 			{
-					R.drawable.shield_icon1,
-					R.drawable.shield_icon2,
-					R.drawable.shield_icon3,
-					R.drawable.shield_icon4
+					R.drawable.shield1_icon,
+					R.drawable.shield2_icon,
+					R.drawable.shield3_icon,
+					R.drawable.shield4_icon
 			};
 	private static int drawableCharms[] =
 			{
