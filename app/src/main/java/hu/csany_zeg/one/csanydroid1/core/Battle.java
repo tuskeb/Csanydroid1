@@ -584,7 +584,8 @@ public class Battle {
         @BattleState(Battle.STATE_ATTACKER_CHANGE)
         public void OnChooseAttackerHero() {
             Hero oldAttacker = nextAttacker();
-            delayNextState(3000);
+            Log.v(TAG, "SET ATTACKER: " +  + getAttacker().getIndex() );
+            delayNextState(600);
             mOnStateChangeListener.onChange(Battle.this, oldAttacker);
 
         }
@@ -592,7 +593,8 @@ public class Battle {
         @BattleState(Battle.STATE_DEFENDER_CHANGE)
         public void OnChooseDefenderHero() {
             Hero oldDefender = nextDefender();
-            delayNextState(3000);
+            Log.v(TAG, "SET DEFENDER: " + getDefender().getIndex());
+            delayNextState(600);
 
             mOnStateChangeListener.onChange(Battle.this, oldDefender);
 
@@ -601,7 +603,7 @@ public class Battle {
         @BattleState(Battle.STATE_ATTACKER_DRINKS_CHARM)
         public void OnAttackerDrinksCharm() {
             mAttacker.drinkCharm(.5f);
-            delayNextState(3000);
+            delayNextState(500);
             mOnStateChangeListener.onChange(Battle.this, mAttacker);
 
         }
@@ -609,7 +611,7 @@ public class Battle {
         @BattleState(Battle.STATE_DEFENDER_DRINKS_CHARM)
         public void OnDefenderDrinksCharm() {
             mDefender.drinkCharm(.5f);
-            delayNextState(3000);
+            delayNextState(500);
             mOnStateChangeListener.onChange(Battle.this, mDefender);
 
         }
@@ -623,7 +625,7 @@ public class Battle {
 
         @BattleState(Battle.STATE_ATTACK)
         public void OnAttack() {
-            delayNextState(3000);
+            delayNextState(2000);
             Battle.this.duel();
             mOnStateChangeListener.onChange(Battle.this, null);
         }
@@ -643,7 +645,7 @@ public class Battle {
 
         @BattleState(Battle.STATE_NEXT_PLAYER)
         public void OnNextPlayer() {
-            delayNextState(100);
+            delayNextState(500);
             mOnStateChangeListener.onChange(Battle.this, null);
         }
 

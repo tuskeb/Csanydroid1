@@ -192,6 +192,7 @@ public class HeroView extends View {
 
 
     private void drawTest(Canvas canvas) {
+
         ArrayList<Integer> a = mHero.getOffensiveImageArray(0);
         ArrayList<Integer> b = mHero.getOffensiveImageArray(1);
         ArrayList<Integer> c = mHero.getOffensiveImageArray(2);
@@ -262,6 +263,7 @@ public class HeroView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                invalidate();
 				/*
 				mIsTouched = true;
 				if (speedY == 0) {
