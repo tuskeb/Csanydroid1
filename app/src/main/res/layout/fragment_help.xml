@@ -14,6 +14,11 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" >
 
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -22,81 +27,71 @@
             android:textColor="#006699"
             android:textSize="60dp"
             android:id="@+id/textView2" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/hero_repository_inhelp"
+            android:textColor="#006699"
+            android:textSize="40dp"
+            android:id="@+id/textView3"
+            android:layout_marginTop="40dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Az elmentett hősök raktárába lehet eljutni! Bal felső sarokban található + jellel adhatunk hozzá hőst. Először egy nevet kell megadni. A csúszkák segítségével adható meg a hős különféle adata. A harcban lévő hősök datai nem módosíthatók. Egy hős csak egy csatában vehet részt. A mentés automatikus, a törlés a szemetesláda ikon megnyomásával történik."
+            android:id="@+id/textView4"
+            android:textSize="25dp"
+            android:textColor="#014225"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/create_hero_inhelp"
+            android:textColor="#006699"
+            android:textSize="40dp"
+            android:id="@+id/textView5"
+            android:layout_marginTop="35dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Csatát hozhatunk létre! Először a csata nevét kell begépelni a megjelenő billentyűzet segítségével. A továbbiakban az elmentett hősök közül lehet választani. A kiválasztás az érintőképernyő segítségével történik. Végezetül a CREATE gomb megnyomásával jön létre a csata."
+            android:textSize="25dp"
+            android:textColor="#014225"
+            android:id="@+id/textView6"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/battle_inhelp"
+            android:textColor="#006699"
+            android:textSize="40dp"
+            android:id="@+id/textView7"
+            android:layout_marginTop="27dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="A csaták elindítása!"
+            android:textSize="25dp"
+            android:textColor="#014225"
+            android:id="@+id/textView8"
+             />
+        </LinearLayout>
+
     </ScrollView>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/hero_repository_inhelp"
-        android:textColor="#006699"
-        android:textSize="40dp"
-        android:id="@+id/textView3"
-        android:layout_marginTop="100dp"
-        android:layout_alignTop="@+id/scrollView"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Az elmentett hősök raktárába lehet eljutni! Bal felső sarokban található + jellel adhatunk hozzá hőst. Először egy nevet kell megadni. A csúszkák segítségével adható meg a hős különféle adata. A harcban lévő hősök datai nem módosíthatók. Egy hős csak egy csatában vehet részt. A mentés automatikus, a törlés a szemetesláda ikon megnyomásával történik."
-        android:id="@+id/textView4"
-        android:textSize="25dp"
-        android:textColor="#014225"
-        android:layout_below="@+id/textView3"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/create_hero_inhelp"
-        android:textColor="#006699"
-        android:textSize="40dp"
-        android:id="@+id/textView5"
-        android:layout_marginTop="35dp"
-        android:layout_below="@+id/textView4"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Csatát hozhatunk létre! Először a csata nevét kell begépelni a megjelenő billentyűzet segítségével. A továbbiakban az elmentett hősök közül lehet választani. A kiválasztás az érintőképernyő segítségével történik. Végezetül a CREATE gomb megnyomásával jön létre a csata."
-        android:textSize="25dp"
-        android:textColor="#014225"
-        android:id="@+id/textView6"
-        android:layout_below="@+id/textView5"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/battle_inhelp"
-        android:textColor="#006699"
-        android:textSize="40dp"
-        android:id="@+id/textView7"
-        android:layout_below="@+id/textView6"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="27dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="A csaták elindítása!"
-        android:textSize="25dp"
-        android:textColor="#014225"
-        android:id="@+id/textView8"
-        android:layout_below="@+id/textView7"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

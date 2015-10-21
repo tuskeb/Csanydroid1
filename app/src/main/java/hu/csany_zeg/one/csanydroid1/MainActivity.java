@@ -1,3 +1,18 @@
+/*
+Megvalósított funkciók, az előírtakon kívül
+	-	Hősök tárolása a Hero Repository-ban.
+	-	A program a hősöket kikapcsolás után is tárolja.
+	-	A hősökről statisztikát vezet
+	-	A hősök 4 paraméteréhez 4 féle kép található a programban
+	-	A hősökhöz 4 kép közül egyet rendel a program
+	-	A hősök harcához animáció látható
+	-	Párhuzamosan több csata is létrehozható
+	-	A csatákhoz a hősök szabadon választhatók.
+	-	Csak azok a hősök adhatók a csatához, akik nem harconak
+	-	A csaták a háttérben folyamatosan futnak (ha nincs megjelenítve akkor is)
+	-	Félbehagyott fejlesztés: Bluetooth többjátékos mód
+	-	Súgó
+ */
 package hu.csany_zeg.one.csanydroid1;
 
 import android.bluetooth.BluetoothAdapter;
