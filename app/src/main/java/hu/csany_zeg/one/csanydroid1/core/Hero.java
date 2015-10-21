@@ -452,19 +452,39 @@ public class Hero extends DataSetObservable implements Cloneable {
 	}
 
 	public int getCharmImageID() {
-		return drawableCharms[Math.min((int)((getBaseOffensivePoint() - MIN_CHARM) / ((float)(MAX_CHARM - MIN_CHARM) / (float) drawableCharms.length)), drawableCharms.length - 1)];
+		return drawableCharms[getCharmImageIndex()];
 	}
 
 	public int getOffensiveImageID() {
-		return drawableOffensive[Math.min((int)((getBaseOffensivePoint() - MIN_OFFENSIVE_POINT) / ((float)(MAX_OFFENSIVE_POINT - MIN_OFFENSIVE_POINT) / (float) drawableOffensive.length)), drawableOffensive.length - 1)];
+		return drawableOffensive[getOffensiveImageIndex()];
 	}
 
 	public int getDefensiveImageID() {
-		return drawableDefensive[Math.min((int) ((getBaseDefensivePoint() - MIN_DEFENSIVE_POINT) / ((float) (MAX_DEFENSIVE_POINT - MIN_DEFENSIVE_POINT) / (float) drawableDefensive.length)), drawableDefensive.length - 1)];
+		return drawableDefensive[getDefensiveImageIndex()];
 	}
 
 	public int getHealthImageID() {
-		return drawableHealths[Math.min((int) ((getBaseDefensivePoint() - MIN_HEALTH) / ((float) (MAX_HEALTH - MIN_HEALTH) / (float) drawableHealths.length)), drawableHealths.length - 1)];
+		return drawableHealths[getHealthImageIndex()];
+	}
+
+	public int getHeroImageIndex() {
+		return mPicture;
+	}
+
+	public int getCharmImageIndex() {
+		return Math.min((int)((getBaseOffensivePoint() - MIN_CHARM) / ((float)(MAX_CHARM - MIN_CHARM) / (float) drawableCharms.length)), drawableCharms.length - 1);
+	}
+
+	public int getOffensiveImageIndex() {
+		return Math.min((int)((getBaseOffensivePoint() - MIN_OFFENSIVE_POINT) / ((float)(MAX_OFFENSIVE_POINT - MIN_OFFENSIVE_POINT) / (float) drawableOffensive.length)), drawableOffensive.length - 1);
+	}
+
+	public int getDefensiveImageIndex() {
+		return Math.min((int) ((getBaseDefensivePoint() - MIN_DEFENSIVE_POINT) / ((float) (MAX_DEFENSIVE_POINT - MIN_DEFENSIVE_POINT) / (float) drawableDefensive.length)), drawableDefensive.length - 1);
+	}
+
+	public int getHealthImageIndex() {
+		return Math.min((int) ((getBaseDefensivePoint() - MIN_HEALTH) / ((float) (MAX_HEALTH - MIN_HEALTH) / (float) drawableHealths.length)), drawableHealths.length - 1);
 	}
 
 	public float getDrunkCharm() {
@@ -627,5 +647,23 @@ public class Hero extends DataSetObservable implements Cloneable {
 
 	}
 
+
+	public ArrayList<Integer> getOffensiveImageArray(int animIndex)
+	{
+		ArrayList<Integer> a= new ArrayList<>();
+		switch (getOffensiveImageIndex()) {
+			case 1:
+			case 2:
+				a.add(drawableHeroesNonRanged[animIndex][getHeroImageIndex()]);
+				break;
+			case 3:
+			case 4:
+				a.add(drawableHeroesRanged[animIndex][getHeroImageIndex()]);
+				break;
+		}
+		a.add(drawableOffensive[getOffensiveImageIndex()]);
+
+		return a;
+	}
 
 }
