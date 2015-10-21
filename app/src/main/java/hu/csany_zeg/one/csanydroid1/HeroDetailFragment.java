@@ -80,10 +80,12 @@ public class HeroDetailFragment extends Fragment {
 			((TextView) rootView.findViewById(R.id.hero_name)).setText(mHero.getName());
 
 			// TODO load from array
-			((TextView) rootView.findViewById(R.id.health_textview))
-					.setText(String.valueOf(mHero.getStatistics(Hero.STATISTICS_HEALTH_POINT).floatValue()));
+/*					((TextView) rootView.findViewById(R.id.health_textview))
+					.setText(String.valueOf(mHero.getStatistics(Hero.STATISTICS_HEALTH_POINT).floatValue()));*/
+
 			((TextView) rootView.findViewById(R.id.total_offensive_point_textview))
 					.setText(String.valueOf(mHero.getStatistics(Hero.STATISTICS_OFFENSIVE_POINT).floatValue()));
+
 			((TextView) rootView.findViewById(R.id.total_defensive_point_textview))
 					.setText(String.valueOf(mHero.getStatistics(Hero.STATISTICS_DEFENSIVE_POINT).floatValue()));
 
