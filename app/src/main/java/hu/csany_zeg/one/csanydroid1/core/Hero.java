@@ -136,7 +136,8 @@ public class Hero extends DataSetObservable implements Cloneable {
 	 * A hős képének az indexe az images tömbben
 	 */
 	protected int mPicture;
-	/**
+
+    /**
 	 * A hős élete.
 	 */
 	protected float mHealthPoint;
@@ -566,6 +567,17 @@ public class Hero extends DataSetObservable implements Cloneable {
 
 		return true;
 	}
+
+
+    public void setHealthPoint(float healthPoint) throws RuntimeException {
+        if (!canModify()) throw new RuntimeException("Value cannot be modified");
+
+        if (healthPoint < MIN_HEALTH) mHealthPoint = MIN_HEALTH;
+        else if (healthPoint > MAX_HEALTH) mHealthPoint = MAX_HEALTH;
+        else mHealthPoint = healthPoint;
+
+        notifyChanged();
+    }
 
 	public void setOffensivePoint(float offensivePoint) throws RuntimeException {
 		if (!canModify()) throw new RuntimeException("Value cannot be modified");

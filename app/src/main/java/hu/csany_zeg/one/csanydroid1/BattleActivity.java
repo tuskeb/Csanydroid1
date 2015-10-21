@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -105,28 +106,21 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
             return fragment;
         }
 
-        Battle mBattle;
-
-        public BattleFragment() {
-        }
+        Battle mBattle = null;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 
-            mBattle = Battle.sBattles.get(getArguments().getInt(ARG_BATTLE_NUMBER));
+            mBattle = Battle.get(getArguments().getInt(ARG_BATTLE_NUMBER));
+            mBattle.setOnStateChangeListener(mStateChangeListeners);
 
         }
 
         Battle.OnStateChange mStateChangeListeners = new Battle.OnStateChange() {
             @Override
             public void onChange(final Battle battle, final Object param) {
-                battle.mHandler.postAtTime(new Runnable() {
-                    @Override
-                    public void run() {
-                        battle.nextState();
-                    }
-                }, 1000);
+                battle.delayNextState(1000);
 
             }
         };
@@ -150,7 +144,7 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
         }
 
         public void selectItem(int position) {
-            final Battle battle = Battle.sBattles.get(position);
+            final Battle battle = Battle.get(position);
             final BattleActivity activity = (BattleActivity) getActivity();
 
             activity.mTitle = battle.getName();
@@ -164,6 +158,14 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
             selectItem(getArguments().getInt(ARG_BATTLE_NUMBER));
 
 
+        }
+
+        @Override
+        public void onDestroy() {
+            if(mBattle != null) {
+                mBattle.setOnStateChangeListener(null);
+            }
+            super.onDestroy();
         }
 
         @Override
