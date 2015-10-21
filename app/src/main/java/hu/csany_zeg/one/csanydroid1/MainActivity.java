@@ -101,6 +101,15 @@ public class MainActivity extends AppCompatActivity {
 
 		}
 
+		{
+            Battle battle = new Battle(null);
+            battle.addPlayer(Player.CURRENT, true);
+            for(Hero hero : Hero.sHeroRepository) {
+                battle.addHero(hero);
+            }
+            battle.setPlayerReady(Player.CURRENT);
+		}
+
 
 		//Display display = getWindowManager().getDefaultDisplay();
 		//Point size = new Point();

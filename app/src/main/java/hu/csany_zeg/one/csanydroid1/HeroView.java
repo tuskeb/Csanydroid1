@@ -49,18 +49,8 @@ public class HeroView extends View {
 	public HeroView(final Context context, Hero hero, boolean leftSide) {
 		super(context);
 
-		this.mHero = hero;
-		this.mIsAttacker = leftSide;//hero.getBattle().geta;
-
-	    /*
-	    Timer timer = new Timer(false);
-	    timer.schedule(new TimerTask() {
-		    public void run() {
-			    Sample.this.hero.setName( Sample.this.hero.getName() + ".");
-
-		    }
-	    }, 1000, 1000);
-	    */
+		mHero = hero;
+		mIsAttacker = leftSide;
 
 		final DataSetObserver dso = new DataSetObserver() {
 			@Override
@@ -75,30 +65,30 @@ public class HeroView extends View {
 		};
 
 		addOnAttachStateChangeListener(new OnAttachStateChangeListener() {
-			@Override
-			public void onViewAttachedToWindow(View v) {
-				HeroView.this.mHero.registerObserver(dso);
-				if(heartBitmap == null)
-					heartBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.heart);
-				mask = Bitmap.createBitmap(32, 32, Bitmap.Config.ARGB_8888);
-				onLifeLost(100);
+            @Override
+            public void onViewAttachedToWindow(View v) {
+                HeroView.this.mHero.registerObserver(dso);
+                if (heartBitmap == null)
+                    heartBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.heart);
+                mask = Bitmap.createBitmap(32, 32, Bitmap.Config.ARGB_8888);
+                onLifeLost(100);
 
-			}
+            }
 
-			@Override
-			public void onViewDetachedFromWindow(View v) {
-				HeroView.this.mHero.unregisterObserver(dso);
-				//heartBitmap.recycle();
-				mask.recycle();
+            @Override
+            public void onViewDetachedFromWindow(View v) {
+                HeroView.this.mHero.unregisterObserver(dso);
+                //heartBitmap.recycle();
+                mask.recycle();
 
-			}
-		});
+            }
+        });
 
 
-	}
+    }
 
-	@Override
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 /*
 		final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
 		final int widthSize = MeasureSpec.getSize(widthMeasureSpec);
@@ -136,13 +126,13 @@ public class HeroView extends View {
 
 		setMeasuredDimension(mIsAttacker ? widthMeasureSpec / 2 : widthMeasureSpec, heightMeasureSpec);
 
-	}
+    }
 
-	public void onLifeLost(float lostLife) {
+    public void onLifeLost(float lostLife) {
 		addParticles(getHealthBarWidth(), 26, 10);
 	}
 
-
+/*
 	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
@@ -150,7 +140,7 @@ public class HeroView extends View {
 		this.w = w - bitmap.getWidth();
 		this.h = h - bitmap.getHeight();
 
-	}
+	}*/
 
 	private static final float LIFE_PER_HEART = 100;
 
@@ -190,22 +180,6 @@ public class HeroView extends View {
 
 	}
 
-
-	Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.hero1_blue);
-	int w,h;
-	float tesztX,tesztY;
-	private void drawRacz(Canvas canvas) {
-		canvas.drawBitmap(bitmap, (float)(w*Math.random()), h, mPaint);
-		h+=2;
-		h %= this.getMeasuredHeight() - bitmap.getHeight();
-		//bitmap.recycle();
-
-
-
-		canvas.drawRect(tesztX-25, tesztY-25, tesztX + 25, tesztY + 25, mPaint);
-		invalidate();
-	}
-
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 		int w = this.getMeasuredWidth(), h = this.getMeasuredHeight();
@@ -217,17 +191,15 @@ public class HeroView extends View {
 		mPaint.setColor(Color.DKGRAY);
 		canvas.drawText(mHero.getName(), 50, y, mPaint);
 
-		drawHealth(canvas);
+        drawHealth(canvas);
 
-		//canvas.drawArc(200, 200, 250, 300,0, (float)Math.PI, true, mPaint);
-
-		drawRacz(canvas);
+        //canvas.drawArc(200, 200, 250, 300,0, (float)Math.PI, true, mPaint);
 
 		mPaint.setTextSize(20.0f);
 		canvas.drawText(mHero.getHealthPoint() + "", 50, y + 20, mPaint);
 		canvas.drawText((Math.round(mHero.getCharm() * 10f) / 10f) + "", 50, y + 50, mPaint);
 		canvas.drawText((Math.round(mHero.getBaseOffensivePoint() * 10f) / 10f) + "", 50, y + 80, mPaint);
-
+/*
 		if (speedY > 0) {
 			y += speedY;
 			if ((speedY -= (FRICTION + (mIsTouched ? STICKING : 0))) < 0) speedY = 0;
@@ -236,7 +208,9 @@ public class HeroView extends View {
 			y += speedY;
 			if ((speedY += (FRICTION + (mIsTouched ? STICKING : 0))) > 0) speedY = 0;
 			invalidate();
-		} else if (mParticles.size() > 0) {
+		} else
+		*/
+        if (mParticles.size() > 0) {
 			invalidate();
 		}
 
@@ -263,9 +237,6 @@ public class HeroView extends View {
 					beginTime = System.nanoTime();
 				}
 				*/
-				tesztX = event.getX();
-				tesztY = event.getY();
-				invalidate();
 				break;
 			case MotionEvent.ACTION_UP:
 				/*
@@ -277,9 +248,7 @@ public class HeroView extends View {
 					}
 				}
 				*/
-				tesztX=0;
-				tesztY=0;
-				invalidate();
+
 				break;
 			case MotionEvent.ACTION_MOVE:
 				/*
@@ -290,9 +259,7 @@ public class HeroView extends View {
 
 				}
 				*/
-				tesztX = event.getX();
-				tesztY = event.getY();
-				invalidate();
+
 		}
 
 		//Animation animation1 = AnimationUtils.loadAnimation(this.getContext(), R.anim.barack);

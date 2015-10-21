@@ -5,4 +5,5 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 public @interface BattleState {
 	int value();
+    byte next() default Battle.STATE_AUTO;
 }

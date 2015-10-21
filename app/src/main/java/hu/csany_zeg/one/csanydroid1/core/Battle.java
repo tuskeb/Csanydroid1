@@ -1,6 +1,7 @@
 package hu.csany_zeg.one.csanydroid1.core;
 
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Parcel;
 import android.util.Log;
@@ -11,6 +12,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import hu.csany_zeg.one.csanydroid1.App;
+import hu.csany_zeg.one.csanydroid1.BattleActivity;
 import hu.csany_zeg.one.csanydroid1.R;
 
 // TODO: http://stackoverflow.com/questions/18903735/how-to-change-the-text-color-of-a-listview-item
@@ -20,6 +22,8 @@ import hu.csany_zeg.one.csanydroid1.R;
 public class Battle {
 
 	public static final byte
+            STATE_AUTO = -2,
+            STATE_WAIT_FOR_START = -1,
 			STATE_DRAW_START_PLAYER = 0,
 			STATE_CHOOSE_ATTACKER_HERO = 1,
 			STATE_CHOOSE_DEFENDER_HERO = 2,
@@ -52,7 +56,19 @@ public class Battle {
 	/**
 	 * Az aktuális támadó és védekező játékos.
 	 */
-	public Hero mAttacker, mDefender;
+	public Hero mAttacker;
+
+
+
+    public Hero getDefender() {
+        return mDefender;
+    }
+
+    public Hero getAttacker() {
+        return mAttacker;
+    }
+
+    public Hero mDefender;
 	public byte mLastAttackerA = -1, mLastAttackerB = -1;
 	private Player mOwner;
 
@@ -65,9 +81,14 @@ public class Battle {
 	 * false:   B
 	 */
 	private boolean mStartingTeam;
-	private Handler mHandler = new Handler(Looper.getMainLooper());
 
 	private byte mState;
+
+    public void setNextState(byte nextState) {
+        mNextState = nextState;
+    }
+
+    private byte mNextState;
 
 	public void setListener(StateChangeListeners listener) {
 		mListener = listener;
@@ -75,7 +96,7 @@ public class Battle {
 
 	private StateChangeListeners mListener = new StateChangeListeners() {};
 	private Parcel mParcel = Parcel.obtain();
-
+    final HandlerThread mHandlerThread;
 	/**
 	 * Létrehoz egy új csatát
 	 */
@@ -83,6 +104,11 @@ public class Battle {
 		mOwner = Player.CURRENT;
 		mName = getNextName(name);
 Log.v(TAG, "battle created: " + mName);
+
+        mHandlerThread = new HandlerThread(mName + "BattleHandler");
+        mHandlerThread.start();
+        mHandler = new Handler(mHandlerThread.getLooper());
+
 		sBattles.add(this);
 	}
 
@@ -91,6 +117,10 @@ Log.v(TAG, "battle created: " + mName);
 
 		mOwner = owner;
 		mName = name;
+
+        mHandlerThread = new HandlerThread(mName + "BattleHandler");
+        mHandlerThread.start();
+        mHandler = new Handler(mHandlerThread.getLooper());
 
 		sBattles.add(this);
 
@@ -136,6 +166,10 @@ Log.v(TAG, "battle created: " + mName);
 		return sBattles.size();
 	}
 
+    public static Battle get(int i) {
+        return sBattles.get(i);
+    }
+
 	public static Battle findBattle(String name) {
 		for (Battle battle : sBattles) {
 			if (battle.mName.compareTo(name) == 0) return battle;
@@ -160,9 +194,16 @@ Log.v(TAG, "battle created: " + mName);
 		// dispose();
 	}
 
-	public void setNextState() {
-		if (mState < STATE_NEXT_PLAYER && mState >= STATE_DRAW_START_PLAYER) ++mState; // következő állapot
-		else if (mState == STATE_NEXT_PLAYER) mState = STATE_CHOOSE_ATTACKER_HERO; // kezdje előről
+	public void nextState() {
+        if(mNextState == STATE_AUTO) {
+            if (mState < STATE_NEXT_PLAYER && mState >= STATE_DRAW_START_PLAYER)
+                ++mState; // következő állapot
+            else if (mState == STATE_NEXT_PLAYER)
+                mState = STATE_CHOOSE_ATTACKER_HERO; // kezdje előről
+
+        } else {
+            mState = mNextState;
+        }
 
 		// Log.v(TAG, "state changed: " + mState);
 
@@ -171,10 +212,9 @@ Log.v(TAG, "battle created: " + mName);
 			if (annotation == null) continue;
 
 			if (mState == annotation.value()) {
+                mNextState = annotation.next();
+
 				try {
-
-					// Log.v(TAG, "invoking method(" + mState + ")");
-
 					method.invoke(mListener);
 				} catch (InvocationTargetException e) {
 					Log.e(TAG, ">>>>>invoke <<<<<< failed(" + mState + ")");
@@ -183,6 +223,8 @@ Log.v(TAG, "battle created: " + mName);
 					Log.e(TAG, "invoke failed(" + mState + ")");
 					e.printStackTrace();
 				}
+
+
 				return;
 			}
 		}
@@ -250,6 +292,9 @@ Log.v(TAG, "battle created: " + mName);
 
 	public void dispose() {
 		sBattles.remove(this);
+        if(mHandler != null) {
+            mHandler.getLooper().quit();
+        }
 	}
 
 	public short getTurn() {
@@ -316,7 +361,7 @@ Log.v(TAG, "battle created: " + mName);
 			break;
 			case Player.ACTION_ADD_HERO_TO_BATTLE: {
 				String heroName = m.readString();
-				Hero hero = (player == Player.CURRENT ? Hero.findHero(heroName) : new Hero(player, heroName));
+                Hero hero = (player == Player.CURRENT ? Hero.findHero(heroName) : new Hero(player, heroName));
 				if (hero == null) break;
 				// IMPORTANT! only one instance is allowed
 
@@ -332,6 +377,8 @@ Log.v(TAG, "battle created: " + mName);
 		}
 
 	}
+
+
 
 	public boolean isMultiPlayer() {
 		return mHeroesA != mHeroesB;
@@ -366,8 +413,8 @@ Log.v(TAG, "battle created: " + mName);
 		mDefender = null;
 
 		// reset variables
-		mState = STATE_DRAW_START_PLAYER;
-		mListener.OnDrawStartPlayer();
+		mState = STATE_WAIT_FOR_START;
+        nextState();
 
 	}
 
@@ -481,89 +528,129 @@ Log.v(TAG, "battle created: " + mName);
 		return true;
 	}
 
+    public Battle setOnStateChangeListener(OnStateChange onStateChangeListener) {
+        mOnStateChangeListener = onStateChangeListener != null ? onStateChangeListener :
+                new OnStateChange() {
+                    @Override
+                    public void onChange(Battle battle, Object param) {
+                        super.onChange(battle, param);
+                    }
+                };
+
+        return this;
+    }
+
+    OnStateChange mOnStateChangeListener;
+    {
+        setOnStateChangeListener(null);
+    }
+
+    public static abstract class OnStateChange {
+        public void onChange(final Battle battle, final Object param) {
+            battle.mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    battle.nextState();
+                }
+            });
+        }
+    }
+
+
+    public Handler mHandler;
+
+
+
 	public abstract class StateChangeListeners {
-		@BattleState(Battle.STATE_DRAW_START_PLAYER)
+
+        @BattleState(
+                value = Battle.STATE_WAIT_FOR_START,
+                next = Battle.STATE_DRAW_START_PLAYER
+        )
+        public void OnWait() {
+            mOnStateChangeListener.onChange(Battle.this, null);
+        }
+
+		@BattleState(value = Battle.STATE_DRAW_START_PLAYER)
 		public void OnDrawStartPlayer() {
 			mStartingTeam = Math.random() - .25 < Math.random(); // +25% chance for team `A`
-			Log.v(TAG, "starting team: " + (mStartingTeam ? "A" : "B"));
+            Log.v(TAG, "starting team: " + (mStartingTeam ? "A" : "B"));
 
-			setNextState();
+            mOnStateChangeListener.onChange(Battle.this, mStartingTeam);
+
 		}
 
 		@BattleState(Battle.STATE_CHOOSE_ATTACKER_HERO)
 		public void OnChooseAttackerHero() {
 			Hero oldAttacker = nextAttacker();
-			setNextState();
+
+            mOnStateChangeListener.onChange(Battle.this, oldAttacker);
+
 		}
 
 		@BattleState(Battle.STATE_CHOOSE_DEFENDER_HERO)
 		public void OnChooseDefenderHero() {
 			Hero oldDefender = nextDefender();
-			setNextState();
+
+            mOnStateChangeListener.onChange(Battle.this, oldDefender);
+
 		}
 
 		@BattleState(Battle.STATE_ATTACKER_DRINKS_CHARM)
 		public void OnAttackerDrinksCharm() {
 			mAttacker.drinkCharm(.5f);
-			setNextState();
-			/*
-				mHandler.postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						setNextState();
-					}
-				}, 1000);
-				*/
+            mOnStateChangeListener.onChange(Battle.this, mAttacker);
+
 		}
 
 		@BattleState(Battle.STATE_DEFENDER_DRINKS_CHARM)
 		public void OnDefenderDrinksCharm() {
 			mDefender.drinkCharm(.5f);
-			setNextState();
+            mOnStateChangeListener.onChange(Battle.this, mDefender);
 
 		}
 
 		@BattleState(Battle.STATE_BEFORE_ATTACK)
 		public void OnBeforeAttack() {
-			setNextState();
+            mOnStateChangeListener.onChange(Battle.this, null);
 		}
 
 		@BattleState(Battle.STATE_ATTACK)
 		public void OnAttack() {
 			Battle.this.duel();
-			setNextState();
+            mOnStateChangeListener.onChange(Battle.this, null);
 		}
 
 
 		@BattleState(Battle.STATE_AFTER_ATTACK)
 		public void OnAfterAttack() {
-			setNextState();
+            mOnStateChangeListener.onChange(Battle.this, null);
 		}
 
 		@BattleState(Battle.STATE_TURN_FINISHED)
 		public void OnTurnFinished() {
-			setNextState();
-
+            mOnStateChangeListener.onChange(Battle.this, null);
 		}
 
 		@BattleState(Battle.STATE_NEXT_PLAYER)
 		public void OnNextPlayer() {
-			// setNextState();
-
-			mHandler.postDelayed(new Runnable() {
-				@Override
-				public void run() {
-					setNextState();
-				}
-			}, 0);
+            mOnStateChangeListener.onChange(Battle.this, null);
 		}
 
-		@BattleState(Battle.STATE_BEFORE_FINISH)
+		@BattleState(value = Battle.STATE_BEFORE_FINISH,
+                next = Battle.STATE_FINISH)
 		public void OnWin() {
+            mOnStateChangeListener.onChange(Battle.this, null);
 			Log.v(TAG, "yuuppppppiiiiiie!");
 			//Log.v(TAG, "k" + mHeroesA.get(0).getStatistics(Hero.STATISTICS_ATTACKS).intValue());
 
 		}
+
+        @BattleState(value = Battle.STATE_FINISH)
+        public void OnFinish() {
+            dispose();
+            Log.v(TAG, "disposed");
+        }
 
 
 	}

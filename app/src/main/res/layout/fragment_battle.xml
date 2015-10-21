@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="horizontal"
     android:id="@+id/hero_linear_layout"
-    tools:context="hu.csany_zeg.one.csanydroid1.BattleActivity$PlaceholderFragment">
+    tools:context="hu.csany_zeg.one.csanydroid1.BattleActivity.BattleFragment">
 
     <!--
     <TextView

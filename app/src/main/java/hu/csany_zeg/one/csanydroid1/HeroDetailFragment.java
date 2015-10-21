@@ -13,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import hu.csany_zeg.one.csanydroid1.core.Hero;
 
@@ -49,7 +50,6 @@ public class HeroDetailFragment extends Fragment {
 
 	}
 
-
 	@Override
 	public View onCreateView(final LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
@@ -60,6 +60,10 @@ public class HeroDetailFragment extends Fragment {
 			((TextView) rootView.findViewById(R.id.number_of_heros)).setText(String.valueOf(Hero.countHeroes()));
 		} else {
 			rootView = inflater.inflate(R.layout.fragment_hero_detail, container, false);
+
+            if(!mHero.canModify()) {
+                Toast.makeText(getActivity(), "The hero is fighting, so cannot be modified", Toast.LENGTH_LONG).show();
+            }
 
 			charmValueTextView = (TextView) rootView.findViewById(R.id.charm_textview);
 			defensiveValueTextView = (TextView) rootView.findViewById(R.id.defensive_textview);
