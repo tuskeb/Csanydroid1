@@ -12,6 +12,7 @@ Megvalósított funkciók, az előírtakon kívül
 	-	A csaták a háttérben folyamatosan futnak (ha nincs megjelenítve akkor is)
 	-	Félbehagyott fejlesztés: Bluetooth többjátékos mód
 	-	Elforgatás támogatása
+	-	Angol és magyar nyelv támogatása
 	-	Súgó
  */
 package hu.csany_zeg.one.csanydroid1;

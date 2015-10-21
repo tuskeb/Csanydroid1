@@ -34,4 +34,5 @@
     <string name="total_attacks">Összes támadás</string>
     <string name="total_kills">Megölt hősök</string>
     <string name="total_deaths">Összes halál</string>
+    <string name="sugo1">Az elmentett hősök raktárába lehet eljutni! Bal felső sarokban található + jellel adhatunk hozzá hőst. Először egy nevet kell megadni. A csúszkák segítségével adható meg a hős különféle adata. A harcban lévő hősök datai nem módosíthatók. Egy hős csak egy csatában vehet részt. A mentés automatikus, a törlés a szemetesláda ikon megnyomásával történik.</string>
 </resources>
