@@ -16,8 +16,11 @@
         android:layout_height="90dp"
         android:padding="16dp"
         android:singleLine="true"
-        android:text="hory"
-        android:textSize="32dp"/>
+        android:text="Hero"
+        android:textSize="32dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <ImageButton
         android:id="@+id/remove_hero"
@@ -50,9 +53,9 @@
         android:id="@+id/offensive_imageview"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/hero_name"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/hero_name"/>
+        android:layout_alignParentEnd="true" />
 
     <TextView
         android:id="@+id/offensiveTextView"
@@ -126,6 +129,7 @@
         android:layout_below="@+id/charm_imageview"
         android:layout_alignParentEnd="true"/>
 
+
     <ImageView
         android:id="@+id/charm_imageview"
         android:layout_width="50dp"
@@ -147,6 +151,7 @@
         android:text="@string/charm_point"
         android:textAppearance="?android:attr/textAppearanceSmall"/>
 
+
     <TextView
         android:id="@+id/charm_textview"
         android:layout_width="wrap_content"
@@ -156,6 +161,44 @@
         android:layout_alignTop="@+id/charmTextView"
         android:layout_alignRight="@+id/charmTextView"
         android:layout_alignEnd="@+id/charmTextView"/>
+    <TextView
+        android:id="@+id/health_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_alignBottom="@+id/remove_hero"
+        android:layout_alignRight="@+id/health_TextView"
+        android:layout_alignEnd="@+id/health_TextView" />
+    <ImageView
+        android:id="@+id/health_imageview"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/add_to_favourites_hero"
+        android:layout_alignBottom="@+id/hero_name"
+        android:layout_alignRight="@+id/add_to_favourites_hero"
+        android:layout_alignEnd="@+id/add_to_favourites_hero" />
+    <SeekBar
+        android:id="@+id/healthBar"
+        android:layout_width="400dp"
+        android:layout_height="35dp"
+        android:layout_below="@+id/remove_hero"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:id="@+id/health_TextView"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:text="@string/health_point"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_above="@+id/healthBar"
+        android:layout_alignLeft="@+id/offensiveTextView"
+        android:layout_alignRight="@+id/offensiveTextView"
+        android:layout_alignStart="@+id/offensiveTextView" />
+
 
     <TableLayout
         android:layout_width="match_parent"
@@ -168,6 +211,15 @@
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp">
 
+        <TableRow>android:layout_width="fill_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:text="@string/health_point"
+                style="@style/hero_detail_stat_name"/>
+            <TextView
+                android:id="@+id/health_point_textview"
+                style="@style/hero_detail_stat_value"/>
+        </TableRow>
         <TableRow
             android:layout_width="fill_parent"
             android:layout_height="match_parent">

@@ -161,12 +161,14 @@ public class Hero extends DataSetObservable implements Cloneable {
 	public static final String
 			STATISTICS_OFFENSIVE_POINT = "offensivePoint",
 			STATISTICS_DEFENSIVE_POINT = "defensivePoint",
+			STATISTICS_HEALTH_POINT = "healthPoint",
 			STATISTICS_DRUNK_CHARM = "drunkCharm",
 			STATISTICS_KILLS = "kills",
 			STATISTICS_DEATHS = "deaths",
 			STATISTICS_ATTACKS = "attacks",
 			STATISTICS_DEFENCES = "defences",
 			STATISTICS_BATTLES = "battles";
+
 
 	/**
 	 * A hős összes védekezésének mértéke.
@@ -181,6 +183,8 @@ public class Hero extends DataSetObservable implements Cloneable {
 	/**
 	 * A hős összes varázsereje.
 	 */
+	@HeroStatistics(STATISTICS_HEALTH_POINT)
+	private int mHealth;
 	@HeroStatistics(STATISTICS_DRUNK_CHARM)
 	private float mTotalDrunkCharm;
 	/**
@@ -208,6 +212,8 @@ public class Hero extends DataSetObservable implements Cloneable {
 	 */
 	@HeroStatistics(STATISTICS_BATTLES)
 	private int mTotalBattles;
+
+
 
 	boolean mIsFavourite;
 	private Battle mBattle = null;
@@ -464,7 +470,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 	}
 
 	public int getHealthImageID() {
-		return drawableHealths[Math.min((int) ((getBaseDefensivePoint() - MIN_HEALTH) / ((float) (MAX_HEALTH - MIN_HEALTH) / (float) drawableHealths.length)), drawableHealths.length - 1)];
+		return drawableHealths[Math.max(Math.min((int) ((getBaseDefensivePoint() - MIN_HEALTH) / ((float) (MAX_HEALTH - MIN_HEALTH) / (float) drawableHealths.length)), drawableHealths.length - 1), 0)];
 	}
 
 	public float getDrunkCharm() {

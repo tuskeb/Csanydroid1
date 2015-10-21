@@ -20,6 +20,7 @@
     <string name="defensive_point">Védekezőérték</string>
     <string name="charm_point">Varázserő pont</string>
     <string name="default_battle_name_prefix">Névtelen Csata</string>
+    <string name="health_point">Életerő pontjai</string>
     <string name="total_offensive_point">Összes támadó pont</string>
     <string name="total_defensive_point">Összes védekező pont</string>
     <string name="total_drunk_charm">Eddig megivott varázsital</string>
