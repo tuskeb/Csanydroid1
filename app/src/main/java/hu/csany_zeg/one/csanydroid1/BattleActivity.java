@@ -2,8 +2,6 @@ package hu.csany_zeg.one.csanydroid1;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -18,6 +16,7 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 import hu.csany_zeg.one.csanydroid1.core.Battle;
+import hu.csany_zeg.one.csanydroid1.core.Hero;
 
 public class BattleActivity extends AppCompatActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
@@ -31,11 +30,13 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
      */
     private CharSequence mTitle;
 
+    Battle mBattle = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         if (Battle.sBattles.size() == 0) {
             finish();
@@ -98,47 +99,62 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static BattleFragment newInstance(int sectionNumber) {
+        public static BattleFragment newInstance(int battleNumber) {
             BattleFragment fragment = new BattleFragment();
             Bundle args = new Bundle();
-            args.putInt(ARG_BATTLE_NUMBER, sectionNumber);
+            args.putInt(ARG_BATTLE_NUMBER, battleNumber);
             fragment.setArguments(args);
             return fragment;
         }
 
-        Battle mBattle = null;
-
         @Override
         public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
 
             mBattle = Battle.get(getArguments().getInt(ARG_BATTLE_NUMBER));
             mBattle.setOnStateChangeListener(mStateChangeListeners);
+
+
+            super.onCreate(savedInstanceState);
 
         }
 
         Battle.OnStateChange mStateChangeListeners = new Battle.OnStateChange() {
             @Override
             public void onChange(final Battle battle, final Object param) {
-                battle.delayNextState(1000);
-
+                switch (battle.getState()) {
+                    case Battle.STATE_ATTACKER_CHANGE:
+                    {
+                        mHeroViewA.setHero(battle.getAttacker());
+                    }
+                    break;
+                    case Battle.STATE_DEFENDER_CHANGE:
+                    {
+                        mHeroViewB.setHero(battle.getDefender());
+                    }
+                    break;
+                }
             }
         };
+
+        HeroView
+                mHeroViewA,
+                mHeroViewB;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
 
-
             View rootView = inflater.inflate(R.layout.fragment_battle, container, false);
             LinearLayout linearLayout = (LinearLayout) rootView.findViewById(R.id.hero_linear_layout);
-            HeroView heroView;
 
-            heroView = new HeroView(getContext(), mBattle.getHeroes(true).get(0), true);
-            linearLayout.addView(heroView);
+            mHeroViewA = new HeroView(getContext(), true);
+            mHeroViewB = new HeroView(getContext(), true);
 
-            heroView = new HeroView(getContext(), mBattle.getHeroes(false).get(1), false);
-            linearLayout.addView(heroView);
+            mHeroViewA.setHero(mBattle.getAttacker());
+            mHeroViewB.setHero(mBattle.getDefender());
+
+            linearLayout.addView(mHeroViewA);
+            linearLayout.addView(mHeroViewB);
 
             return rootView;
         }
@@ -160,18 +176,19 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
 
         }
 
+        Battle mBattle;
+
+
         @Override
         public void onDestroy() {
-            if(mBattle != null) {
+
+            if (mBattle != null) {
                 mBattle.setOnStateChangeListener(null);
             }
+
             super.onDestroy();
         }
 
-        @Override
-        public void onDetach() {
-            super.onDetach();
-        }
     }
 
 }

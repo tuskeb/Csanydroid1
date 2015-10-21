@@ -232,7 +232,8 @@ public class Player {
 								} else if (number instanceof Float) {
 									field.setFloat(hero, (float) (field.getFloat(hero) + number.floatValue()));
 								} else {
-									Log.e(TAG, "unknown type");
+                                    assert false;
+									Log.e(TAG, "unknown type: " + number.getClass().getName());
 								}
 
 							} catch (IllegalAccessException e) {
