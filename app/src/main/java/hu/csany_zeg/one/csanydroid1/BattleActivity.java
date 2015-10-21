@@ -133,6 +133,12 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
                         mHeroViewB.setHero(battle.getDefender());
                     }
                     break;
+                    case Battle.STATE_ATTACK:
+                    {
+                        mHeroViewB.onLifeLost((float)param);
+
+                    }
+                    break;
                 }
             }
         };

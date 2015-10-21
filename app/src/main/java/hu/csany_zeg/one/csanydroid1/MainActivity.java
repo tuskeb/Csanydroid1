@@ -83,13 +83,15 @@ public class MainActivity extends AppCompatActivity {
 
 				int size = parcel.readInt();
 				Log.v("hero", size + " heroes to load");
+
 				while(--size >= 0) {
 					new Hero(parcel);
 				}
 
 			} catch (Exception e) {
-				for (int i = 0; i < 12; i++) {
-					new Hero(Hero.getNextName(null));
+                final String heroNames[] = {"Szilárd", "Tibor", "Dávid", "Richárd", "Szabolcs", "András", "Roland", "Zoltán", "László", "Sári", "Kati", "Józsi", "Béla", "Karcsi", "Peti", "Janka", "Sándor", "Bence"};
+				for (int i = 0; i < heroNames.length; i++) {
+					new Hero(Hero.getNextName(heroNames[i]));
 				}
 			} finally {
 				if (fis != null) {

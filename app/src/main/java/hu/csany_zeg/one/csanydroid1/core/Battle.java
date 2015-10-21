@@ -297,7 +297,7 @@ public class Battle {
         return mTurn;
     }
 
-    protected void duel() {
+    protected float duel() {
 
         final float offensivePoint = mAttacker.getBaseOffensivePoint() * ((OFF_RAND_MIN + (float) Math.random() * (OFF_RAND_MAX - OFF_RAND_MIN)) + (mAttacker.getDrunkCharm() * OFF_CHARM_FACTOR));
         final float defensivePoint = mDefender.getBaseDefensivePoint() * ((DEF_RAND_MIN + (float) Math.random() * (DEF_RAND_MAX - DEF_RAND_MIN)) + (mDefender.getDrunkCharm() * DEF_CHARM_FACTOR));
@@ -309,7 +309,8 @@ public class Battle {
         mAttacker.updateStatistics(Hero.STATISTICS_ATTACKS, (int) 1);
         mDefender.updateStatistics(Hero.STATISTICS_DEFENCES, (int) 1);
 
-        if (mDefender.receiveDamage(offensivePoint - defensivePoint)) { // vesztett életet?
+        final float r = offensivePoint - defensivePoint;
+        if (mDefender.receiveDamage(r)) { // vesztett életet?
             Log.v(TAG, "defender received damage");
 
             if (!mDefender.isAlive()) { // most ölte meg
@@ -337,6 +338,8 @@ public class Battle {
             }
 
         }
+
+        return r;
 
     }
 
@@ -406,6 +409,7 @@ public class Battle {
 
         mAttacker = null;
         mDefender = null;
+
 
         // reset variables
         mState = STATE_WAIT_FOR_START;
@@ -635,8 +639,8 @@ public class Battle {
         @BattleState(Battle.STATE_ATTACK)
         public void OnAttack() {
             delayNextState(2000);
-            Battle.this.duel();
-            mOnStateChangeListener.onChange(Battle.this, null);
+            final float r = Battle.this.duel();
+            mOnStateChangeListener.onChange(Battle.this, r);
         }
 
 

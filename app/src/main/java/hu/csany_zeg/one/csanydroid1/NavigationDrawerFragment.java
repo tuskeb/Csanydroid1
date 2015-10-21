@@ -231,6 +231,9 @@ public class NavigationDrawerFragment extends Fragment {
 	
 	private void selectItem(int position) {
 		mCurrentSelectedPosition = position;
+        if(position >= Battle.countBattles()) {
+            getActivity().finish();
+        }
 		if (mDrawerListView != null && position >= 0) {
 			mDrawerListView.setItemChecked(position, true);
 		}

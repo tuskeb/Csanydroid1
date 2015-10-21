@@ -41,11 +41,7 @@ public class HeroView extends View {
     Bitmap mask;
     private ArrayList<Particle> mParticles = new ArrayList<Particle>();
     private Paint mPaint = new Paint();
-    private float initialY;
-    private float diffY;
-    private long beginTime;
-    private float speedY;
-    private float y = 40;
+
     private boolean mIsTouched = false;
 
     final DataSetObserver dso = new DataSetObserver() {
@@ -101,61 +97,15 @@ public class HeroView extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-/*
-        final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-		final int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-		final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-		final int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-
-		int desiredWidth = widthSize / 2;
-		int desiredHeight = heightSize;
-
-		int width;
-		int height;
-
-		switch (widthMode) {
-			case MeasureSpec.EXACTLY:
-				width = widthSize;
-				break;
-			case MeasureSpec.AT_MOST:
-				width = Math.min(desiredWidth, widthSize);
-				break;
-			default:
-				width = desiredWidth;
-		}
-
-		switch (heightMode) {
-			case MeasureSpec.EXACTLY:
-				height = heightSize;
-				break;
-			case MeasureSpec.AT_MOST:
-				height = Math.min(desiredHeight, heightSize);
-				break;
-			default:
-				height = desiredHeight;
-
-		}*/
-
         setMeasuredDimension(mIsAttacker ? widthMeasureSpec / 2 : widthMeasureSpec, heightMeasureSpec);
-
     }
 
     public void onLifeLost(float lostLife) {
-        addParticles(getHealthBarWidth(), 26, 10);
+        addParticles(getWidth() / 2, getHeight() / 2, Math.round(lostLife * 5));
     }
 
+    // private static final float LIFE_PER_HEART = 100;
 /*
-    @Override
-	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-		super.onSizeChanged(w, h, oldw, oldh);
-
-		this.w = w - bitmap.getWidth();
-		this.h = h - bitmap.getHeight();
-
-	}*/
-
-    private static final float LIFE_PER_HEART = 100;
-
     private float getHealthBarWidth() {
 
         float life = mHero.getHealthPoint();
@@ -192,6 +142,7 @@ public class HeroView extends View {
 
     }
 
+*/
 
     private void drawHero(Canvas canvas) {
 
@@ -209,13 +160,21 @@ public class HeroView extends View {
 
         Bitmap bitmap;
 
-        float y = getHeight() - 100;
+        float y = getHeight() - 60;
         float x = getWidth() * .1f;
 
-        bitmap = scaleBitmap(BitmapFactory.decodeResource(getResources(), mIsAttacker ?  mHero.getOffensiveImageID() : mHero.getDefensiveImageID()));
+        mPaint.setTextSize(23f);
+        mPaint.setTextAlign(Paint.Align.LEFT);
+        bitmap = scaleBitmap(BitmapFactory.decodeResource(getResources(), mIsAttacker ? mHero.getOffensiveImageID() : mHero.getDefensiveImageID()));
         canvas.drawBitmap(bitmap, x - bitmap.getWidth() / 2, y - bitmap.getHeight() / 2, new Paint());
-        canvas.drawText(String.valueOf(mIsAttacker ? mHero.getBaseOffensivePoint() : mHero.getBaseDefensivePoint()), x + bitmap.getWidth() + 10, y, mPaint);
+        canvas.drawText(String.format("%.2f", mIsAttacker ? mHero.getBaseOffensivePoint() : mHero.getBaseDefensivePoint()), x + bitmap.getWidth() / 2 + 10, y, mPaint);
+        bitmap.recycle();
 
+        x = getWidth() * .6f;
+        bitmap = scaleBitmap(BitmapFactory.decodeResource(getResources(), mHero.getHealthImageID()));
+        canvas.drawBitmap(bitmap, x - bitmap.getWidth() / 2, y - bitmap.getHeight() / 2, new Paint());
+        canvas.drawText(String.format("%.2f", mHero.getHealthPoint()), x + bitmap.getWidth() / 2 + 10, y, mPaint);
+        bitmap.recycle();
 
     }
 
@@ -277,18 +236,10 @@ public class HeroView extends View {
             //mPaint.setColor(Color.RED);
             //canvas.drawRect(0, 0, w, h, mPaint);
 
-            mPaint.setTextSize(30.0f);
+            mPaint.setTextSize(32.0f);
             mPaint.setColor(Color.DKGRAY);
-            canvas.drawText(mHero.getName(), 50, y, mPaint);
-
-            //drawHealth(canvas);
-
-            //canvas.drawArc(200, 200, 250, 300,0, (float)Math.PI, true, mPaint);
-
-            mPaint.setTextSize(20.0f);
-            canvas.drawText(mHero.getHealthPoint() + "", 50, y + 20, mPaint);
-            canvas.drawText((Math.round(mHero.getCharm() * 10f) / 10f) + "", 50, y + 50, mPaint);
-            canvas.drawText((Math.round(mHero.getBaseOffensivePoint() * 10f) / 10f) + "", 50, y + 80, mPaint);
+mPaint.setTextAlign(Paint.Align.CENTER);
+            canvas.drawText(mHero.getName(), getWidth() / 2, 50, mPaint);
 
             drawHero(canvas);
             drawAsdf(canvas);
@@ -316,9 +267,6 @@ public class HeroView extends View {
             Particle p = mParticles.get(--i);
             p.draw(canvas);
         }
-
-        y %= h;
-
 
     }
 
@@ -407,6 +355,7 @@ public class HeroView extends View {
 
             mX += mVelocityX;
 
+            HeroView.this.mPaint.setColor(Color.rgb(0xd0, 0x00, 0x00));
             canvas.drawCircle(mX + 5f, mY + 5f, 10f, HeroView.this.mPaint);
 
             mVelocityY += GRAVITY_Y;
