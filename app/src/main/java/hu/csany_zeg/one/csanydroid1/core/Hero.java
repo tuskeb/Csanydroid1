@@ -57,6 +57,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 							R.drawable.ch2_basic_non_ranged,
 							R.drawable.ch3_basic_non_ranged,
 							R.drawable.ch4_basic_non_ranged
+
 					},
 					{
 							R.drawable.ch1_non_ranged1,
