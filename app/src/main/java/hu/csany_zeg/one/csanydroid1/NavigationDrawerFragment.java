@@ -231,18 +231,22 @@ public class NavigationDrawerFragment extends Fragment {
 	
 	private void selectItem(int position) {
 		mCurrentSelectedPosition = position;
+
+        // itt tuti elvérzik
         if(position >= Battle.countBattles()) {
             getActivity().finish();
+        } else {
+
+            if (mDrawerListView != null && position >= 0) {
+                mDrawerListView.setItemChecked(position, true);
+            }
+            if (mDrawerLayout != null) {
+                mDrawerLayout.closeDrawer(mFragmentContainerView);
+            }
+            if (mCallbacks != null) {
+                mCallbacks.onNavigationDrawerItemSelected(position);
+            }
         }
-		if (mDrawerListView != null && position >= 0) {
-			mDrawerListView.setItemChecked(position, true);
-		}
-		if (mDrawerLayout != null) {
-			mDrawerLayout.closeDrawer(mFragmentContainerView);
-		}
-		if (mCallbacks != null) {
-			mCallbacks.onNavigationDrawerItemSelected(position);
-		}
 	}
 	
 	@Override

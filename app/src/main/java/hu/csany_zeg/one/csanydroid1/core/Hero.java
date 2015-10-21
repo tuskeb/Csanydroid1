@@ -19,7 +19,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 
 	public static ArrayList<Hero> sHeroRepository;
 
-	public static short MIN_HEALTH = 10, MAX_HEALTH = 500;
+	public static float MIN_HEALTH = 10, MAX_HEALTH = 500;
 	private static int drawableHeroes[] =
 			{
 					R.drawable.ch1_basic_stay,

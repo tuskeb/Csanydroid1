@@ -31,15 +31,7 @@ public class HeroListFragment extends ListFragment {
 	 * activated item position. Only used on tablets.
 	 */
 	private static final String STATE_ACTIVATED_POSITION = "activated_position";
-	/**
-	 * A dummy implementation of the {@link Callbacks} interface that does
-	 * nothing. Used only when this fragment is not attached to an activity.
-	 */
-	private static Callbacks sDummyCallbacks = new Callbacks() {
-		@Override
-		public void onItemSelected(String id) {
-		}
-	};
+
 	ArrayAdapter<Hero> mArrayAdapter;
 
 	DataSetObserver arrayAdapterObserver = new DataSetObserver() {
@@ -50,12 +42,6 @@ public class HeroListFragment extends ListFragment {
 		}
 	};
 
-
-	/**
-	 * The fragment's current callback object, which is notified of list item
-	 * clicks.
-	 */
-	private Callbacks mCallbacks = sDummyCallbacks;
 	/**
 	 * The current activated item position. Only used on tablets.
 	 */
@@ -117,27 +103,6 @@ public class HeroListFragment extends ListFragment {
 		}
 
 	}
-	
-	@Override
-	public void onAttach(Context context) {
-		super.onAttach(context);
-		Activity activity = getActivity();
-
-		// Activities containing this fragment must implement its callbacks.
-		if (!(activity instanceof Callbacks)) {
-			throw new IllegalStateException("Activity must implement fragment's callbacks.");
-		}
-
-		mCallbacks = (Callbacks) activity;
-	}
-	
-	@Override
-	public void onDetach() {
-		super.onDetach();
-
-		// Reset the active callbacks interface to the dummy implementation.
-		mCallbacks = sDummyCallbacks;
-	}
 
 	@Override
 	public void onListItemClick(ListView listView, View view, int position, long id) {
@@ -149,8 +114,6 @@ public class HeroListFragment extends ListFragment {
 	}
 
 	public void selectItem(int position, boolean user) {
-
-		mCallbacks.onItemSelected(position >= 0 ? Hero.getHero(position).getName() : null);
 		setActivatedPosition(position);
 
 		if (!user) getListView().setSelection(position);
@@ -190,16 +153,5 @@ public class HeroListFragment extends ListFragment {
 
 		mActivatedPosition = position;
 	}
-	
-	/**
-	 * A callback interface that all activities containing this fragment must
-	 * implement. This mechanism allows activities to be notified of item
-	 * selections.
-	 */
-	public interface Callbacks {
-		/**
-		 * Callback for when an item has been selected.
-		 */
-		public void onItemSelected(String id);
-	}
+
 }

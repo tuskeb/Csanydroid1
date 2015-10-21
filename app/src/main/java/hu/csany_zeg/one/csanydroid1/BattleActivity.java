@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import hu.csany_zeg.one.csanydroid1.core.Battle;
 import hu.csany_zeg.one.csanydroid1.core.Hero;
@@ -37,12 +38,7 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-/*
-        if (Battle.sBattles.size() == 0) {
-        // sadfsadfsargdf
-            finish();
-        }
-*/
+
         setContentView(R.layout.activity_battle);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -50,7 +46,6 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
-
 
     }
 
@@ -61,6 +56,7 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
         fragmentManager.beginTransaction()
                 .replace(R.id.container, BattleFragment.newInstance(position))
                 .commit();
+
     }
 
     public void restoreActionBar() {
@@ -114,7 +110,6 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
             mBattle = Battle.get(getArguments().getInt(ARG_BATTLE_NUMBER));
             mBattle.setOnStateChangeListener(mStateChangeListeners);
 
-
             super.onCreate(savedInstanceState);
 
         }
@@ -123,25 +118,23 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
             @Override
             public void onChange(final Battle battle, final Object param) {
                 switch (battle.getState()) {
-                    case Battle.STATE_ATTACKER_CHANGE:
-                    {
+                    case Battle.STATE_ATTACKER_CHANGE: {
                         mHeroViewA.setHero(battle.getAttacker());
                     }
                     break;
-                    case Battle.STATE_DEFENDER_CHANGE:
-                    {
+                    case Battle.STATE_DEFENDER_CHANGE: {
                         mHeroViewB.setHero(battle.getDefender());
                     }
                     break;
-                    case Battle.STATE_ATTACK:
-                    {
-                        mHeroViewB.onLifeLost((float)param);
+                    case Battle.STATE_ATTACK: {
+                        mHeroViewB.onLifeLost((float) param);
 
                     }
                     break;
-                    case Battle.STATE_FINISH:
-                    {
-
+                    case Battle.STATE_FINISH: {
+                        // reménykedek benne, hogy múködik. tudom, nem valami bíztató...
+                        getActivity().finish();
+                        Toast.makeText(getActivity(), "Köszönjük a figyelmet! A csata véget ért.", Toast.LENGTH_SHORT).show();
                     }
                     break;
                 }
@@ -186,7 +179,6 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
             super.onAttach(context);
 
             selectItem(getArguments().getInt(ARG_BATTLE_NUMBER));
-
 
         }
 
