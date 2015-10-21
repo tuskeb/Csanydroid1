@@ -22,10 +22,8 @@
 
     <style name="button_text_xlarge">
         <item name="android:textSize">60dp</item>
-        <item name="android:background">#000000</item>
         <!--<item name="android:textColor">#fff</item>
         <item name="android:background">#006699</item>-->
-        <item name="android:textColor">#FF8000</item>
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <!--<item name="android:gravity">center</item>-->

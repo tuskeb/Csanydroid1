@@ -31,7 +31,6 @@
         android:background="#ababab">
 
         <Button
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/hero_repository"
             android:id="@+id/hero_repository_button"
@@ -43,7 +42,6 @@
             style="@style/button_style" />
 
         <Button
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/new_battle_button"
             android:id="@+id/new_battle_button"
@@ -54,7 +52,6 @@
             style="@style/button_style" />
 
         <Button
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/battle_button"
             android:id="@+id/view_battles_button"
@@ -65,7 +62,6 @@
             style="@style/button_style" />
 
         <Button
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/help_button"
             android:id="@+id/view_help_button"
