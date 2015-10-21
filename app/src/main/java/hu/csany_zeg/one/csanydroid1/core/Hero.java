@@ -515,19 +515,19 @@ public class Hero extends DataSetObservable implements Cloneable {
 		return mPicture;
 	}
 
-	public int getCharmImageIndex() {
+	private int getCharmImageIndex() {
 		return Math.min((int)((getCharm() - MIN_CHARM) / ((float)(MAX_CHARM - MIN_CHARM) / (float) drawableCharms.length)), drawableCharms.length - 1);
 	}
 
-	public int getOffensiveImageIndex() {
+    private int getOffensiveImageIndex() {
 		return Math.min((int)((getBaseOffensivePoint() - MIN_OFFENSIVE_POINT) / ((float)(MAX_OFFENSIVE_POINT - MIN_OFFENSIVE_POINT) / (float) drawableOffensive.length)), drawableOffensive.length - 1);
 	}
 
-	public int getDefensiveImageIndex() {
+    private int getDefensiveImageIndex() {
 		return Math.min((int) ((getBaseDefensivePoint() - MIN_DEFENSIVE_POINT) / ((float) (MAX_DEFENSIVE_POINT - MIN_DEFENSIVE_POINT) / (float) drawableDefensive.length)), drawableDefensive.length - 1);
 	}
 
-	public int getHealthImageIndex() {
+    private int getHealthImageIndex() {
 		return Math.min((int) ((getHealthPoint() - MIN_HEALTH) / ((float) (MAX_HEALTH - MIN_HEALTH) / (float) drawableHealths.length)), drawableHealths.length - 1);
 	}
 
@@ -705,13 +705,13 @@ public class Hero extends DataSetObservable implements Cloneable {
 				break;
 		}
 		a.add(drawableOffensiveToHero[animIndex][getOffensiveImageIndex()]);
-		addBasicImages(a);
+		//addBasicImages(a);
 		return a;
 	}
 
 
 	public ArrayList<Integer> getDefensiveImageArray() {
-		ArrayList<Integer> a= new ArrayList<>();
+		ArrayList<Integer> a = new ArrayList<>();
 		a.add(drawableOffensiveToHero[0][getOffensiveImageIndex()]);
 		a.add(drawableOffensiveToHero[getOffensiveImageIndex()][0]);
 		addBasicImages(a);

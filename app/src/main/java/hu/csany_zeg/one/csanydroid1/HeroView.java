@@ -20,6 +20,8 @@ import android.view.View;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import hu.csany_zeg.one.csanydroid1.core.Hero;
@@ -31,10 +33,10 @@ public class HeroView extends View {
     private final float STICKING = FRICTION * 2f;
     private static Bitmap heartBitmap = null;
 
-        @Override
-        protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-           flushCache();
-        }
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        flushCache();
+    }
 
     Bitmap mask;
     private ArrayList<Particle> mParticles = new ArrayList<Particle>();
@@ -81,7 +83,7 @@ public class HeroView extends View {
             @Override
             public void onViewAttachedToWindow(View v) {
                 if (heartBitmap == null)
-                    heartBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.heartasd);
+                    heartBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.heart1);
                 mask = Bitmap.createBitmap(32, 32, Bitmap.Config.ARGB_8888);
             }
 
@@ -193,12 +195,8 @@ public class HeroView extends View {
 
     private void drawHero(Canvas canvas) {
 
-
-        ArrayList<Integer> imageIdArray = mHero.getOffensiveImageArray(0);
-
-        for (Integer imgId : imageIdArray) {
-
-            final Bitmap bitmap = getPicture(imageIdArray.get(0));
+        for (Integer imgId : mHero.getOffensiveImageArray(0)) {
+            final Bitmap bitmap = getPicture(imgId);
 
             int width = bitmap.getWidth(), height = bitmap.getHeight();
 
@@ -207,15 +205,41 @@ public class HeroView extends View {
 
     }
 
-    private static HashMap<Integer, Bitmap[]> mBitmapCache = new HashMap<>();
+    private void drawAsdf(Canvas canvas) {
+
+        Bitmap bitmap;
+
+        float y = getHeight() - 100;
+        float x = getWidth() * .1f;
+
+        bitmap = scaleBitmap(BitmapFactory.decodeResource(getResources(), mIsAttacker ?  mHero.getOffensiveImageID() : mHero.getDefensiveImageID()));
+        canvas.drawBitmap(bitmap, x - bitmap.getWidth() / 2, y - bitmap.getHeight() / 2, new Paint());
+        canvas.drawText(String.valueOf(mIsAttacker ? mHero.getBaseOffensivePoint() : mHero.getBaseDefensivePoint()), x + bitmap.getWidth() + 10, y, mPaint);
+
+
+    }
+
+    private Bitmap scaleBitmap(Bitmap bitmap) {
+
+        Bitmap dst;
+        Matrix m = new Matrix();
+        m.setScale(4, 4);
+        (dst = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), m, false)).setDensity(DisplayMetrics.DENSITY_DEFAULT);
+        bitmap.recycle();
+        return dst;
+    }
+
+
+    private static final HashMap<Integer, Bitmap[]> mBitmapCache = new HashMap<>();
 
     private static void flushCache() {
         synchronized (mBitmapCache) {
-            final Set<Integer> keySet = mBitmapCache.keySet();
-            for(Integer key : keySet) {
-                Bitmap bitmapArray[] = mBitmapCache.remove(key);
+            for (Iterator<Map.Entry<Integer, Bitmap[]>> it = mBitmapCache.entrySet().iterator(); it.hasNext(); ) {
+                Bitmap bitmapArray[] = it.next().getValue();
                 bitmapArray[0].recycle();
                 bitmapArray[1].recycle();
+
+                it.remove();
             }
 
         }
@@ -228,8 +252,7 @@ public class HeroView extends View {
                 Bitmap dst[] = new Bitmap[2];
                 Matrix m = new Matrix();
 
-                final float scale = (float)Math.min(((float)getWidth() * .8f) / (float)src.getWidth(), ((float)getHeight() * .8f) / (float)src.getHeight());
-
+                final float scale = (float) Math.min(((float) getWidth() * .8f) / (float) src.getWidth(), ((float) getHeight() * .8f) / (float) src.getHeight());
 
                 m.setScale(scale, scale);
                 (dst[0] = Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), m, false)).setDensity(DisplayMetrics.DENSITY_DEFAULT);
@@ -239,8 +262,8 @@ public class HeroView extends View {
 
                 mBitmapCache.put(id, dst);
 
-            }
 
+            }
             return mBitmapCache.get(id)[mIsAttacker ? 0 : 1];
 
         }
@@ -258,7 +281,7 @@ public class HeroView extends View {
             mPaint.setColor(Color.DKGRAY);
             canvas.drawText(mHero.getName(), 50, y, mPaint);
 
-            drawHealth(canvas);
+            //drawHealth(canvas);
 
             //canvas.drawArc(200, 200, 250, 300,0, (float)Math.PI, true, mPaint);
 
@@ -268,6 +291,7 @@ public class HeroView extends View {
             canvas.drawText((Math.round(mHero.getBaseOffensivePoint() * 10f) / 10f) + "", 50, y + 80, mPaint);
 
             drawHero(canvas);
+            drawAsdf(canvas);
 
 /*
         if (speedY > 0) {
@@ -327,8 +351,8 @@ public class HeroView extends View {
 
                 break;
             case MotionEvent.ACTION_MOVE:
-				/*
-				// TODO csillapítás után újra mozog
+                /*
+                // TODO csillapítás után újra mozog
 				if (speedY == 0) {
 					y = event.getY() - diffY;
 					invalidate();

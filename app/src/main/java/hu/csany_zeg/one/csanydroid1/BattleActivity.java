@@ -37,11 +37,12 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
+/*
         if (Battle.sBattles.size() == 0) {
+        // sadfsadfsargdf
             finish();
         }
-
+*/
         setContentView(R.layout.activity_battle);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
