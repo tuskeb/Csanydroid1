@@ -51,6 +51,7 @@ public class HeroSelectorActivityFragment extends Fragment {
 					//Toast.makeText(getActivity(), "Battle successfully created. Waiting for other players...", Toast.LENGTH_SHORT).show();
 
 					//return;
+                    // ennek csak a bluetooth-os résznél lett volna jelentősége
 				}
 
 				ArrayList<String> names = new ArrayList<String>();

@@ -14,10 +14,6 @@ import java.util.ArrayList;
 import hu.csany_zeg.one.csanydroid1.App;
 import hu.csany_zeg.one.csanydroid1.R;
 
-// TODO: http://stackoverflow.com/questions/18903735/how-to-change-the-text-color-of-a-listview-item
-// TODO http://developer.android.com/training/displaying-bitmaps/cache-bitmap.html
-/* #ebd46e, #d3b21f */
-
 public class Battle {
 
     public static final byte
@@ -52,6 +48,9 @@ public class Battle {
             DEF_CHARM_FACTOR = 1f / 2.5f;
     public float
             MAX_USABLE_CHARM = 5f;
+
+    // nem final, mivel egy komolyabb verzióban lehetőség lett volna ezeket is állítani. majd legközelebb!
+
     /**
      * Az aktuális támadó és védekező játékos.
      */
@@ -290,6 +289,7 @@ public class Battle {
         if (mHandler != null) {
             mHandler.getLooper().quit();
         }
+
         mDisposed = true;
     }
 
@@ -662,8 +662,10 @@ public class Battle {
             mOnStateChangeListener.onChange(Battle.this, null);
         }
 
-        @BattleState(value = Battle.STATE_BEFORE_FINISH,
-                next = Battle.STATE_FINISH)
+        @BattleState(
+                value = Battle.STATE_BEFORE_FINISH,
+                next = Battle.STATE_FINISH
+        )
         public void OnWin() {
             Log.v(TAG, "yuuppppppiiiiiie!");
             delayNextState(1000);
@@ -674,7 +676,7 @@ public class Battle {
 
         @BattleState(value = Battle.STATE_FINISH)
         public void OnFinish() {
-            // dispose();
+            dispose();
             Log.v(TAG, "disposed");
         }
 

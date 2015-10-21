@@ -190,10 +190,6 @@ public class Hero extends DataSetObservable implements Cloneable {
 	 */
 	protected float mCharm;
 	/**
-	 * Alap varázsereje.
-	 */
-	protected float mBaseCharm;
-	/**
 	 * Támadási értéke.
 	 */
 	protected float mOffensivePoint;
@@ -301,7 +297,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 
 		// TODO review
 		mHealthPoint = (short) (Math.random() * (MAX_HEALTH - MIN_HEALTH + 1) + MIN_HEALTH);
-		mBaseCharm = (float) Math.random() * (MAX_CHARM + Float.MIN_VALUE);
+		mCharm = (float) Math.random() * (MAX_CHARM + Float.MIN_VALUE);
 		mOffensivePoint = (float) Math.random() * (MAX_OFFENSIVE_POINT - MIN_OFFENSIVE_POINT + Float.MIN_VALUE) + MIN_OFFENSIVE_POINT;
 		mDefensivePoint = (float) Math.random() * (MAX_OFFENSIVE_POINT - MIN_OFFENSIVE_POINT + Float.MIN_VALUE) + MIN_OFFENSIVE_POINT;
 		mPicture = (int) (Math.random() * drawableHeroes.length);
@@ -319,7 +315,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 		mName = parcel.readString();
 		mIsFavourite = parcel.readByte() > 0;
 		mHealthPoint = parcel.readFloat();
-		mBaseCharm = parcel.readFloat();
+		mCharm = parcel.readFloat();
 		mOffensivePoint = parcel.readFloat();
 		mDefensivePoint = parcel.readFloat();
 		mPicture = parcel.readInt();
@@ -352,7 +348,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 		parcel.writeString(getName());
 		parcel.writeByte((byte) (mIsFavourite ? 1 : 0));
 		parcel.writeFloat(mHealthPoint);
-		parcel.writeFloat(mBaseCharm);
+		parcel.writeFloat(mCharm);
 		parcel.writeFloat(mOffensivePoint);
 		parcel.writeFloat(mDefensivePoint);
 		parcel.writeInt(mPicture);
@@ -545,8 +541,8 @@ public class Hero extends DataSetObservable implements Cloneable {
 		if (Math.random() < r) {
 			mDrunkCharm = Math.min(mCharm, mBattle.MAX_USABLE_CHARM); // "maximális varázsereje"??
 			mCharm -= mDrunkCharm;
-
-			updateStatistics(STATISTICS_DRUNK_CHARM, mDrunkCharm);
+Log.v("battle", "mDrunkCharm: " + mDrunkCharm + "/" + mCharm);
+        updateStatistics(STATISTICS_DRUNK_CHARM, mDrunkCharm);
 
 		} else { // ne használjon ilyen szereket
 			mDrunkCharm = 0;
@@ -575,7 +571,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 
 	}
 
-	public float getCharm() { return mBaseCharm; }
+	public float getCharm() { return mCharm; }
 
 	public float getBaseOffensivePoint() {
 		return mOffensivePoint;
@@ -606,12 +602,12 @@ public class Hero extends DataSetObservable implements Cloneable {
 		notifyChanged();
 	}
 
-	public void setBaseCharm(float baseCharm) throws RuntimeException {
+	public void setCharm(float charm) throws RuntimeException {
 		if (!canModify()) throw new RuntimeException("Value cannot be modified.");
 
-		if(baseCharm < MIN_CHARM) mBaseCharm = MIN_CHARM;
-		else if(baseCharm > MAX_CHARM) mBaseCharm = MAX_CHARM;
-		else mBaseCharm = baseCharm;
+		if(charm < MIN_CHARM) mCharm = MIN_CHARM;
+		else if(charm > MAX_CHARM) mCharm = MAX_CHARM;
+		else mCharm = charm;
 
 		notifyChanged();
 	}

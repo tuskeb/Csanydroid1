@@ -145,7 +145,6 @@ public class HeroView extends View {
 */
 
     private void drawHero(Canvas canvas) {
-
         for (Integer imgId : mHero.getOffensiveImageArray(0)) {
             final Bitmap bitmap = getPicture(imgId);
 
@@ -160,19 +159,29 @@ public class HeroView extends View {
 
         Bitmap bitmap;
 
-        float y = getHeight() - 60;
+        float y = getHeight() - 100;
         float x = getWidth() * .1f;
 
         mPaint.setTextSize(23f);
         mPaint.setTextAlign(Paint.Align.LEFT);
+
+
+        bitmap = scaleBitmap(BitmapFactory.decodeResource(getResources(), mHero.getCharmImageID()));
+        canvas.drawBitmap(bitmap, x - bitmap.getWidth() / 2, y - bitmap.getHeight() / 2, mPaint);
+        canvas.drawText(String.format("%.2f", mHero.getDrunkCharm()), x + bitmap.getWidth() / 2 + 10, y, mPaint);
+        y += bitmap.getHeight() + 10;
+
+        bitmap.recycle();
+
+
         bitmap = scaleBitmap(BitmapFactory.decodeResource(getResources(), mIsAttacker ? mHero.getOffensiveImageID() : mHero.getDefensiveImageID()));
-        canvas.drawBitmap(bitmap, x - bitmap.getWidth() / 2, y - bitmap.getHeight() / 2, new Paint());
+        canvas.drawBitmap(bitmap, x - bitmap.getWidth() / 2, y - bitmap.getHeight() / 2, mPaint);
         canvas.drawText(String.format("%.2f", mIsAttacker ? mHero.getBaseOffensivePoint() : mHero.getBaseDefensivePoint()), x + bitmap.getWidth() / 2 + 10, y, mPaint);
         bitmap.recycle();
 
         x = getWidth() * .6f;
         bitmap = scaleBitmap(BitmapFactory.decodeResource(getResources(), mHero.getHealthImageID()));
-        canvas.drawBitmap(bitmap, x - bitmap.getWidth() / 2, y - bitmap.getHeight() / 2, new Paint());
+        canvas.drawBitmap(bitmap, x - bitmap.getWidth() / 2, y - bitmap.getHeight() / 2, mPaint);
         canvas.drawText(String.format("%.2f", mHero.getHealthPoint()), x + bitmap.getWidth() / 2 + 10, y, mPaint);
         bitmap.recycle();
 

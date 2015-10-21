@@ -64,7 +64,7 @@ public class HeroDetailFragment extends Fragment {
 			rootView = inflater.inflate(R.layout.fragment_hero_detail, container, false);
 
             if(!mHero.canModify()) {
-                Toast.makeText(getActivity(), "The hero is fighting, so cannot be modified", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "The hero is fighting, so cannot be modified", Toast.LENGTH_SHORT).show();
             }
 
 			charmValueTextView = (TextView) rootView.findViewById(R.id.charm_textview);
@@ -229,7 +229,7 @@ public class HeroDetailFragment extends Fragment {
 				@Override
 				public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 					try {
-						mHero.setBaseCharm((float) progress + Hero.MIN_CHARM);
+						mHero.setCharm((float) progress + Hero.MIN_CHARM);
 					} catch (Exception ignored) { }
 
 					charmValueTextView.setText(String.valueOf(Math.round(mHero.getCharm())));

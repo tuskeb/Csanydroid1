@@ -139,6 +139,11 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
 
                     }
                     break;
+                    case Battle.STATE_FINISH:
+                    {
+
+                    }
+                    break;
                 }
             }
         };

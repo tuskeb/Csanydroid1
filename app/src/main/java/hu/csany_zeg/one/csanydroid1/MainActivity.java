@@ -89,10 +89,16 @@ public class MainActivity extends AppCompatActivity {
 				}
 
 			} catch (Exception e) {
-                final String heroNames[] = {"Szilárd", "Tibor", "Dávid", "Richárd", "Szabolcs", "András", "Roland", "Zoltán", "László", "Sári", "Kati", "Józsi", "Béla", "Karcsi", "Peti", "Janka", "Sándor", "Bence"};
+                final String heroNames[] = {"Szilárd", "Tibor", "Dávid", "Richárd", "Szabolcs", "András", "Roland", "Zoltán", "László", "Sári", "Kati", "Józsi", "Béla", "Karcsi", "Peti", "Janka", "Sándor", "Bence", "Gyuri", "Margit"};
 				for (int i = 0; i < heroNames.length; i++) {
 					new Hero(Hero.getNextName(heroNames[i]));
 				}
+
+                Hero superHero = new Hero("PenDroid");
+                superHero.setCharm(Hero.MAX_CHARM);
+                superHero.setOffensivePoint(Hero.MAX_OFFENSIVE_POINT);
+                superHero.setDefensivePoint(Hero.MAX_DEFENSIVE_POINT);
+
 			} finally {
 				if (fis != null) {
 					try {
@@ -103,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
 
 		}
 
+        /*
 		{
             Battle battle = new Battle(null);
             battle.addPlayer(Player.CURRENT, true);
@@ -112,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
             battle.setPlayerReady(Player.CURRENT);
 		}
 
-
+*/
 		//Display display = getWindowManager().getDefaultDisplay();
 		//Point size = new Point();
 		//display.getSize(size);
