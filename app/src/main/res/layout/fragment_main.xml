@@ -4,7 +4,8 @@
     android:orientation="horizontal"
     tools:context=".MainActivityFragment"
     android:id="@+id/linearLayout"
-              android:weightSum="1">
+              android:weightSum="1"
+                android:background="#ababab">
 
     <TextView
         android:layout_width="386dp"
@@ -26,9 +27,7 @@
         android:id="@+id/linearLayout2"
         android:layout_below="@+id/textView"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        style="@style/teszt_layout"
-        android:background="#ababab">
+        android:layout_alignParentEnd="true">
 
         <Button
             android:layout_height="wrap_content"

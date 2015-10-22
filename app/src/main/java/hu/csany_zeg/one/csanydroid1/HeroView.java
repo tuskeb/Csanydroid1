@@ -68,7 +68,7 @@ public class HeroView extends View {
 				mTimer = new Timer();
 				mTimer.scheduleAtFixedRate(new TimerTask() {
 					public void run() {
-
+/*
 						handler.post(new Runnable() {
 							@Override
 							public void run() {
@@ -80,7 +80,7 @@ public class HeroView extends View {
 
 							}
 						});
-
+*/
 
 					}
 				}, 0, 1500);
@@ -184,7 +184,7 @@ public class HeroView extends View {
 	}
 
 	public void onLifeLost(float lostLife) {
-		addParticles(getWidth() / 2, getHeight() / 2, Math.round(lostLife * 4));
+		addParticles(getWidth() / 2, getHeight() / 2, Math.round(lostLife * 5));
 	}
 
 	private void drawImageArray(Canvas canvas, ArrayList<Integer> imageArray) {
@@ -202,23 +202,16 @@ public class HeroView extends View {
 
 		Bitmap bitmap;
 
-		float y = getHeight() - 100;
-		float x = getWidth() * .1f;
+		float x, y = getHeight();
 
 		mPaint.setTextSize(23f);
 		mPaint.setTextAlign(Paint.Align.LEFT);
 
 
-		bitmap = scaleBitmap(BitmapFactory.decodeResource(getResources(), mHero.getCharmImageID()));
-		canvas.drawBitmap(bitmap, x - bitmap.getWidth() / 2, y - bitmap.getHeight() / 2, mPaint);
-		canvas.drawText(String.format("%.2f", mHero.getDrunkCharm()), x + bitmap.getWidth() / 2 + 10, y, mPaint);
-		y += bitmap.getHeight() + 10;
-
-		bitmap.recycle();
-
-
 		final boolean isAttacker = mHero.getBattle().getAttacker() == mHero;
 		bitmap = scaleBitmap(BitmapFactory.decodeResource(getResources(), isAttacker ? mHero.getOffensiveImageID() : mHero.getDefensiveImageID()));
+		x = getWidth() * .1f;
+		y -= 40;
 		canvas.drawBitmap(bitmap, x - bitmap.getWidth() / 2, y - bitmap.getHeight() / 2, mPaint);
 		canvas.drawText(String.format("%.2f", isAttacker ? mHero.getBaseOffensivePoint() : mHero.getBaseDefensivePoint()), x + bitmap.getWidth() / 2 + 10, y, mPaint);
 		bitmap.recycle();
@@ -228,6 +221,19 @@ public class HeroView extends View {
 		canvas.drawBitmap(bitmap, x - bitmap.getWidth() / 2, y - bitmap.getHeight() / 2, mPaint);
 		canvas.drawText(String.format("%.2f", mHero.getHealthPoint()), x + bitmap.getWidth() / 2 + 10, y, mPaint);
 		bitmap.recycle();
+
+		if(mHero.getCharm() > 0) {
+			bitmap = scaleBitmap(BitmapFactory.decodeResource(getResources(), mHero.getCharmImageID()));
+
+			x = getWidth() * .1f;
+			y -= bitmap.getHeight();
+
+			canvas.drawBitmap(bitmap, x - bitmap.getWidth() / 2, y - bitmap.getHeight() / 2, mPaint);
+			canvas.drawText(String.format("%.2f", mHero.getDrunkCharm()), x + bitmap.getWidth() / 2 + 10, y, mPaint);
+
+			bitmap.recycle();
+		}
+
 
 	}
 
@@ -377,11 +383,11 @@ public class HeroView extends View {
 	}
 
 	private class Particle {
-		private final float GRAVITY_Y = .55f;
+		private final float GRAVITY_Y = .4f;
 		private final float AIR_RESISTANCE_X = .08f;
-		private final float MIN_FORCE = 3.5f, MAX_FORCE = 8f;
-		private final double ANGLE = 75 * (Math.PI / 180); // [rad] TODO find a name
-		private final float mR = 4f + (float) (Math.random() * 6);
+		private final float MIN_FORCE = 4f, MAX_FORCE = 8.7f;
+		private final double SCATTERING_ANGLE = 80 * (Math.PI / 180);
+		private final float mR = 3.8f +  (float)Math.random() * 8f;
 		public float mX, mY;
 		private double mVelocityX, mVelocityY;
 
@@ -389,7 +395,7 @@ public class HeroView extends View {
 			mX = x;
 			mY = y;
 
-			final double angle = (-Math.PI / 2) + (Math.random() * ANGLE - ANGLE / 2);
+			final double angle = (-Math.PI / 2) + (Math.random() * SCATTERING_ANGLE - SCATTERING_ANGLE / 2);
 			mVelocityX = Math.cos(angle) * (MIN_FORCE + Math.random() * (MAX_FORCE - MIN_FORCE));
 			mVelocityY = Math.sin(angle) * (MIN_FORCE + Math.random() * (MAX_FORCE - MIN_FORCE));
 

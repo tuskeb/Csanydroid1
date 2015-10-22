@@ -229,16 +229,14 @@ public class NavigationDrawerFragment extends Fragment {
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 	}
 	
-	private void selectItem(int position) {
+	public void selectItem(int position) {
 		mCurrentSelectedPosition = position;
 
         // itt tuti elvérzik
-        if(position >= Battle.countBattles()) {
-	        Log.v("asdf", "exit");
+        if(position < 0 || position >= Battle.countBattles()) {
            getActivity().finish();
         } else {
-
-            if (mDrawerListView != null && position >= 0) {
+            if (mDrawerListView != null) {
                 mDrawerListView.setItemChecked(position, true);
             }
             if (mDrawerLayout != null) {
@@ -302,7 +300,7 @@ public class NavigationDrawerFragment extends Fragment {
 
 				AlertDialog alert = new AlertDialog.Builder(getActivity())
 						                    .setTitle("Confirm")
-						                    .setMessage("Are you sure want to give up this battle?")
+						                    .setMessage(getString(R.string.battle_give_up_confirmation))
 						                    .setPositiveButton(getString(android.R.string.yes), new DialogInterface.OnClickListener() {
 							                    @Override
 							                    public void onClick(DialogInterface dialog, int which) {
@@ -316,9 +314,6 @@ public class NavigationDrawerFragment extends Fragment {
 
 								                    getActivity().supportInvalidateOptionsMenu(); // calls onPrepareOptionsMenu()
 								                    ((BattleActivity) getActivity()).onNavigationDrawerItemSelected(mCurrentSelectedPosition);
-
-
-								                    // getActivity().recreate(); // TODO: is it good?
 
 								                    dialog.dismiss();
 							                    }

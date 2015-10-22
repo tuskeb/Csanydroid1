@@ -30,15 +30,16 @@ public class Player {
 			ACTION_UPDATE_HERO = 10 | SCOPE_PLAYER,
 			ACTION_UPDATE_HERO_STAT = 11 | SCOPE_PLAYER,
 			ACTION_ADD_HERO_TO_BATTLE = 12,
-			ACTION_INVITE = 13;
+			ACTION_REMOVE_HERO_FROM_BATTLE = 13 | SCOPE_PLAYER,
+			ACTION_INVITE = 14;
 	private final static String TAG = "player";
 	private final static ArrayList<Player> sPlayers = new ArrayList<Player>();
 	private final OutputStream mOutputStream;
 	private final InputStream mInputStream;
+	private final Parcel mParcel = Parcel.obtain();
 	// private final UUID mUUID;
 	//private ArrayList<OnDataReceivedListener> mListeners = new ArrayList<OnDataReceivedListener>();
 	private String mName;
-	private final Parcel mParcel = Parcel.obtain();
 
 	public Player(BluetoothSocket bluetoothSocket) throws IOException {
 		this(bluetoothSocket.getRemoteDevice().getName(), bluetoothSocket.getOutputStream(), bluetoothSocket.getInputStream());
@@ -211,19 +212,28 @@ public class Player {
 						final Hero hero = Hero.findHero(m.readString());
 						if (hero == null) break;
 
+						// TODO do
+
+					}
+					break;
+					case Player.ACTION_REMOVE_HERO_FROM_BATTLE: {
+
+						final Hero hero = Hero.findHero(m.readString());
+						if (hero == null) break;
+						hero.setBattle(null);
 
 					}
 					break;
 					case Player.ACTION_UPDATE_HERO_STAT: {
 
 						final Hero hero = Hero.findHero(m.readString());
-						final String name = m.readString();
-						final Number number = (Number)m.readValue(null);
+						final String entryName = m.readString();
+						final Number number = (Number) m.readValue(null);
 
 						for (final Field field : hero.getClass().getDeclaredFields()) {
 							final HeroStatistics annotation = field.getAnnotation(HeroStatistics.class);
 							if (annotation == null) continue;
-							if (annotation.value().compareTo(name) != 0) continue;
+							if (annotation.value().compareTo(entryName) != 0) continue;
 
 							try {
 								field.setAccessible(true);
@@ -232,7 +242,7 @@ public class Player {
 								} else if (number instanceof Float) {
 									field.setFloat(hero, (float) (field.getFloat(hero) + number.floatValue()));
 								} else {
-                                    assert false;
+									assert false;
 									Log.e(TAG, "unknown type: " + number.getClass().getName());
 								}
 

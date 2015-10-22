@@ -30,13 +30,13 @@
     <string name="defensive_point">Defensive Point</string>
     <string name="charm_point">Charm Point</string>
     <string name="default_battle_name_prefix">Unnamed Battle</string>
-    <string name="title_activity_hero_selector">HeroSelectorActivity</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_hero_selector" translatable="false">HeroSelectorActivity</string>
+    <string name="hello_world" translatable="false">Hello world!</string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="health_point">Health Points</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_help">HelpActivity</string>
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
+    <string name="title_activity_help" translatable="false">HelpActivity</string>
     <string name="total_offensive_point">Total offensive point</string>
     <string name="total_defensive_point">Total defensive point</string>
     <string name="total_drunk_charm">Total drunk charm</string>
@@ -46,6 +46,7 @@
     <string name="total_deaths">Total deaths</string>
     <string name="total_kills">Total kills</string>
     <string name="sugo1">Az elmentett hősök raktárába lehet eljutni! Bal felső sarokban található + jellel adhatunk hozzá hőst. Először egy nevet kell megadni. A csúszkák segítségével adható meg a hős különféle adata. A harcban lévő hősök datai nem módosíthatók. Egy hős csak egy csatában vehet részt. A mentés automatikus, a törlés a szemetesláda ikon megnyomásával történik.</string>
-    <string name="sugo2">Csatát hozhatunk létre! Először a csata nevét kell begépelni a megjelenő billentyűzet segítségével. A továbbiakban az elmentett hősök közül lehet választani. A kiválasztás az érintőképernyő segítségével történik. Végezetül a CREATE gomb megnyomásával jön létre a csata.</string>
-    <string name="sugo3">A csaták elindítása!</string>
+    <string name="sugo2" translatable="false">Csatát hozhatunk létre! Először a csata nevét kell begépelni a megjelenő billentyűzet segítségével. A továbbiakban az elmentett hősök közül lehet választani. A kiválasztás az érintőképernyő segítségével történik. Végezetül a CREATE gomb megnyomásával jön létre a csata.</string>
+    <string name="sugo3" translatable="false">A csaták elindítása!</string>
+    <string name="battle_give_up_confirmation">Are you sure want to give up the battle?</string>
 </resources>

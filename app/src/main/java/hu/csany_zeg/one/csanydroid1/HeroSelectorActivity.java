@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.GridLayout;
 
+// valójában HeroCreatorActivity a jelen esetben
 public class HeroSelectorActivity extends AppCompatActivity {
 
     @Override

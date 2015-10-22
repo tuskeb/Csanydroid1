@@ -63,6 +63,7 @@ public class HeroSelectorActivityFragment extends Fragment {
 				}
 
 				if (names.size() < 2) {
+					// a csata így is létre van hozva.
 					Toast.makeText(getActivity(), "You need minimum two heroes.", Toast.LENGTH_LONG).show();
 				} else {
 					try {

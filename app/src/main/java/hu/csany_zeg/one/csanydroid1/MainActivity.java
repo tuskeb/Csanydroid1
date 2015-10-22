@@ -86,14 +86,8 @@ public class MainActivity extends AppCompatActivity {
 		if(Hero.sHeroRepository == null) {
 			Hero.sHeroRepository = new ArrayList<>();
 
-            new Hero("Macska");
-            new Hero("Kutya");
-           /*
-
 			FileInputStream fis = null;
 			try {
-				// if(Math.random() < 2f) throw new Exception();
-
 				fis = openFileInput("hero_repository");
 				final byte bytes[] = new byte[fis.available()];
 				fis.read(bytes);
@@ -127,10 +121,10 @@ public class MainActivity extends AppCompatActivity {
 					} catch (IOException ignored) { }
 				}
 			}
-*/
+
 		}
 
-
+/*
 		{
             Battle battle = new Battle(null);
             battle.addPlayer(Player.CURRENT, true);
@@ -139,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
             }
             battle.setPlayerReady(Player.CURRENT);
 		}
-
+*/
 
 		//Display display = getWindowManager().getDefaultDisplay();
 		//Point size = new Point();

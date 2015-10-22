@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">CsataSzimulátor</string>
     <string name="action_settings">Beállítások</string>
     <string name="create_hero_inhelp">Hős létrehozása</string>
     <string name="hero_repository_inhelp">Hős raktár</string>
@@ -35,4 +34,5 @@
     <string name="total_kills">Megölt hősök</string>
     <string name="total_deaths">Összes halál</string>
     <string name="sugo1">Az elmentett hősök raktárába lehet eljutni! Bal felső sarokban található + jellel adhatunk hozzá hőst. Először egy nevet kell megadni. A csúszkák segítségével adható meg a hős különféle adata. A harcban lévő hősök datai nem módosíthatók. Egy hős csak egy csatában vehet részt. A mentés automatikus, a törlés a szemetesláda ikon megnyomásával történik.</string>
+    <string name="battle_give_up_confirmation">Biztosan fel szeretné adni a csatát?</string>
 </resources>

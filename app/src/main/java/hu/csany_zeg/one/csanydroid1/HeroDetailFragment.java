@@ -44,10 +44,10 @@ public class HeroDetailFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
-        if (getArguments().containsKey(ARG_ITEM_ID)) {
-            String itemId = getArguments().getString(ARG_ITEM_ID);
-            mHero = itemId != null ? Hero.findHero(itemId) : null;
-        }
+		if (getArguments().containsKey(ARG_ITEM_ID)) {
+			String itemId = getArguments().getString(ARG_ITEM_ID);
+			mHero = itemId != null ? Hero.findHero(itemId) : null;
+		}
 
 		super.onCreate(savedInstanceState);
 
@@ -59,16 +59,16 @@ public class HeroDetailFragment extends Fragment {
 	                         Bundle savedInstanceState) {
 		final View rootView;
 
-        Log.v("mamma", mHero + "");
+		Log.v("mamma", mHero + "");
 		if (mHero == null) {
 			rootView = inflater.inflate(R.layout.fragment_hero_overalldetail, container, false);
 			((TextView) rootView.findViewById(R.id.number_of_heros)).setText(String.valueOf(Hero.countHeroes()));
 		} else {
 			rootView = inflater.inflate(R.layout.fragment_hero_detail, container, false);
 
-            if(!mHero.canModify()) {
-                Toast.makeText(getActivity(), "The hero is fighting, so cannot be modified", Toast.LENGTH_SHORT).show();
-            }
+			if (!mHero.canModify()) {
+				Toast.makeText(getActivity(), "The hero is fighting, so cannot be modified", Toast.LENGTH_SHORT).show();
+			}
 
 			charmValueTextView = (TextView) rootView.findViewById(R.id.charm_textview);
 			defensiveValueTextView = (TextView) rootView.findViewById(R.id.defensive_textview);
@@ -85,13 +85,13 @@ public class HeroDetailFragment extends Fragment {
 			// TODO load from array
 
 			((TextView) rootView.findViewById(R.id.total_offensive_point_textview))
-					.setText(String.valueOf(mHero.getStatistics(Hero.STATISTICS_OFFENSIVE_POINT).floatValue()));
+					.setText(String.format("%.3f", mHero.getStatistics(Hero.STATISTICS_OFFENSIVE_POINT).floatValue()));
 
 			((TextView) rootView.findViewById(R.id.total_defensive_point_textview))
-					.setText(String.valueOf(mHero.getStatistics(Hero.STATISTICS_DEFENSIVE_POINT).floatValue()));
+					.setText(String.format("%.3f", mHero.getStatistics(Hero.STATISTICS_DEFENSIVE_POINT).floatValue()));
 
 			((TextView) rootView.findViewById(R.id.total_drunk_charm_textview))
-					.setText(String.valueOf(mHero.getStatistics(Hero.STATISTICS_DRUNK_CHARM).floatValue()));
+					.setText(String.format("%.3f", mHero.getStatistics(Hero.STATISTICS_DRUNK_CHARM).floatValue()));
 
 			((TextView) rootView.findViewById(R.id.total_kills_textview))
 					.setText(String.valueOf(mHero.getStatistics(Hero.STATISTICS_KILLS).intValue()));
@@ -205,7 +205,7 @@ public class HeroDetailFragment extends Fragment {
 						mHero.setHealthPoint((float) progress + Hero.MIN_HEALTH);
 					} catch (RuntimeException ignored) { }
 
-					healthValueTextView.setText(String.valueOf(Math.round(mHero.getHealthPoint()-Hero.MIN_HEALTH)));
+					healthValueTextView.setText(String.valueOf(Math.round(mHero.getHealthPoint() - Hero.MIN_HEALTH)));
 
 					healthImageView.setImageDrawable(getResources().getDrawable(mHero.getHealthImageID()));
 				}

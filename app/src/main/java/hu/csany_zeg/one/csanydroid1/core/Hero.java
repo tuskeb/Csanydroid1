@@ -26,7 +26,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 			STATISTICS_BATTLES = "battles";
 	private static final String TAG = "hero";
 	public static ArrayList<Hero> sHeroRepository;
-	public static short MIN_HEALTH = 1, MAX_HEALTH = 2;
+	public static short MIN_HEALTH = 10, MAX_HEALTH = 500;
 	public static float MIN_CHARM = 0.0f, MAX_CHARM = 20.0f;
 	public static float MIN_OFFENSIVE_POINT = 1.0f, MAX_OFFENSIVE_POINT = 10.0f;
 	public static float MIN_DEFENSIVE_POINT = 1.0f, MAX_DEFENSIVE_POINT = 10.0f;
@@ -522,7 +522,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 		if (Math.random() < r) {
 			mDrunkCharm = Math.min(mCharm, mBattle.MAX_USABLE_CHARM); // "maximális varázsereje"??
 			mCharm -= mDrunkCharm;
-			Log.v("battle", "mDrunkCharm: " + mDrunkCharm + "/" + mCharm);
+
 			updateStatistics(STATISTICS_DRUNK_CHARM, mDrunkCharm);
 
 		} else { // ne használjon ilyen szereket

@@ -49,6 +49,7 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
 
 	@Override
 	public void onNavigationDrawerItemSelected(int position) {
+		if(position < 0) return;
 		// update the main content by replacing fragments
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		fragmentManager.beginTransaction()
@@ -104,6 +105,10 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
 						mHeroViewB.setHero(battle.getDefender());
 					}
 					break;
+					case Battle.STATE_BEFORE_ATTACK: {
+						mHeroViewA.setState(HeroView.STATE_SHOW_MOVEMENT);
+					}
+					break;
 					case Battle.STATE_ATTACK: {
 						mHeroViewB.onLifeLost((float) param);
 
@@ -112,12 +117,14 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
 					case Battle.STATE_BEFORE_FINISH: {
 						// reménykedek benne, hogy múködik. tudom, nem valami bíztató...
 						//getActivity().finish();
-						Log.v("battle", "receive finish signal");
 						Toast.makeText(getActivity(), "Köszönjük a figyelmet! A csata véget ért.", Toast.LENGTH_SHORT).show();
 						mHeroViewB.setState(HeroView.STATE_SHOW_TROPHY);
 
 					}
 					break;
+					case Battle.STATE_FINISH: {
+						getActivity().finish();
+					}
 				}
 			}
 		};
@@ -137,11 +144,10 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
 
 		@Override
 		public void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
 
 			mBattle = Battle.get(getArguments().getInt(ARG_BATTLE_NUMBER));
 			mBattle.setOnStateChangeListener(mStateChangeListeners);
-
-			super.onCreate(savedInstanceState);
 
 		}
 
@@ -152,11 +158,21 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
 			View rootView = inflater.inflate(R.layout.fragment_battle, container, false);
 			LinearLayout linearLayout = (LinearLayout) rootView.findViewById(R.id.hero_linear_layout);
 
+
 			mHeroViewA = new HeroView(getContext());
+
 			mHeroViewB = new HeroView(getContext());
 
 			mHeroViewA.setHero(mBattle.getAttacker());
 			mHeroViewB.setHero(mBattle.getDefender());
+
+			if (mBattle.getState() >= Battle.STATE_BEFORE_FINISH) {
+				mHeroViewB.setState(HeroView.STATE_SHOW_TROPHY);
+			}
+			if (mBattle.getState() >= Battle.STATE_BEFORE_ATTACK) {
+				mHeroViewA.setState(HeroView.STATE_SHOW_MOVEMENT);
+			}
+
 
 			((FrameLayout) linearLayout.findViewById(R.id.hero_a_container)).addView(mHeroViewA);
 			((FrameLayout) linearLayout.findViewById(R.id.hero_b_container)).addView(mHeroViewB);
@@ -165,12 +181,11 @@ public class BattleActivity extends AppCompatActivity implements NavigationDrawe
 		}
 
 		public void selectItem(int position) {
-
-			final Battle battle = Battle.get(position);
-			final BattleActivity activity = (BattleActivity) getActivity();
-
-			activity.mTitle = battle.getName();
-
+			try {
+				final Battle battle = Battle.get(position);
+				final BattleActivity activity = (BattleActivity) getActivity();
+				activity.mTitle = battle.getName();
+			} catch (Exception e) {}
 
 		}
 
