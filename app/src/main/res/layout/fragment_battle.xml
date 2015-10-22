@@ -1,11 +1,26 @@
 <LinearLayout
+    android:id="@+id/hero_linear_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     android:orientation="horizontal"
-    android:id="@+id/hero_linear_layout"
+    android:weightSum="2"
     tools:context="hu.csany_zeg.one.csanydroid1.BattleActivity.BattleFragment">
+
+    <FrameLayout
+        android:id="@+id/hero_a_container"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1">
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/hero_b_container"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1">
+    </FrameLayout>
 
     <!--
     <TextView

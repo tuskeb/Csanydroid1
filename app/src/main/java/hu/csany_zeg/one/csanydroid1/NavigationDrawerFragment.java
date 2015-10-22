@@ -234,7 +234,8 @@ public class NavigationDrawerFragment extends Fragment {
 
         // itt tuti elvérzik
         if(position >= Battle.countBattles()) {
-            getActivity().finish();
+	        Log.v("asdf", "exit");
+           getActivity().finish();
         } else {
 
             if (mDrawerListView != null && position >= 0) {
@@ -298,6 +299,7 @@ public class NavigationDrawerFragment extends Fragment {
 		switch (item.getItemId()) {
 			case R.id.give_up:
 // http://developer.android.com/guide/topics/ui/dialogs.html
+
 				AlertDialog alert = new AlertDialog.Builder(getActivity())
 						                    .setTitle("Confirm")
 						                    .setMessage("Are you sure want to give up this battle?")

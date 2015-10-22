@@ -10,6 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import hu.csany_zeg.one.csanydroid1.App;
 import hu.csany_zeg.one.csanydroid1.R;
@@ -119,9 +120,9 @@ public class Battle {
         sBattles.add(this);
 
         mOwner.send(new Player.Message(Player.ACTION_GET_BATTLE, this) {
-            @Override
-            public void extra(Parcel m) {
-            }
+	        @Override
+	        public void extra(Parcel m) {
+	        }
 
         });
     }
@@ -237,7 +238,7 @@ public class Battle {
 
     public Hero nextAttacker() {
         final Hero oldHero = mAttacker;
-
+Log.v(TAG, "adf");
         final ArrayList<Hero> heroes = getHeroes(getCurrentPlayerAsBoolean());
 
         byte lastAttacker = getCurrentPlayerAsBoolean() ? mLastAttackerA : mLastAttackerB;
@@ -253,13 +254,17 @@ public class Battle {
         else
             mLastAttackerB = lastAttacker;
 
+	    Log.v(TAG, "_adf");
+
         return oldHero;
     }
 
     public Hero nextDefender() {
         final Hero oldHero = mDefender;
 
+	    Log.v(TAG, "adfaa");
         final ArrayList<Hero> heroes = getHeroes(!getCurrentPlayerAsBoolean());
+
 /*
         boolean b = false;
 		for (int i = heroes.size(); i > 0;) {
@@ -281,14 +286,16 @@ public class Battle {
         //	mDefender = null;
         //}
 
+	    Log.v(TAG, "__adfaa");
+
         return oldHero;
     }
 
     public void dispose() {
         sBattles.remove(this);
-        if (mHandler != null) {
+        /*if (mHandler != null) {
             mHandler.getLooper().quit();
-        }
+        }*/
 
         mDisposed = true;
     }
@@ -386,6 +393,8 @@ public class Battle {
         // mindegyik játékos készen áll?
         if (mPlayersA.size() + mPlayersB.size() > mReadyPlayers.size()) return;
 
+	    if (mHeroesA.size() + mHeroesB.size() < 2) return; // TODO broadcast error message
+
         final ArrayList<Hero> heroes = new ArrayList<>();
         heroes.addAll(mHeroesA);
         heroes.addAll(mHeroesB);
@@ -394,7 +403,6 @@ public class Battle {
             //++hero.mTotalBattles;
             hero.updateStatistics("battles", 1);
         }
-
 
         // nincs ellenfél
         if (mPlayersB.size() == 0) {
@@ -666,7 +674,7 @@ public class Battle {
                 next = Battle.STATE_FINISH
         )
         public void OnWin() {
-            Log.v(TAG, "yuuppppppiiiiiie!");
+            Log.v(TAG, "won!");
             delayNextState(1000);
             mOnStateChangeListener.onChange(Battle.this, null);
             //Log.v(TAG, "k" + mHeroesA.get(0).getStatistics(Hero.STATISTICS_ATTACKS).intValue());
@@ -675,7 +683,7 @@ public class Battle {
 
         @BattleState(value = Battle.STATE_FINISH)
         public void OnFinish() {
-            dispose();
+            //dispose();
             Log.v(TAG, "disposed");
         }
 

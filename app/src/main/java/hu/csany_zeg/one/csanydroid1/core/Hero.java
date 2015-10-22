@@ -15,11 +15,21 @@ import hu.csany_zeg.one.csanydroid1.R;
 
 public class Hero extends DataSetObservable implements Cloneable {
 
+	public static final String
+			STATISTICS_OFFENSIVE_POINT = "offensivePoint",
+			STATISTICS_DEFENSIVE_POINT = "defensivePoint",
+			STATISTICS_DRUNK_CHARM = "drunkCharm",
+			STATISTICS_KILLS = "kills",
+			STATISTICS_DEATHS = "deaths",
+			STATISTICS_ATTACKS = "attacks",
+			STATISTICS_DEFENCES = "defences",
+			STATISTICS_BATTLES = "battles";
 	private static final String TAG = "hero";
-
 	public static ArrayList<Hero> sHeroRepository;
-
-	public static float MIN_HEALTH = .10f, MAX_HEALTH = .500f;
+	public static short MIN_HEALTH = 1, MAX_HEALTH = 2;
+	public static float MIN_CHARM = 0.0f, MAX_CHARM = 20.0f;
+	public static float MIN_OFFENSIVE_POINT = 1.0f, MAX_OFFENSIVE_POINT = 10.0f;
+	public static float MIN_DEFENSIVE_POINT = 1.0f, MAX_DEFENSIVE_POINT = 10.0f;
 	private static int drawableHeroes[] =
 			{
 					R.drawable.ch1_basic_stay,
@@ -27,16 +37,14 @@ public class Hero extends DataSetObservable implements Cloneable {
 					R.drawable.ch3_basic_stay,
 					R.drawable.ch4_basic_stay
 			};
-
-
 	private static int drawableHeroesRanged[][] =
 			{
-				{
-					R.drawable.ch1_basic_ranged,
+					{
+							R.drawable.ch1_basic_ranged,
 							R.drawable.ch2_basic_ranged,
 							R.drawable.ch3_basic_ranged,
 							R.drawable.ch4_basic_ranged
-				},
+					},
 					{
 							R.drawable.ch1_ranged1,
 							R.drawable.ch2_ranged1,
@@ -72,7 +80,6 @@ public class Hero extends DataSetObservable implements Cloneable {
 							R.drawable.ch4_non_ranged2
 					}
 			};
-
 	private static int drawableOffensive[] =
 			{
 					R.drawable.weapon_icon_dagger,
@@ -80,7 +87,6 @@ public class Hero extends DataSetObservable implements Cloneable {
 					R.drawable.weapon_icon_pistol,
 					R.drawable.weapon_icon_laser
 			};
-
 	private static int drawableOffensiveToHero[][] =
 			{
 					{
@@ -102,31 +108,27 @@ public class Hero extends DataSetObservable implements Cloneable {
 							R.drawable.weapon_laser2
 					}
 			};
-
-	private static int drawableDefensiveToHero[]=
+	private static int drawableDefensiveToHero[] =
 			{
 					R.drawable.shield1,
 					R.drawable.shield2,
 					R.drawable.shield3,
 					R.drawable.shield4
 			};
-
-	private static int drawableCharmToHero[]=
+	private static int drawableCharmToHero[] =
 			{
 					R.drawable.magic4,
 					R.drawable.magic3,
 					R.drawable.magic2,
 					R.drawable.magic1,
 			};
-
-	private static int drawableHealthToHero[]=
+	private static int drawableHealthToHero[] =
 			{
 					R.drawable.heart4,
 					R.drawable.heart3,
 					R.drawable.heart2,
 					R.drawable.heart1,
 			};
-
 	private static int drawableDefensive[] =
 			{
 					R.drawable.shield1_icon,
@@ -148,28 +150,6 @@ public class Hero extends DataSetObservable implements Cloneable {
 					R.drawable.heart2_icon,
 					R.drawable.heart1_icon
 			};
-
-	public static ArrayList<Hero> getFreeHeroes() {
-		ArrayList<Hero> heroes = new ArrayList<>();
-		for (Hero hero : sHeroRepository) {
-			if (hero.getBattle() == null) heroes.add(hero);
-		}
-
-		Collections.sort(heroes, new Comparator<Hero>() {
-			@Override
-			public int compare(Hero lhs, Hero rhs) {
-				return lhs.mIsFavourite != rhs.mIsFavourite ? (lhs.mIsFavourite ? 1 : -1) : lhs.getName().compareTo(rhs.getName());
-			}
-		});
-
-		return heroes;
-	}
-
-
-
-	public static float MIN_CHARM = 0.0f, MAX_CHARM = 20.0f;
-	public static float MIN_OFFENSIVE_POINT = 1.0f, MAX_OFFENSIVE_POINT = 10.0f;
-	public static float MIN_DEFENSIVE_POINT = 1.0f, MAX_DEFENSIVE_POINT = 10.0f;
 	private static DataSetObservable mGlobalObservable = new DataSetObservable();
 	/**
 	 * A hős neve.
@@ -181,7 +161,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 	 */
 	protected int mPicture;
 
-    /**
+	/**
 	 * A hős élete.
 	 */
 	protected float mHealthPoint;
@@ -197,17 +177,7 @@ public class Hero extends DataSetObservable implements Cloneable {
 	 * Védekezési értéke.
 	 */
 	protected float mDefensivePoint;
-
-	public static final String
-			STATISTICS_OFFENSIVE_POINT = "offensivePoint",
-			STATISTICS_DEFENSIVE_POINT = "defensivePoint",
-				STATISTICS_DRUNK_CHARM = "drunkCharm",
-			STATISTICS_KILLS = "kills",
-			STATISTICS_DEATHS = "deaths",
-			STATISTICS_ATTACKS = "attacks",
-			STATISTICS_DEFENCES = "defences",
-			STATISTICS_BATTLES = "battles";
-
+	boolean mIsFavourite;
 	/**
 	 * A hős összes védekezésének mértéke.
 	 */
@@ -248,44 +218,9 @@ public class Hero extends DataSetObservable implements Cloneable {
 	 */
 	@HeroStatistics(STATISTICS_BATTLES)
 	private int mTotalBattles;
-
-	boolean mIsFavourite;
 	private Battle mBattle = null;
 	private HeroParams mParams = null;
 	private float mDrunkCharm;
-
-	public Number getStatistics(String name) {
-		for (final Field field : this.getClass().getDeclaredFields()) {
-			final HeroStatistics annotation = field.getAnnotation(HeroStatistics.class);
-			if (annotation == null) continue;
-			if (annotation.value().compareTo(name) != 0) continue;
-
-			try {
-				field.setAccessible(true);
-				return (Number) field.get(this);
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-				return null;
-			}
-
-		}
-
-		return null;
-	}
-
-	public void updateStatistics(final String name, final Number number) {
-		mOwner.send(new Player.Message(Player.ACTION_UPDATE_HERO_STAT, this) {
-			@Override
-			public void extra(Parcel m) {
-				m.writeString(name);
-				m.writeValue(number);
-			}
-		});
-
-		Log.v(TAG, "cannot found");
-
-	}
-
 	/**
 	 * Létrehoz egy helyi hőst.
 	 */
@@ -335,38 +270,6 @@ public class Hero extends DataSetObservable implements Cloneable {
 
 	}
 
-	@Override
-	public void notifyChanged() {
-		super.notifyChanged();
-		mGlobalObservable.notifyChanged();
-	}
-
-	public void obtainProperties(Parcel parcel) {
-		// Log.v(TAG, "save");
-
-		// general
-		parcel.writeString(getName());
-		parcel.writeByte((byte) (mIsFavourite ? 1 : 0));
-		parcel.writeFloat(mHealthPoint);
-		parcel.writeFloat(mCharm);
-		parcel.writeFloat(mOffensivePoint);
-		parcel.writeFloat(mDefensivePoint);
-		parcel.writeInt(mPicture);
-
-		// statistics
-		parcel.writeFloat(mTotalOffensivePoint);
-		parcel.writeFloat(mTotalDefensivePoint);
-		parcel.writeFloat(mTotalDrunkCharm);
-		parcel.writeInt(mTotalKills);
-		parcel.writeInt(mTotalDeaths);
-		parcel.writeInt(mTotalAttacks);
-		parcel.writeInt(mTotalDefences);
-		parcel.writeInt(mTotalBattles);
-
-
-	}
-
-
 	public Hero(Player owner, String name) {
 		mOwner = owner;
 		mName = name;
@@ -382,6 +285,22 @@ public class Hero extends DataSetObservable implements Cloneable {
 
 	}
 
+	public static ArrayList<Hero> getFreeHeroes() {
+		ArrayList<Hero> heroes = new ArrayList<>();
+		for (Hero hero : sHeroRepository) {
+			if (hero.getBattle() == null) heroes.add(hero);
+		}
+
+		Collections.sort(heroes, new Comparator<Hero>() {
+			@Override
+			public int compare(Hero lhs, Hero rhs) {
+				return lhs.mIsFavourite != rhs.mIsFavourite ? (lhs.mIsFavourite ? 1 : -1) : lhs.getName().compareTo(rhs.getName());
+			}
+		});
+
+		return heroes;
+	}
+
 	public static DataSetObservable getGlobalObservable() {
 		return mGlobalObservable;
 	}
@@ -394,7 +313,6 @@ public class Hero extends DataSetObservable implements Cloneable {
 	public static int countHeroes() {
 		return sHeroRepository.size();
 	}
-
 
 	public static String getNextName(String prefix) {
 
@@ -426,6 +344,69 @@ public class Hero extends DataSetObservable implements Cloneable {
 		}
 
 		return null;
+
+	}
+
+	public Number getStatistics(String name) {
+		for (final Field field : this.getClass().getDeclaredFields()) {
+			final HeroStatistics annotation = field.getAnnotation(HeroStatistics.class);
+			if (annotation == null) continue;
+			if (annotation.value().compareTo(name) != 0) continue;
+
+			try {
+				field.setAccessible(true);
+				return (Number) field.get(this);
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+				return null;
+			}
+
+		}
+
+		return null;
+	}
+
+	public void updateStatistics(final String name, final Number number) {
+		mOwner.send(new Player.Message(Player.ACTION_UPDATE_HERO_STAT, this) {
+			@Override
+			public void extra(Parcel m) {
+				m.writeString(name);
+				m.writeValue(number);
+			}
+		});
+
+		Log.v(TAG, "cannot found");
+
+	}
+
+	@Override
+	public void notifyChanged() {
+		super.notifyChanged();
+		mGlobalObservable.notifyChanged();
+	}
+
+	public void obtainProperties(Parcel parcel) {
+		// Log.v(TAG, "save");
+
+		// general
+		parcel.writeString(getName());
+		parcel.writeByte((byte) (mIsFavourite ? 1 : 0));
+		parcel.writeFloat(mHealthPoint);
+		parcel.writeFloat(mCharm);
+		parcel.writeFloat(mOffensivePoint);
+		parcel.writeFloat(mDefensivePoint);
+		parcel.writeInt(mPicture);
+
+		// statistics
+		parcel.writeFloat(mTotalOffensivePoint);
+		parcel.writeFloat(mTotalDefensivePoint);
+		parcel.writeFloat(mTotalDrunkCharm);
+		parcel.writeInt(mTotalKills);
+		parcel.writeInt(mTotalDeaths);
+		parcel.writeInt(mTotalAttacks);
+		parcel.writeInt(mTotalDefences);
+		parcel.writeInt(mTotalBattles);
+
 
 	}
 
@@ -512,19 +493,19 @@ public class Hero extends DataSetObservable implements Cloneable {
 	}
 
 	private int getCharmImageIndex() {
-		return Math.min((int)((getCharm() - MIN_CHARM) / ((float)(MAX_CHARM - MIN_CHARM) / (float) drawableCharms.length)), drawableCharms.length - 1);
+		return Math.min((int) ((getCharm() - MIN_CHARM) / ((float) (MAX_CHARM - MIN_CHARM) / (float) drawableCharms.length)), drawableCharms.length - 1);
 	}
 
-    private int getOffensiveImageIndex() {
-		return Math.min((int)((getBaseOffensivePoint() - MIN_OFFENSIVE_POINT) / ((float)(MAX_OFFENSIVE_POINT - MIN_OFFENSIVE_POINT) / (float) drawableOffensive.length)), drawableOffensive.length - 1);
+	private int getOffensiveImageIndex() {
+		return Math.min((int) ((getBaseOffensivePoint() - MIN_OFFENSIVE_POINT) / ((float) (MAX_OFFENSIVE_POINT - MIN_OFFENSIVE_POINT) / (float) drawableOffensive.length)), drawableOffensive.length - 1);
 	}
 
-    private int getDefensiveImageIndex() {
+	private int getDefensiveImageIndex() {
 		return Math.min((int) ((getBaseDefensivePoint() - MIN_DEFENSIVE_POINT) / ((float) (MAX_DEFENSIVE_POINT - MIN_DEFENSIVE_POINT) / (float) drawableDefensive.length)), drawableDefensive.length - 1);
 	}
 
-    private int getHealthImageIndex() {
-		return Math.min((int) ((getHealthPoint() - MIN_HEALTH) / ((float) (MAX_HEALTH - MIN_HEALTH) / (float) drawableHealths.length)), drawableHealths.length - 1);
+	private int getHealthImageIndex() {
+		return Math.min((int) (Math.max(getHealthPoint() - MIN_HEALTH, 0) / ((float) (MAX_HEALTH - MIN_HEALTH) / (float) drawableHealths.length)), drawableHealths.length - 1);
 	}
 
 	public float getDrunkCharm() {
@@ -541,8 +522,8 @@ public class Hero extends DataSetObservable implements Cloneable {
 		if (Math.random() < r) {
 			mDrunkCharm = Math.min(mCharm, mBattle.MAX_USABLE_CHARM); // "maximális varázsereje"??
 			mCharm -= mDrunkCharm;
-Log.v("battle", "mDrunkCharm: " + mDrunkCharm + "/" + mCharm);
-        updateStatistics(STATISTICS_DRUNK_CHARM, mDrunkCharm);
+			Log.v("battle", "mDrunkCharm: " + mDrunkCharm + "/" + mCharm);
+			updateStatistics(STATISTICS_DRUNK_CHARM, mDrunkCharm);
 
 		} else { // ne használjon ilyen szereket
 			mDrunkCharm = 0;
@@ -560,18 +541,38 @@ Log.v("battle", "mDrunkCharm: " + mDrunkCharm + "/" + mCharm);
 		return mHealthPoint;
 	}
 
+	public void setHealthPoint(float healthPoint) throws RuntimeException {
+		if (!canModify()) throw new RuntimeException("Value cannot be modified");
+
+		if (healthPoint < MIN_HEALTH) mHealthPoint = MIN_HEALTH;
+		else if (healthPoint > MAX_HEALTH) mHealthPoint = MAX_HEALTH;
+		else mHealthPoint = healthPoint;
+
+		notifyChanged();
+	}
+
 	public boolean receiveDamage(float lostLife) {
 		if (lostLife <= 0) return false;
 
 		if ((this.mHealthPoint -= lostLife) < 0) this.mHealthPoint = 0;
 
-        notifyChanged();
+		notifyChanged();
 
 		return true;
 
 	}
 
 	public float getCharm() { return mCharm; }
+
+	public void setCharm(float charm) throws RuntimeException {
+		if (!canModify()) throw new RuntimeException("Value cannot be modified.");
+
+		if (charm < MIN_CHARM) mCharm = MIN_CHARM;
+		else if (charm > MAX_CHARM) mCharm = MAX_CHARM;
+		else mCharm = charm;
+
+		notifyChanged();
+	}
 
 	public float getBaseOffensivePoint() {
 		return mOffensivePoint;
@@ -602,16 +603,6 @@ Log.v("battle", "mDrunkCharm: " + mDrunkCharm + "/" + mCharm);
 		notifyChanged();
 	}
 
-	public void setCharm(float charm) throws RuntimeException {
-		if (!canModify()) throw new RuntimeException("Value cannot be modified.");
-
-		if(charm < MIN_CHARM) mCharm = MIN_CHARM;
-		else if(charm > MAX_CHARM) mCharm = MAX_CHARM;
-		else mCharm = charm;
-
-		notifyChanged();
-	}
-
 	public boolean isValidName(String text) {
 		text = text.trim();
 
@@ -626,17 +617,6 @@ Log.v("battle", "mDrunkCharm: " + mDrunkCharm + "/" + mCharm);
 
 		return true;
 	}
-
-
-    public void setHealthPoint(float healthPoint) throws RuntimeException {
-        if (!canModify()) throw new RuntimeException("Value cannot be modified");
-
-        if (healthPoint < MIN_HEALTH) mHealthPoint = MIN_HEALTH;
-        else if (healthPoint > MAX_HEALTH) mHealthPoint = MAX_HEALTH;
-        else mHealthPoint = healthPoint;
-
-        notifyChanged();
-    }
 
 	public void setOffensivePoint(float offensivePoint) throws RuntimeException {
 		if (!canModify()) throw new RuntimeException("Value cannot be modified");
@@ -663,6 +643,33 @@ Log.v("battle", "mDrunkCharm: " + mDrunkCharm + "/" + mCharm);
 		return String.format("%s [ name=\"%s\", hept=%f, chrm=%f, oppt=%f, dept=%f ]", getClass().getName(), mName, mHealthPoint, mCharm, mOffensivePoint, mDefensivePoint);
 	}
 
+	/**
+	 * Index 0,1,2
+	 */
+	public ArrayList<Integer> getOffensiveImageArray(int animIndex) {
+		final ArrayList<Integer> imageArray = new ArrayList<>();
+		imageArray.add((getOffensiveImageIndex() < 2 ? drawableHeroesNonRanged : drawableHeroesRanged)[animIndex][getHeroImageIndex()]);
+		imageArray.add(drawableOffensiveToHero[animIndex][getOffensiveImageIndex()]);
+		//addBasicImages(a);
+		return imageArray;
+	}
+
+	public ArrayList<Integer> getDefensiveImageArray() {
+		final ArrayList<Integer> imageArray = new ArrayList<>();
+		imageArray.add((getOffensiveImageIndex() < 2 ? drawableHeroesNonRanged : drawableHeroesRanged)[0][getHeroImageIndex()]);
+		//imageArray.add(drawableDefensiveToHero[getDefensiveImageIndex()]);
+		//addBasicImages(a);
+		return imageArray;
+	}
+/*
+	private void addBasicImages(ArrayList<Integer> a) {
+
+		a.add(drawableDefensiveToHero[getDefensiveImageIndex()]);
+		a.add(drawableHealthToHero[getHealthImageIndex()]);
+		a.add(drawableCharmToHero[getCharmImageIndex()]);
+
+	}
+*/
 	private class HeroParams {
 		public float mHealthPoint;
 		public float mOffensivePoint;
@@ -683,43 +690,6 @@ Log.v("battle", "mDrunkCharm: " + mDrunkCharm + "/" + mCharm);
 			Hero.this.mCharm = mCharm;
 
 		}
-
-	}
-
-	/** Index 0,1,2 */
-	public ArrayList<Integer> getOffensiveImageArray(int animIndex)
-	{
-		ArrayList<Integer> a= new ArrayList<>();
-		switch (getOffensiveImageIndex()) {
-			case 0:
-			case 1:
-				a.add(drawableHeroesNonRanged[animIndex][getHeroImageIndex()]);
-				break;
-			case 2:
-			case 3:
-				a.add(drawableHeroesRanged[animIndex][getHeroImageIndex()]);
-				break;
-		}
-		a.add(drawableOffensiveToHero[animIndex][getOffensiveImageIndex()]);
-		//addBasicImages(a);
-		return a;
-	}
-
-
-	public ArrayList<Integer> getDefensiveImageArray() {
-		ArrayList<Integer> a = new ArrayList<>();
-		a.add(drawableOffensiveToHero[0][getOffensiveImageIndex()]);
-		a.add(drawableOffensiveToHero[getOffensiveImageIndex()][0]);
-		addBasicImages(a);
-		return a;
-	}
-
-	private void addBasicImages(ArrayList<Integer>  a)
-	{
-
-		a.add(drawableDefensiveToHero[getDefensiveImageIndex()]);
-		a.add(drawableHealthToHero[getHealthImageIndex()]);
-		a.add(drawableCharmToHero[getCharmImageIndex()]);
 
 	}
 }
